@@ -14,3 +14,6 @@
 [submodule "3rdparty/bgfx"]
 	path = 3rdparty/bgfx
 	url = https://github.com/bkaradzic/bgfx
+[submodule "3rdparty/bx"]
+	path = 3rdparty/bx
+	url = https://github.com/bkaradzic/bx
