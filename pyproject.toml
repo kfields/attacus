@@ -1,0 +1,25 @@
+[tool.poetry]
+name = "attacus"
+version = "0.1.0"
+description = ""
+authors = ["Kurtis Fields <kurtisfields@gmail.com>"]
+
+[tool.poetry.dependencies]
+python = ">=3.10.0,<3.11"
+
+[tool.poetry.dev-dependencies]
+pytest = "^7.1.1"
+aimgen = {path = "./pkg/aimgen",  develop = true}
+glad = {path = "./3rdparty/glad",  develop = true}
+pybind11 = "^2.9.2"
+scikit-build = "^0.14.1"
+cmake = "^3.22.3"
+
+[build-system]
+requires = [
+    "setuptools>=42",
+    "pybind11>=2.9.2",
+    "cmake>=3.22",
+    "scikit-build>=0.14.1",
+]
+build-backend = "poetry.masonry.api"
