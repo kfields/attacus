@@ -11,7 +11,7 @@ function(USES_SDL THIS)
     target_include_directories(${THIS} PRIVATE
         ${SDL_ROOT}/include
     )
-    #target_link_libraries(${THIS} PRIVATE SDL2main SDL2-static)
-    target_link_libraries(${THIS} PRIVATE SDL2main SDL2)
+    target_link_libraries(${THIS} PRIVATE SDL2main SDL2-static)
+    #target_link_libraries(${THIS} PRIVATE SDL2main SDL2)
 endfunction()
 

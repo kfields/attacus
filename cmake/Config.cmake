@@ -16,6 +16,14 @@ set(GLAD_ROOT ${ATT_ROOT}/src/glad)
 set(FLUTTER_ROOT ${ATT_ROOT}/src/flutter)
 
 
+set(BX_ROOT ${ATT_ROOT}/3rdparty/bx)
+if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+set(BX_COMPATIBILITY ${BX_ROOT}/include/compat/msvc)
+endif()
+
+set(BIMG_ROOT ${ATT_ROOT}/3rdparty/bimg)
+set(BGFX_ROOT ${ATT_ROOT}/3rdparty/bgfx)
+
 set(EXAMPLES_ROOT ${ATT_ROOT}/examples)
 
 #

@@ -21,7 +21,8 @@ add_subdirectory(3rdparty/pybind11)
 #
 # SDL - Minimal build for now
 #
-#set(SDL_SHARED OFF CACHE BOOL "Build a shared version of the library" FORCE)
+set(HAVE_LIBC ON)
+set(SDL_SHARED OFF CACHE BOOL "Build a shared version of the library" FORCE)
 #set(SDL_STATIC_PIC ON CACHE BOOL "Static version of the library should be built with Position Independent Code" FORCE)
 
 set(SDL_RENDER OFF CACHE BOOL "Use render subsystem" FORCE)
@@ -42,6 +43,11 @@ if(${ATT_RENDERER_GL})
     #glad_add_library(glad_gl_core_45 STATIC API gl:core=4.5)
     add_subdirectory(src/glad)
 endif()
+
+#
+# bgfx
+#
+add_subdirectory(src/bgfx)
 
 #
 #Attacus
