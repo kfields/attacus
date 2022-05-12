@@ -11,3 +11,6 @@
 	path = 3rdparty/glad
 	url = https://github.com/Dav1dde/glad
 	branch = glad2
+[submodule "3rdparty/bgfx"]
+	path = 3rdparty/bgfx
+	url = https://github.com/bkaradzic/bgfx
