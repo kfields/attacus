@@ -17,3 +17,6 @@
 [submodule "3rdparty/bx"]
 	path = 3rdparty/bx
 	url = https://github.com/bkaradzic/bx
+[submodule "3rdparty/bimg"]
+	path = 3rdparty/bimg
+	url = https://github.com/bkaradzic/bimg
