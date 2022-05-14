@@ -63,21 +63,18 @@ public:
 
     virtual void Reset(ResetKind kind = ResetKind::kHard) {}
 
-    uint16_t AllocViewId();
-    void FreeViewId(uint16_t id);
-
     //Accessors
     int width() { return size_.width; }
     int height() { return size_.height; }
     Size size() { return size_; }
 
-    uint16_t viewId() { return viewId_; }
-    void SetViewId(uint16_t id) { viewId_ = id; }
+    int16_t id() { return id_; }
+    void SetId(int16_t id) { id_ = id; }
     //Data members
     Size size_;
 
-    static uint16_t viewCount_;
-    uint16_t viewId_;
+    static int16_t surface_count_;
+    int16_t id_;
     Surface* parent_;
     std::list<Surface*> children_;
     bgfx::FrameBufferHandle frameBuffer_;

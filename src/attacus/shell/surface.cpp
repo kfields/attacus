@@ -3,11 +3,11 @@
 namespace attacus {
 
 //TODO:Recycle handles
-uint16_t Surface::viewCount_ = 0;
+int16_t Surface::surface_count_ = 0;
 
 Surface::Surface(SurfaceParams params, Surface* parent) :
     size_(params.size), parent_(parent),
-    viewId_(viewCount_++), frameBuffer_(BGFX_INVALID_HANDLE)
+    id_(surface_count_++), frameBuffer_(BGFX_INVALID_HANDLE)
 {
     if (parent != nullptr) {
         parent->AddChild(*this);
@@ -35,13 +35,5 @@ void Surface::Draw() {
         child->Draw();
     }
 }
-uint16_t Surface::AllocViewId() {
-    return viewCount_++;
-}
-
-void Surface::FreeViewId(uint16_t id) {
-    //TODO:Laziness
-}
-
 
 } //namespace attacus

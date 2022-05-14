@@ -13,6 +13,7 @@ set(SHELL_HEADERS
     component.h
     window_component.h
     surface.h
+    surface_manager.h
     window_base.h
     platform_window.h
     window.h
@@ -23,6 +24,7 @@ set(SHELL_SRC
     component.cpp
     window_component.cpp
     surface.cpp
+    surface_manager.cpp
     window_base.cpp
     window.cpp
     view.cpp
