@@ -21,4 +21,4 @@ USES_BGFX(${THIS})
 
 add_subdirectory(00-helloworld)
 add_subdirectory(01-methodchannel)
-add_subdirectory(02-texture)
+add_subdirectory(10-cubes)

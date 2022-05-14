@@ -132,10 +132,10 @@ static const uint64_t s_ptState[]
 };
 BX_STATIC_ASSERT(BX_COUNTOF(s_ptState) == BX_COUNTOF(s_ptNames) );
 
-class ExampleTexture : public ExampleApp {
+class ExampleCubes : public ExampleApp {
 public:
-    //EXAMPLE_CTOR(ExampleTexture)
-	ExampleTexture(ExampleParams params) : ExampleApp(params),
+    //EXAMPLE_CTOR(ExampleCubes)
+	ExampleCubes(ExampleParams params) : ExampleApp(params),
 		pt_(0),
 		r_(true),
 		g_(true),
@@ -355,9 +355,9 @@ public:
 };
 
 EXAMPLE_MAIN(
-    ExampleTexture
-    , "02-texture"
-    , "Load texture."
-    , "https://kfields.github.io/attacus/examples.html#texture"
+    ExampleCubes
+    , "cubes"
+    , "Show cubes."
+    , "https://kfields.github.io/attacus/examples.html#cubes"
 );
 
