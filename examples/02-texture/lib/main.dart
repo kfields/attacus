@@ -51,8 +51,8 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
   final _controller = OpenGLTextureController();
-  final _width = 200.0;
-  final _height = 200.0;
+  final _width = 400.0;
+  final _height = 400.0;
 
   @override
   initState() {

@@ -14,6 +14,7 @@ public:
     App(WindowParams params = WindowParams());
     virtual ~App();
     virtual void Create() override;
+    virtual void CreateGfx() override;
     virtual void Destroy() override;
     virtual bool Dispatch(SDL_Event& event) override;
     virtual void PreRender() override;

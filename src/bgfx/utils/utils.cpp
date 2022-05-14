@@ -3,6 +3,9 @@
  * License: https://github.com/bkaradzic/bgfx/blob/master/LICENSE
  */
 
+#include <filesystem>
+namespace fs = std::filesystem;
+
 #include "common.h"
 
 #include <tinystl/allocator.h>
@@ -23,9 +26,16 @@ namespace stl = tinystl;
 
 #include <bimg/decode.h>
 
+const char resourceRoot[] = "../resources";
+
+const char* resourcePath(const char* path) {
+	fs::path filePath = fs::current_path() / resourceRoot / path;
+	return _strdup(filePath.string().c_str());
+}
+
 void* load(bx::FileReaderI* _reader, bx::AllocatorI* _allocator, const char* _filePath, uint32_t* _size)
 {
-	if (bx::open(_reader, _filePath) )
+	if (bx::open(_reader, resourcePath(_filePath)) )
 	{
 		uint32_t size = (uint32_t)bx::getSize(_reader);
 		void* data = BX_ALLOC(_allocator, size);
@@ -126,7 +136,7 @@ static bgfx::ShaderHandle loadShader(bx::FileReaderI* _reader, const char* _name
 	bx::strCat(filePath, BX_COUNTOF(filePath), _name);
 	bx::strCat(filePath, BX_COUNTOF(filePath), ".bin");
 
-	bgfx::ShaderHandle handle = bgfx::createShader(loadMem(_reader, filePath) );
+	bgfx::ShaderHandle handle = bgfx::createShader(loadMem(_reader, resourcePath(filePath)) );
 	bgfx::setName(handle, _name);
 
 	return handle;

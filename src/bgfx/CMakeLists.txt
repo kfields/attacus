@@ -23,18 +23,21 @@ set(BIMG_SRC
 
 set(BGFX_HEADERS
     ${BGFX_ROOT}/include/bgfx/bgfx.h
+    bgfx_p.h
 )
 
 set(_ ${BGFX_ROOT}/src)
 
 set(BGFX_SRC
     #${BGFX_ROOT}/src/amalgamated.cpp
-    ${_}/bgfx.cpp
+    #${_}/bgfx.cpp
+    bgfx.cpp
     ${_}/vertexlayout.cpp
     ${_}/shader.cpp
     ${_}/topology.cpp
     ${_}/debug_renderdoc.cpp
     ${_}/renderer_noop.cpp
+    ${_}/renderer_agc.cpp
     ${_}/renderer_d3d9.cpp
     ${_}/renderer_d3d11.cpp
     ${_}/renderer_d3d12.cpp

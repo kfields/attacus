@@ -1,5 +1,7 @@
 #include <iostream>
 
+#include <attacus/flutter/flutter_view.h>
+
 #include "texture_registrar.h"
 
 namespace attacus
@@ -9,42 +11,29 @@ namespace attacus
 
     TextureRegistrar::~TextureRegistrar() = default;
 
-    int64_t TextureRegistrar::RegisterTexture(TextureVariant *texture)
+    int64_t TextureRegistrar::RegisterTexture(Texture& texture)
     {
-        if (auto pixel_buffer_texture = std::get_if<PixelBufferTexture>(texture))
-        {
-            FlutterDesktopTextureInfo info = {};
-            info.type = kFlutterDesktopPixelBufferTexture;
-            info.pixel_buffer_config.user_data = pixel_buffer_texture;
-            info.pixel_buffer_config.callback =
-                [](size_t width, size_t height,
-                   void *user_data) -> const FlutterDesktopPixelBuffer *
-            {
-                auto texture = static_cast<PixelBufferTexture *>(user_data);
-                auto buffer = texture->CopyPixelBuffer(width, height);
-                return buffer;
-            };
-            //int64_t texture_id = FlutterDesktopTextureRegistrarRegisterExternalTexture(texture_registrar_ref_, &info);
-            FlutterEngineResult result = FlutterEngineRegisterExternalTexture(engine_, ++texture_id);
-            return texture_id;
-        }
-
-        std::cerr << "Attempting to register unknown texture variant." << std::endl;
-        return -1;
-    } // namespace flutter
+        texture_id++;
+        texture.id_ = texture_id;
+        textures_[texture_id] = &texture;
+        FlutterEngineResult result = FlutterEngineRegisterExternalTexture(engine_, texture_id);
+        return texture_id;
+    }
 
     bool TextureRegistrar::UnregisterTexture(int64_t texture_id)
     {
-        //return FlutterDesktopTextureRegistrarUnregisterExternalTexture(texture_registrar_ref_, texture_id);
         FlutterEngineResult result = FlutterEngineUnregisterExternalTexture(engine_, texture_id);
         return true;
     }
 
     bool TextureRegistrar::MarkTextureFrameAvailable(int64_t texture_id)
     {
-        //return FlutterDesktopTextureRegistrarMarkExternalTextureFrameAvailable(texture_registrar_ref_, texture_id);
         FlutterEngineResult result = FlutterEngineMarkExternalTextureFrameAvailable(engine_, texture_id);
         return true;
+    }
+
+    bool TextureRegistrar::CopyTexture(int64_t texId, size_t width, size_t height, FlutterOpenGLTexture*  texOut) {
+        return textures_[texId]->Copy(width, height, texOut);
     }
 
 } // namespace attacus

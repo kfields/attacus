@@ -4,9 +4,11 @@
 
 #pragma once
 
+#include <map>
+
 #include "flutter_component.h"
 
-#include "texture.h"
+#include <attacus/flutter/texture.h>
 
 namespace attacus
 {
@@ -22,15 +24,17 @@ namespace attacus
         TextureRegistrar &operator=(TextureRegistrar const &) = delete;
 
         // |flutter::TextureRegistrar|
-        int64_t RegisterTexture(TextureVariant *texture);
-        int64_t InternalRegisterTexture(const FlutterDesktopTextureInfo *texture_info);
+        int64_t RegisterTexture(Texture& texture);
         // |flutter::TextureRegistrar|
         bool MarkTextureFrameAvailable(int64_t texture_id);
 
         // |flutter::TextureRegistrar|
         bool UnregisterTexture(int64_t texture_id);
 
+        bool CopyTexture(int64_t texId, size_t width, size_t height, FlutterOpenGLTexture*  texOut);
+
         // Data members
+        std::map<int64_t, Texture*> textures_;
         // TODO: Recycle id's?
         int64_t texture_id = 0;
     };

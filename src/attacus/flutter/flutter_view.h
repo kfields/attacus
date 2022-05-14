@@ -30,6 +30,7 @@ public:
     FlutterView(WindowParams params = WindowParams());
     virtual ~FlutterView();
     virtual void Create() override;
+    virtual void Destroy() override;
     static FlutterView& Produce(WindowParams params = WindowParams()) {
         FlutterView& r = *new FlutterView(params);
         r.Create();

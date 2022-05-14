@@ -9,9 +9,15 @@ function(USES_STD THIS)
     USES_FMT(${THIS})
 
     if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-        target_compile_definitions(${THIS} PRIVATE BX_CONFIG_DEBUG=1)
+        target_compile_definitions(${THIS} PRIVATE 
+            ${ATT_COMPILE_DEFS}
+            BX_CONFIG_DEBUG=1
+        )
     else()
-        target_compile_definitions(${THIS} PRIVATE BX_CONFIG_DEBUG=0)
+        target_compile_definitions(${THIS} PRIVATE
+            ${ATT_COMPILE_DEFS}
+            BX_CONFIG_DEBUG=0
+        )
     endif()
 
     if(${ATT_PLATFORM} STREQUAL "Linux")

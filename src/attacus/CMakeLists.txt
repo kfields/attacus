@@ -6,6 +6,7 @@ set(THIS ${PROJECT_NAME})
 
 include(../../cmake/Shell.cmake)
 include(../../cmake/Flutter.cmake)
+include(../../cmake/Bgfx.cmake)
 
 set(ATT_HEADERS
     app.h
@@ -20,6 +21,7 @@ set_target_properties(${THIS} PROPERTIES POSITION_INDEPENDENT_CODE ${ATT_STATIC_
 
 USES_SHELL(${THIS})
 USES_FLUTTER(${THIS})
+USES_BGFX(${THIS})
 
 add_subdirectory(shell)
 add_subdirectory(flutter)

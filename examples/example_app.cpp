@@ -1,3 +1,5 @@
+#include <bgfx/utils/entry.h>
+
 #include "example_app.h"
 
 namespace attacus {
@@ -9,6 +11,7 @@ ExampleApp::ExampleApp(ExampleParams params) : App(params),
 
 void ExampleApp::Create() {
     App::Create();
+    entry::init();
 }
 
 } //namespace attacus

@@ -3,11 +3,14 @@ include_guard()
 include(${CMAKE_CURRENT_LIST_DIR}/Attacus.cmake)
 include(${CMAKE_CURRENT_LIST_DIR}/Shell.cmake)
 include(${CMAKE_CURRENT_LIST_DIR}/Flutter.cmake)
+include(${CMAKE_CURRENT_LIST_DIR}/Bgfx.cmake)
 
 function(USES_EXAMPLES THIS)
     USES_ATT(${THIS})
     USES_SHELL(${THIS})
     USES_FLUTTER(${THIS})
+    USES_BGFX(${THIS})
+    USES_BGFX_UTILS(${THIS})
 
     target_include_directories(${THIS} PRIVATE
         ${ATT_ROOT}

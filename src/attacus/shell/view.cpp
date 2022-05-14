@@ -20,6 +20,7 @@ View::~View() {
 
 void View::Create() {
     Window::Create();
+    CreateGfx();
 }
 
 void View::Destroy() {
@@ -54,14 +55,20 @@ void View::CreateSDLWindow() {
     SetWindowId(SDL_GetWindowID(sdl_window_));
     MapWindow(windowId(), this);
 
-    auto resource_context = SDL_GL_CreateContext(sdl_window_);
-    if (resource_context == NULL) {
+    gfx_context_ = SDL_GL_CreateContext(sdl_window_);
+    if (gfx_context_ == NULL) {
+        std::cout << fmt::format("Can't create opengl context for bgfx: {}\n", SDL_GetError());
+        return;
+    }
+
+    resource_context_ = SDL_GL_CreateContext(sdl_window_);
+    if (resource_context_ == NULL) {
         std::cout << fmt::format("Can't create opengl context for resource window: {}\n", SDL_GetError());
         return;
     }
 
-    auto context = SDL_GL_CreateContext(sdl_window_);
-    if (context == NULL) {
+    context_ = SDL_GL_CreateContext(sdl_window_);
+    if (context_ == NULL) {
         std::cout << fmt::format("Can't create opengl context: {}\n", SDL_GetError());
         return;
     }
@@ -70,8 +77,8 @@ void View::CreateSDLWindow() {
     std::cout << fmt::format("OpenGL {}.{} loaded\n", GLAD_VERSION_MAJOR(version), GLAD_VERSION_MINOR(version));
 
     SDL_SetWindowData(sdl_window_, "Window", this);
-    SDL_SetWindowData(sdl_window_, "GL", context);
-    SDL_SetWindowData(sdl_window_, "GL2", resource_context);
+    SDL_SetWindowData(sdl_window_, "GL", context_);
+    SDL_SetWindowData(sdl_window_, "GL2", resource_context_);
 
     if (SDL_GL_SetSwapInterval(1) < 0) {
         std::cout << fmt::format("Couldn't enable vsync: {}\n", SDL_GetError());

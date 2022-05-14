@@ -6,6 +6,7 @@ set(THIS ${PROJECT_NAME})
 
 include(${ATT_ROOT}/cmake/Sdl.cmake)
 include(${ATT_ROOT}/cmake/Shell.cmake)
+include(${ATT_ROOT}/cmake/Bgfx.cmake)
 
 
 set(FLUTTER_HEADERS
@@ -45,7 +46,7 @@ set(FLUTTER_HEADERS
     components/text_range.h
     components/string_conversion.h
 
-    components/texture.h
+    texture.h
     components/texture_registrar.h
 
 )
@@ -58,6 +59,8 @@ set(FLUTTER_SRC
     standard_codec.cpp
     json_message_codec.cpp
     json_method_codec.cpp
+
+    texture.cpp
 
     components/flutter_component.cpp
     components/isolate.cpp
@@ -77,6 +80,7 @@ add_library(${THIS} STATIC ${FLUTTER_SRC} ${FLUTTER_HEADERS})
 set_target_properties(${THIS} PROPERTIES POSITION_INDEPENDENT_CODE ${ATT_STATIC_PIC})
 
 USES_SDL(${THIS})
+USES_BGFX(${THIS})
 #USES_SHELL(${THIS})
 
 if(${ATT_PLATFORM_WINDOWS})

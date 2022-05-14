@@ -7,6 +7,7 @@ set(THIS ${PROJECT_NAME})
 include(${ATT_ROOT}/cmake/Examples.cmake)
 
 set(HEADERS
+    logo.h
 )
 
 set(SOURCES
