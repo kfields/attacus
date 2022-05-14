@@ -6,6 +6,7 @@ set(THIS ${PROJECT_NAME})
 
 include(${ATT_ROOT}/cmake/Sdl.cmake)
 include(${ATT_ROOT}/cmake/Flutter.cmake)
+include(${ATT_ROOT}/cmake/Bgfx.cmake)
 
 
 set(SHELL_HEADERS
@@ -32,6 +33,7 @@ set_target_properties(${THIS} PROPERTIES POSITION_INDEPENDENT_CODE ${ATT_STATIC_
 
 USES_SDL(${THIS})
 USES_FLUTTER(${THIS})
+USES_BGFX(${THIS})
 
 target_compile_definitions(${THIS} PRIVATE SHELL_HEADER=${SHELL_HEADER} SHELL_CLASS=${SHELL_CLASS})
 target_link_libraries(${THIS} PRIVATE AttShell${ATT_PLATFORM})

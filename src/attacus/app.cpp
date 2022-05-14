@@ -103,10 +103,13 @@ bool App::Dispatch(SDL_Event& event) {
 
 void App::PreRender() {
     FlutterView::PreRender();
+    SDL_GL_MakeCurrent(sdl_window_, gfx_context_);
 }
 
 void App::PostRender() {
+    bgfx::frame(capture_);
     FlutterView::PostRender();
+    SDL_GL_MakeCurrent(sdl_window_, nullptr);
 }
 
 int App::Run() {

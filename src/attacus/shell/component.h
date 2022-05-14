@@ -20,6 +20,14 @@ public:
 class Component {
 public:
     virtual void Create() {}
+
+    template<typename T = Component>
+    static T& Produce() {
+        T& c = *new T();
+        c.Create();
+        return c;
+    }
+
     virtual bool Dispatch(SDL_Event& event);
     virtual bool DispatchWindowEvent(SDL_Event& event);
     virtual void OnResize(SDL_Event& event) {}

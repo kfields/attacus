@@ -1,15 +1,17 @@
 #include "surface.h"
 
-//#include <bgfx/bgfx.h>
-
 namespace attacus {
 
 //TODO:Recycle handles
 uint16_t Surface::viewCount_ = 0;
 
-Surface::Surface() :
-    viewId_(viewCount_++), parent_(nullptr)
+Surface::Surface(SurfaceParams params, Surface* parent) :
+    size_(params.size), parent_(parent),
+    viewId_(viewCount_++), frameBuffer_(BGFX_INVALID_HANDLE)
 {
+    if (parent != nullptr) {
+        parent->AddChild(*this);
+    }
 }
 
 Surface::~Surface() {

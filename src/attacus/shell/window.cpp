@@ -53,14 +53,6 @@ bool Window::Dispatch(SDL_Event& event) {
     return PlatformWindow::Dispatch(event);
 }
 
-void Window::PreRender() {
-    PlatformWindow::PreRender();
-}
-
-void Window::PostRender() {
-    PlatformWindow::PostRender();
-}
-
 int Window::Run() {
     CreateAndShow();
     Startup();

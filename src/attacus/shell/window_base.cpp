@@ -15,7 +15,6 @@ WindowBase::WindowBase(WindowParams params) :
     windowId_(0),
     name_(params.name), 
     origin_(params.origin),
-    size_(params.size),
     flags_(params.flags),
     sdl_window_(nullptr)
 {

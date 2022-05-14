@@ -17,29 +17,18 @@ struct Point {
     Point(const Point& p1) { x = p1.x; y = p1.y; }
 };
 
-struct Size {
-    int width;
-    int height;
-    Size() : width(0), height(0) {}
-    Size(int width, int height)
-        : width(width), height(height) {}
-    Size(const Size& s1) { width = s1.width; height = s1.height; }
-};
-
-struct WindowParams {
+struct WindowParams : SurfaceParams {
     WindowParams(std::string _name = "Attacus",
         Point _origin = Point(SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED),
         Size _size = Size(800,600),
         uint32_t _flags = SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI
-    ) {
+    ) : SurfaceParams(_size) {
         name = _name;
         origin = _origin;
-        size = _size;
         flags = _flags;
     }
     std::string name;
     Point origin;
-    Size size;
     uint32_t flags;
 };
 
@@ -81,16 +70,12 @@ public:
     int x() { return origin_.x; }
     int y() { return origin_.y; }
     Point origin() { return origin_; }
-    int width() { return size_.width; }
-    int height() { return size_.height; }
-    Size size() { return size_; }
     //Data members
     WindowBase* parent_ = nullptr;
     uint32_t windowId_;
     static std::map<uint32_t, WindowBase*> windowMap_;
     std::string name_;
     Point origin_;
-    Size size_;
     uint32_t flags_;
     SDL_Window* sdl_window_;
     SDL_Window* sdl_resource_window_ = nullptr;

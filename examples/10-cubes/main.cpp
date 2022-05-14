@@ -134,7 +134,6 @@ BX_STATIC_ASSERT(BX_COUNTOF(s_ptState) == BX_COUNTOF(s_ptNames) );
 
 class ExampleCubes : public ExampleApp {
 public:
-    //EXAMPLE_CTOR(ExampleCubes)
 	ExampleCubes(ExampleParams params) : ExampleApp(params),
 		pt_(0),
 		r_(true),
@@ -146,9 +145,6 @@ public:
 
     virtual void Create() override {
         ExampleApp::Create();
-
-        // Enable debug text.
-		bgfx::setDebug(debugFlags_);
 
         channel_ = new StandardMethodChannel(messenger(), kChannelName);
 
@@ -164,7 +160,7 @@ public:
                                 "Missing argument while trying to activate system cursor");
                 return;
                 }
-                const auto& width = std::get<double>(width_iter->second);
+                const uint16_t width = std::get<double>(width_iter->second);
 
                 //auto height = std::get<double>(args[1]);
                 //auto height = std::get<double>(args.at(EncodableValue("height")));
@@ -174,9 +170,7 @@ public:
                                 "Missing argument while trying to activate system cursor");
                 return;
                 }
-                const auto& height = std::get<double>(height_iter->second);
-
-                SDL_GL_MakeCurrent(sdl_window_, gfx_context_);
+                const uint16_t height = std::get<double>(height_iter->second);
 
                 const uint64_t tsFlags = 0
                     | BGFX_SAMPLER_MIN_POINT
@@ -186,8 +180,6 @@ public:
                     | BGFX_SAMPLER_V_CLAMP
                     ;
 
-                //frameBuffer_ = bgfx::createFrameBuffer(width, height, bgfx::TextureFormat::BGRA8);
-                //frameBuffer_ = bgfx::createFrameBuffer(width, height, bgfx::TextureFormat::RGBA8);
                 frameBuffer_ = bgfx::createFrameBuffer(width, height, bgfx::TextureFormat::RGBA8, tsFlags);
                 bgfx::setViewFrameBuffer(viewId(), frameBuffer_);
 
@@ -268,7 +260,6 @@ public:
     virtual void Draw() override {
         ExampleApp::Draw();
         if (!texture_) return;
-        SDL_GL_MakeCurrent(sdl_window_, gfx_context_);
 
 		float time = (float)((bx::getHPCounter() - timeOffset_) / double(bx::getHPFrequency()));
 
@@ -328,18 +319,14 @@ public:
 		}
 
         bgfx::touch(viewId());
-        bgfx::frame(capture_);
 
         texture_->th_ = bgfx::getTexture(frameBuffer_);
-
-        SDL_GL_MakeCurrent(sdl_window_, nullptr);
         
         textureRegistrar().MarkTextureFrameAvailable(texture_->id_);
     }
 
     // Data members
     MethodChannel<>* channel_ = nullptr;
-    bgfx::FrameBufferHandle frameBuffer_ = bgfx::FrameBufferHandle(BGFX_INVALID_HANDLE);
     FrameBufferTexture* texture_ = nullptr;
     //
 	bgfx::VertexBufferHandle vbh_;

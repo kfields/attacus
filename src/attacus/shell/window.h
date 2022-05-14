@@ -17,8 +17,6 @@ public:
     virtual void Create() override;
     virtual void Destroy() override;
     virtual bool Dispatch(SDL_Event& event) override;
-    virtual void PreRender() override;
-    virtual void PostRender() override;
     virtual void Reset(ResetKind kind = ResetKind::kHard) override;
 
     int Run();

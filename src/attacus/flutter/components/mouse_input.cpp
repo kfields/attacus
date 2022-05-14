@@ -66,7 +66,7 @@ bool MouseInput::Dispatch(SDL_Event &e)
         {
             mouseDown = true;
             mouseId = e.button.which;
-            buttons_ = buttons_ | (1 << e.button.which);
+            buttons_ = buttons_ | (static_cast<int64_t>(1) << e.button.which);
             lastMouseX = e.button.x;
             lastMouseY = e.button.y;
             return UpdatePointer(FlutterPointerPhase::kDown, e.button.x, e.button.y, e.button.timestamp);
@@ -85,6 +85,7 @@ bool MouseInput::Dispatch(SDL_Event &e)
         break;
     }
     }
+    return true;
 }
 
 } // namespace attacus
