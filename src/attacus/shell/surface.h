@@ -37,7 +37,7 @@ public:
 
     template<typename T = Surface>
     static T& Produce(SurfaceParams params = SurfaceParams(), Surface* parent = nullptr) {
-        T& c = *new T(parent);
+        T& c = *new T(params, parent);
         c.Create();
         return c;
     }
@@ -58,7 +58,7 @@ public:
 
     void Render() { PreRender(); Draw(); PostRender(); }
     virtual void PreRender() {}
-    virtual void Draw() {}
+    virtual void Draw();
     virtual void PostRender() {}
 
     virtual void Reset(ResetKind kind = ResetKind::kHard) {}

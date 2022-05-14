@@ -132,9 +132,9 @@ static const uint64_t s_ptState[]
 };
 BX_STATIC_ASSERT(BX_COUNTOF(s_ptState) == BX_COUNTOF(s_ptNames) );
 
-class ExampleCubes : public ExampleApp {
+class ExampleCubesSurface : public Surface {
 public:
-	ExampleCubes(ExampleParams params) : ExampleApp(params),
+	ExampleCubesSurface(SurfaceParams params, Surface* parent) : Surface(params, parent),
 		pt_(0),
 		r_(true),
 		g_(true),
@@ -144,122 +144,83 @@ public:
     }
 
     virtual void Create() override {
-        ExampleApp::Create();
+        Surface::Create();
+        const uint64_t tsFlags = 0
+            | BGFX_SAMPLER_MIN_POINT
+            | BGFX_SAMPLER_MAG_POINT
+            | BGFX_SAMPLER_MIP_POINT
+            | BGFX_SAMPLER_U_CLAMP
+            | BGFX_SAMPLER_V_CLAMP
+            ;
 
-        channel_ = new StandardMethodChannel(messenger(), kChannelName);
+        frameBuffer_ = bgfx::createFrameBuffer(width(), height(), bgfx::TextureFormat::RGBA8, tsFlags);
+        bgfx::setViewFrameBuffer(viewId(), frameBuffer_);
 
-        new StandardMethod(*channel_, kCreateMethod,
-            [this](const MethodCall<>& call, std::unique_ptr<MethodResult<>> result) {
-                //auto args = call.arguments();
-                const auto& args = std::get<EncodableMap>(*call.arguments());
-                //auto width = std::get<double>(args[0]);
-                //auto width = std::get<double>(args.at(EncodableValue("width")));
-                auto width_iter = args.find(EncodableValue(std::string(kWidthKey)));
-                if (width_iter == args.end()) {
-                result->Error("Argument error",
-                                "Missing argument while trying to activate system cursor");
-                return;
-                }
-                const uint16_t width = std::get<double>(width_iter->second);
+        bgfx::setViewClear(viewId()
+            , BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH
+            //, 0x303030ff
+            , 0x12345678
+            , 1.0f
+            , 0
+        );
 
-                //auto height = std::get<double>(args[1]);
-                //auto height = std::get<double>(args.at(EncodableValue("height")));
-                auto height_iter = args.find(EncodableValue(std::string(kHeightKey)));
-                if (height_iter == args.end()) {
-                result->Error("Argument error",
-                                "Missing argument while trying to activate system cursor");
-                return;
-                }
-                const uint16_t height = std::get<double>(height_iter->second);
+        bgfx::setViewRect(viewId(), 0, 0, width(), height());
 
-                const uint64_t tsFlags = 0
-                    | BGFX_SAMPLER_MIN_POINT
-                    | BGFX_SAMPLER_MAG_POINT
-                    | BGFX_SAMPLER_MIP_POINT
-                    | BGFX_SAMPLER_U_CLAMP
-                    | BGFX_SAMPLER_V_CLAMP
-                    ;
+        texture_ = new FrameBufferTexture(frameBuffer_);
+        //auto texId = textureRegistrar().RegisterTexture(*texture_);
 
-                frameBuffer_ = bgfx::createFrameBuffer(width, height, bgfx::TextureFormat::RGBA8, tsFlags);
-                bgfx::setViewFrameBuffer(viewId(), frameBuffer_);
+        // Create vertex stream declaration.
+        PosColorVertex::init();
 
-                bgfx::setViewClear(viewId()
-                    , BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH
-                    //, 0x303030ff
-                    , 0x12345678
-                    , 1.0f
-                    , 0
-                );
+        // Create static vertex buffer.
+        vbh_ = bgfx::createVertexBuffer(
+            // Static data can be passed with bgfx::makeRef
+            bgfx::makeRef(s_cubeVertices, sizeof(s_cubeVertices))
+            , PosColorVertex::ms_layout
+        );
 
-                bgfx::setViewRect(viewId(), 0, 0, width, height);
+        // Create static index buffer for triangle list rendering.
+        ibh_[0] = bgfx::createIndexBuffer(
+            // Static data can be passed with bgfx::makeRef
+            bgfx::makeRef(s_cubeTriList, sizeof(s_cubeTriList))
+        );
 
-                texture_ = new FrameBufferTexture(frameBuffer_);
-                auto texId = textureRegistrar().RegisterTexture(*texture_);
+        // Create static index buffer for triangle strip rendering.
+        ibh_[1] = bgfx::createIndexBuffer(
+            // Static data can be passed with bgfx::makeRef
+            bgfx::makeRef(s_cubeTriStrip, sizeof(s_cubeTriStrip))
+        );
 
-                //
+        // Create static index buffer for line list rendering.
+        ibh_[2] = bgfx::createIndexBuffer(
+            // Static data can be passed with bgfx::makeRef
+            bgfx::makeRef(s_cubeLineList, sizeof(s_cubeLineList))
+        );
 
-                // Create vertex stream declaration.
-                PosColorVertex::init();
+        // Create static index buffer for line strip rendering.
+        ibh_[3] = bgfx::createIndexBuffer(
+            // Static data can be passed with bgfx::makeRef
+            bgfx::makeRef(s_cubeLineStrip, sizeof(s_cubeLineStrip))
+        );
 
-                // Create static vertex buffer.
-                vbh_ = bgfx::createVertexBuffer(
-                    // Static data can be passed with bgfx::makeRef
-                    bgfx::makeRef(s_cubeVertices, sizeof(s_cubeVertices))
-                    , PosColorVertex::ms_layout
-                );
+        // Create static index buffer for point list rendering.
+        ibh_[4] = bgfx::createIndexBuffer(
+            // Static data can be passed with bgfx::makeRef
+            bgfx::makeRef(s_cubePoints, sizeof(s_cubePoints))
+        );
 
-                // Create static index buffer for triangle list rendering.
-                ibh_[0] = bgfx::createIndexBuffer(
-                    // Static data can be passed with bgfx::makeRef
-                    bgfx::makeRef(s_cubeTriList, sizeof(s_cubeTriList))
-                );
+        // Create program from shaders.
+        program_ = loadProgram("vs_cubes", "fs_cubes");
 
-                // Create static index buffer for triangle strip rendering.
-                ibh_[1] = bgfx::createIndexBuffer(
-                    // Static data can be passed with bgfx::makeRef
-                    bgfx::makeRef(s_cubeTriStrip, sizeof(s_cubeTriStrip))
-                );
-
-                // Create static index buffer for line list rendering.
-                ibh_[2] = bgfx::createIndexBuffer(
-                    // Static data can be passed with bgfx::makeRef
-                    bgfx::makeRef(s_cubeLineList, sizeof(s_cubeLineList))
-                );
-
-                // Create static index buffer for line strip rendering.
-                ibh_[3] = bgfx::createIndexBuffer(
-                    // Static data can be passed with bgfx::makeRef
-                    bgfx::makeRef(s_cubeLineStrip, sizeof(s_cubeLineStrip))
-                );
-
-                // Create static index buffer for point list rendering.
-                ibh_[4] = bgfx::createIndexBuffer(
-                    // Static data can be passed with bgfx::makeRef
-                    bgfx::makeRef(s_cubePoints, sizeof(s_cubePoints))
-                );
-
-                // Create program from shaders.
-                program_ = loadProgram("vs_cubes", "fs_cubes");
-
-                timeOffset_ = bx::getHPCounter();
-
-                SDL_GL_MakeCurrent(sdl_window_, nullptr);
-
-                result->Success(texId);
-            });
-
-        new StandardMethod(*channel_, kDisposeMethod,
-            [this](const MethodCall<>& call, std::unique_ptr<MethodResult<>> result) {
-                auto args = call.arguments();
-                auto id = std::get<int>(args[0]);
-                result->Success();
-            });
+        timeOffset_ = bx::getHPCounter();
 
     }
 
     virtual void Draw() override {
-        ExampleApp::Draw();
+        Surface::Draw();
         if (!texture_) return;
+
+        bgfx::touch(viewId());
 
 		float time = (float)((bx::getHPCounter() - timeOffset_) / double(bx::getHPFrequency()));
 
@@ -318,15 +279,10 @@ public:
 			}
 		}
 
-        bgfx::touch(viewId());
-
         texture_->th_ = bgfx::getTexture(frameBuffer_);
-        
-        textureRegistrar().MarkTextureFrameAvailable(texture_->id_);
     }
 
     // Data members
-    MethodChannel<>* channel_ = nullptr;
     FrameBufferTexture* texture_ = nullptr;
     //
 	bgfx::VertexBufferHandle vbh_;
@@ -341,10 +297,72 @@ public:
 	bool a_;
 };
 
+class ExampleCubes : public ExampleApp {
+public:
+	ExampleCubes(ExampleParams params) : ExampleApp(params)
+	{
+    }
+
+    virtual void Create() override {
+        ExampleApp::Create();
+
+        channel_ = new StandardMethodChannel(messenger(), kChannelName);
+
+        new StandardMethod(*channel_, kCreateMethod,
+            [this](const MethodCall<>& call, std::unique_ptr<MethodResult<>> result) {
+                //auto args = call.arguments();
+                const auto& args = std::get<EncodableMap>(*call.arguments());
+                //auto width = std::get<double>(args[0]);
+                //auto width = std::get<double>(args.at(EncodableValue("width")));
+                auto width_iter = args.find(EncodableValue(std::string(kWidthKey)));
+                if (width_iter == args.end()) {
+                result->Error("Argument error",
+                                "Missing argument while trying to activate system cursor");
+                return;
+                }
+                const uint16_t width = std::get<double>(width_iter->second);
+
+                //auto height = std::get<double>(args[1]);
+                //auto height = std::get<double>(args.at(EncodableValue("height")));
+                auto height_iter = args.find(EncodableValue(std::string(kHeightKey)));
+                if (height_iter == args.end()) {
+                result->Error("Argument error",
+                                "Missing argument while trying to activate system cursor");
+                return;
+                }
+                const uint16_t height = std::get<double>(height_iter->second);
+
+                surface_ = &ExampleCubesSurface::Produce<ExampleCubesSurface>(SurfaceParams(Size(width, height)), this);
+
+                auto texId = textureRegistrar().RegisterTexture(*surface_->texture_);
+
+                result->Success(texId);
+            });
+
+        new StandardMethod(*channel_, kDisposeMethod,
+            [this](const MethodCall<>& call, std::unique_ptr<MethodResult<>> result) {
+                auto args = call.arguments();
+                auto id = std::get<int>(args[0]);
+                result->Success();
+            });
+
+    }
+
+    virtual void Draw() override {
+        ExampleApp::Draw();
+		if (surface_ && surface_->texture_)
+			textureRegistrar().MarkTextureFrameAvailable(surface_->texture_->id_);
+    }
+
+    // Data members
+    ExampleCubesSurface* surface_ = nullptr;
+    MethodChannel<>* channel_ = nullptr;
+    FrameBufferTexture* texture_ = nullptr;
+};
+
 EXAMPLE_MAIN(
     ExampleCubes
     , "cubes"
     , "Show cubes."
     , "https://kfields.github.io/attacus/examples.html#cubes"
 );
-

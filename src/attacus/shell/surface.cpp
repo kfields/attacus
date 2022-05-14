@@ -29,6 +29,12 @@ void Surface::Destroy() {
     delete this;
 }
 
+void Surface::Draw() {
+    for (std::list<Surface*>::iterator it = children_.begin(); it != children_.end(); ++it){
+        Surface* child = *it;
+        child->Draw();
+    }
+}
 uint16_t Surface::AllocViewId() {
     return viewCount_++;
 }
