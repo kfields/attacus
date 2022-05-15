@@ -8,7 +8,6 @@ using json = nlohmann::json;
 
 struct SDL_Window;
 struct SDL_Cursor;
-typedef union SDL_Event SDL_Event;
 
 namespace attacus {
 

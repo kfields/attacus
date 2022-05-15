@@ -1,8 +1,10 @@
-#include "component.h"
+#include <SDL.h>
+
+#include "dispatcher.h"
 
 namespace attacus {
 
-bool Component::Dispatch(SDL_Event& event) {
+bool Dispatcher::Dispatch(SDL_Event& event) {
     switch (event.type) {
     case SDL_QUIT:
         return false;
@@ -12,7 +14,7 @@ bool Component::Dispatch(SDL_Event& event) {
     return true;
 }
 
-bool Component::DispatchWindowEvent(SDL_Event& event) {
+bool Dispatcher::DispatchWindowEvent(SDL_Event& event) {
     Uint8 sdl_window_event = event.window.event;
     switch (sdl_window_event) {
     case SDL_WINDOWEVENT_RESIZED:
@@ -31,7 +33,7 @@ bool Component::DispatchWindowEvent(SDL_Event& event) {
     return true;
 }
 
-void Component::PushCallbackEvent(Delegate* delegate, void* user_data){
+void Dispatcher::PushCallbackEvent(Delegate* delegate, void* user_data){
     SDL_Event event;
     SDL_UserEvent userevent;
 

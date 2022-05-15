@@ -5,6 +5,8 @@
 #include <map>
 #include <thread>
 
+#include <SDL.h>
+
 #include "surface.h"
 
 namespace attacus {

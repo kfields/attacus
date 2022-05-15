@@ -6,7 +6,7 @@
 
 #include <bgfx/bgfx.h>
 
-#include "component.h"
+#include "dispatcher.h"
 
 namespace attacus {
 
@@ -26,7 +26,7 @@ struct SurfaceParams {
     Size size;
 };
 
-class Surface : public Component {
+class Surface : public Dispatcher {
 public:
     enum class ResetKind {
         kSoft,

@@ -14,7 +14,7 @@ add_subdirectory(3rdparty/fmt)
 #
 # pybind11
 #
-set(PYBIND11_CPP_STANDARD -std=c++20)
+set(-DCMAKE_CXX_STANDARD=20 -std=c++20)
 set(PYBIND11_PYTHON_VERSION 3.10)
 add_subdirectory(3rdparty/pybind11)
 

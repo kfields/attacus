@@ -2,8 +2,6 @@
 
 #include <functional>
 
-#include "SDL.h"
-
 namespace attacus {
 
 class Delegate {
@@ -19,7 +17,7 @@ public:
 
 class Component {
 public:
-    virtual void Create() {}
+    virtual void Create();
 
     template<typename T = Component>
     static T& Produce() {
@@ -27,15 +25,6 @@ public:
         c.Create();
         return c;
     }
-
-    virtual bool Dispatch(SDL_Event& event);
-    virtual bool DispatchWindowEvent(SDL_Event& event);
-    virtual void OnResize(SDL_Event& event) {}
-    virtual void OnSize() {}
-    virtual void OnShow() {}
-
-    static void PushCallbackEvent(Delegate* delegate, void* user_data);
-
 };
 
 } //namespace attacus

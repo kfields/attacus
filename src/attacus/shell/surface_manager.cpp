@@ -7,23 +7,25 @@
 namespace attacus
 {
 
-    SurfaceManager::SurfaceManager() {}
+SurfaceManager* SurfaceManager::instance_ = new SurfaceManager();
 
-    SurfaceManager::~SurfaceManager() = default;
+SurfaceManager::SurfaceManager() {}
 
-    int16_t SurfaceManager::RegisterSurface(Surface& Surface)
-    {
-        surface_count++;
-        Surface.id_ = surface_count;
-        Surfaces_[surface_count] = &Surface;
-        //FlutterEngineResult result = FlutterEngineRegisterExternalSurface(engine_, surface_id);
-        return surface_count;
-    }
+SurfaceManager::~SurfaceManager() = default;
 
-    bool SurfaceManager::UnregisterSurface(int16_t surface_id)
-    {
-        //FlutterEngineResult result = FlutterEngineUnregisterExternalSurface(engine_, surface_id);
-        return true;
-    }
+int16_t SurfaceManager::RegisterSurface(Surface& Surface)
+{
+    surface_count++;
+    Surface.id_ = surface_count;
+    surfaces_[surface_count] = &Surface;
+    //FlutterEngineResult result = FlutterEngineRegisterExternalSurface(engine_, surface_id);
+    return surface_count;
+}
+
+bool SurfaceManager::UnregisterSurface(int16_t surface_id)
+{
+    //FlutterEngineResult result = FlutterEngineUnregisterExternalSurface(engine_, surface_id);
+    return true;
+}
 
 } // namespace attacus

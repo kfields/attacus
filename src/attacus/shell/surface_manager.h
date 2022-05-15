@@ -11,23 +11,26 @@
 namespace attacus
 {
 
-    class SurfaceManager
-    {
-    public:
-        explicit SurfaceManager();
-        virtual ~SurfaceManager();
+class SurfaceManager
+{
+public:
+    explicit SurfaceManager();
+    virtual ~SurfaceManager();
 
-        // Prevent copying.
-        SurfaceManager(SurfaceManager const &) = delete;
-        SurfaceManager &operator=(SurfaceManager const &) = delete;
+    // Prevent copying.
+    SurfaceManager(SurfaceManager const &) = delete;
+    SurfaceManager &operator=(SurfaceManager const &) = delete;
 
-        int16_t RegisterSurface(Surface& Surface);
-        bool UnregisterSurface(int16_t surface_id);
+    int16_t RegisterSurface(Surface& Surface);
+    bool UnregisterSurface(int16_t surface_id);
 
-        // Data members
-        std::map<int16_t, Surface*> Surfaces_;
-        // TODO: Recycle id's?
-        int16_t surface_count = 0;
-    };
+    // Accessors
+    SurfaceManager& instance() { return *instance_;}
+    // Data members
+    static SurfaceManager* instance_;
+    std::map<int16_t, Surface*> surfaces_;
+    // TODO: Recycle id's?
+    int16_t surface_count = 0;
+};
 
 } // namespace attacus
