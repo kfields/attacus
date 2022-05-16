@@ -1,14 +1,14 @@
 #include <iostream>
 
 #include <attacus/flutter/encodable_value.h>
-#include <attacus/flutter/flutter_view.h>
+#include <attacus/flutter/flutter_window.h>
 #include <attacus/flutter/standard_method_channel.h>
 
 #include "mouse_input.h"
 
 namespace attacus {
 
-MouseInput::MouseInput(FlutterView &view) : FlutterComponent(view)
+MouseInput::MouseInput(FlutterWindow &view) : FlutterComponent(view)
 {
 }
 

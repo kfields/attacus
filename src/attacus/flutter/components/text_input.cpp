@@ -1,5 +1,5 @@
 
-#include <attacus/flutter/flutter_view.h>
+#include <attacus/flutter/flutter_window.h>
 #include <attacus/flutter/json_method_channel.h>
 
 #include "text_input.h"
@@ -37,7 +37,7 @@ static constexpr char kInternalConsistencyError[] =
 namespace attacus
 {
 
-TextInput::TextInput(FlutterView &view) : FlutterComponent(view)
+TextInput::TextInput(FlutterWindow &view) : FlutterComponent(view)
 {
 }
 

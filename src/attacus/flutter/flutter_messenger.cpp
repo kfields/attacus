@@ -4,14 +4,14 @@
 
 #include "flutter_embedder.h"
 #include "flutter_messenger.h"
-#include "flutter_view.h"
+#include "flutter_window.h"
 #include "engine_method_result.h"
 #include "channel.h"
 
 namespace attacus
 {
 
-FlutterMessenger::FlutterMessenger(FlutterView& view)
+FlutterMessenger::FlutterMessenger(FlutterWindow& view)
     : view_(&view) {}
 
 FlutterMessenger::~FlutterMessenger() = default;

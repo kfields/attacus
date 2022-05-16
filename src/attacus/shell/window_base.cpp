@@ -11,10 +11,8 @@ namespace attacus {
 
 std::map<uint32_t, WindowBase*> WindowBase::windowMap_;
 
-WindowBase::WindowBase(WindowParams params) :
+WindowBase::WindowBase(WindowParams params) : View(params),
     windowId_(0),
-    name_(params.name), 
-    origin_(params.origin),
     flags_(params.flags),
     sdl_window_(nullptr)
 {

@@ -6,13 +6,13 @@
 
 namespace attacus {
 
-class FlutterView;
+class FlutterWindow;
 class StandardMethodChannel;
 class TextInputModel;
 
 class MouseInput : FlutterComponent {
 public:
-    MouseInput(FlutterView& view);
+    MouseInput(FlutterWindow& view);
     void Create();
     bool Dispatch(SDL_Event &e) override;
     bool UpdatePointer(FlutterPointerPhase phase, double x, double y, size_t timestamp);

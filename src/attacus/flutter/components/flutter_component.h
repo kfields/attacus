@@ -6,12 +6,12 @@
 
 namespace attacus {
 
-class FlutterView;
+class FlutterWindow;
 
-class FlutterComponent : public WindowComponent<FlutterView> {
+class FlutterComponent : public WindowComponent<FlutterWindow> {
 public:
-    FlutterComponent(FlutterView& view);
-    FlutterView& flutter() { return *window_; }
+    FlutterComponent(FlutterWindow& view);
+    FlutterWindow& flutter() { return *window_; }
     virtual void Create() override;
     // Data members
     FlutterEngine engine_;

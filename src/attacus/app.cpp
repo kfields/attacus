@@ -11,13 +11,13 @@
 #include <bgfx/platform.h>
 
 #include "app.h"
-#include <attacus/flutter/flutter_view.h>
+#include <attacus/flutter/flutter_window.h>
 
 namespace attacus {
 
 static void SetupBgfxPlatformData(const App& app, bgfx::PlatformData &pd, const SDL_SysWMinfo &wmi);
 
-App::App(WindowParams params) : FlutterView(params),
+App::App(WindowParams params) : FlutterWindow(params),
     state_(State::kRunning),
     resetFlags_(BGFX_RESET_VSYNC),
     debugFlags_(BGFX_DEBUG_TEXT),
@@ -28,7 +28,7 @@ App::~App() {
 }
 
 void App::Create() {
-    FlutterView::Create();
+    FlutterWindow::Create();
 }
 
 void App::CreateGfx() {
@@ -56,7 +56,7 @@ void App::CreateGfx() {
 }
 
 void App::Destroy() {
-    FlutterView::Destroy();
+    FlutterWindow::Destroy();
 }
 
 void App::Reset(ResetKind kind)
@@ -98,17 +98,17 @@ bool App::Dispatch(SDL_Event& event) {
             }
         }
     }
-    return FlutterView::Dispatch(event);
+    return FlutterWindow::Dispatch(event);
 }
 
 void App::PreRender() {
-    FlutterView::PreRender();
+    FlutterWindow::PreRender();
     SDL_GL_MakeCurrent(sdl_window_, gfx_context_);
 }
 
 void App::PostRender() {
     bgfx::frame(capture_);
-    FlutterView::PostRender();
+    FlutterWindow::PostRender();
     SDL_GL_MakeCurrent(sdl_window_, nullptr);
 }
 
@@ -125,7 +125,7 @@ int App::Run() {
 
     RegisterResizer();
 
-    FlutterView::Run();
+    FlutterWindow::Run();
 
     SDL_Quit();
 

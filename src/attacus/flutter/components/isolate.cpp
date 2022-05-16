@@ -1,4 +1,4 @@
-#include <attacus/flutter/flutter_view.h>
+#include <attacus/flutter/flutter_window.h>
 #include <attacus/flutter/json_method_channel.h>
 
 #include "isolate.h"
@@ -7,7 +7,7 @@ namespace attacus {
 
 static constexpr char kChannelName[] = "flutter/isolate";
 
-IsolateComponent::IsolateComponent(FlutterView &view) : FlutterComponent(view)
+IsolateComponent::IsolateComponent(FlutterWindow &view) : FlutterComponent(view)
 {
 }
 

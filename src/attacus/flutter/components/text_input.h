@@ -6,13 +6,13 @@
 
 namespace attacus {
 
-class FlutterView;
+class FlutterWindow;
 class JsonMethodChannel;
 class TextInputModel;
 
 class TextInput : FlutterComponent {
 public:
-    TextInput(FlutterView& view);
+    TextInput(FlutterWindow& view);
     void Create();
     void SendStateUpdate(const TextInputModel& model);
     bool Dispatch(SDL_Event &e) override;

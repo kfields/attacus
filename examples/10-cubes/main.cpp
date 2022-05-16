@@ -1,4 +1,4 @@
-#include <attacus/flutter/flutter_view.h>
+#include <attacus/flutter/flutter_window.h>
 #include <attacus/flutter/flutter_messenger.h>
 #include <attacus/flutter/standard_method_channel.h>
 #include <attacus/flutter/components/texture_registrar.h>

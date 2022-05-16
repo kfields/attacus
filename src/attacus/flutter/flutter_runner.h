@@ -6,14 +6,14 @@
 
 namespace attacus {
 
-class FlutterView;
+class FlutterWindow;
 
 class FlutterRunner {
 public:
-    FlutterRunner(FlutterView& view);
+    FlutterRunner(FlutterWindow& view);
     void Create();
     // Data members
-    FlutterView* view_;
+    FlutterWindow* view_;
     FlutterEngine engine_;
     FlutterTaskRunnerDescription platform_task_runner = {};
     FlutterTaskRunnerDescription render_task_runner = {};

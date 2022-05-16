@@ -1,6 +1,6 @@
 #include <iostream>
 
-#include <attacus/flutter/flutter_view.h>
+#include <attacus/flutter/flutter_window.h>
 
 #include "surface_manager.h"
 

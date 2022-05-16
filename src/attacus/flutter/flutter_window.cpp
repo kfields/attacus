@@ -9,7 +9,7 @@ namespace fs = std::filesystem;
 
 #include <attacus/app.h>
 
-#include "flutter_view.h"
+#include "flutter_window.h"
 #include "flutter_embedder.h"
 #include "flutter_messenger.h"
 #include "flutter_runner.h"
@@ -28,7 +28,7 @@ namespace fs = std::filesystem;
 namespace attacus
 {
 
-FlutterView::FlutterView(WindowParams params) : View(params)
+FlutterWindow::FlutterWindow(WindowParams params) : GfxWindow(params)
 {
     messenger_ = new FlutterMessenger(*this);
     runner_ = new FlutterRunner(*this);
@@ -43,20 +43,20 @@ FlutterView::FlutterView(WindowParams params) : View(params)
     textureRegistrar_ = new TextureRegistrar(*this);
 }
 
-FlutterView::~FlutterView()
+FlutterWindow::~FlutterWindow()
 {
 }
 
-void FlutterView::Create()
+void FlutterWindow::Create()
 {
-    View::Create();
+    GfxWindow::Create();
 
     FlutterRendererConfig config = {};
     config.type = kOpenGL;
     config.open_gl.struct_size = sizeof(config.open_gl);
     config.open_gl.make_current = [](void *userdata) -> bool
     {
-        auto self = *static_cast<FlutterView*>(userdata);
+        auto self = *static_cast<FlutterWindow*>(userdata);
         auto window = self.sdl_window_;
         //auto context = SDL_GetWindowData(window, "GL");
         //SDL_GL_MakeCurrent(window, SDL_GetWindowData(window, "GL"));
@@ -65,7 +65,7 @@ void FlutterView::Create()
     };
     config.open_gl.make_resource_current = [](void *userdata) -> bool
     {
-        auto self = *static_cast<FlutterView*>(userdata);
+        auto self = *static_cast<FlutterWindow*>(userdata);
         auto window = self.sdl_window_;
         //auto context = SDL_GetWindowData(window, "GL2");
         //SDL_GL_MakeCurrent(window, context);
@@ -74,14 +74,14 @@ void FlutterView::Create()
     };
     config.open_gl.clear_current = [](void *userdata) -> bool
     {
-        auto self = *static_cast<FlutterView*>(userdata);
+        auto self = *static_cast<FlutterWindow*>(userdata);
         auto window = self.sdl_window_;
         SDL_GL_MakeCurrent(window, nullptr);
         return true;
     };
     config.open_gl.present = [](void *userdata) -> bool
     {
-        auto self = *static_cast<FlutterView*>(userdata);
+        auto self = *static_cast<FlutterWindow*>(userdata);
         auto window = self.sdl_window_;
         SDL_GL_SwapWindow(window);
         return true;
@@ -99,7 +99,7 @@ void FlutterView::Create()
     config.open_gl.gl_external_texture_frame_callback = 
         [](void *userdata, int64_t texId, size_t width, size_t height, FlutterOpenGLTexture*  texOut) -> bool
     {
-        auto self = *static_cast<FlutterView*>(userdata);
+        auto self = *static_cast<FlutterWindow*>(userdata);
         return self.textureRegistrar().CopyTexture(texId, width, height, texOut);
     };
 
@@ -115,7 +115,7 @@ void FlutterView::Create()
     args.icu_data_path = _strdup(icudtl_path.string().c_str());
     args.platform_message_callback = [](const FlutterPlatformMessage *message, void *user_data)
     {
-        FlutterView &self = *static_cast<FlutterView*>(user_data);
+        FlutterWindow &self = *static_cast<FlutterWindow*>(user_data);
         self.messenger().Receive(*message);
     };
     args.custom_task_runners = &runner_->custom_task_runners;
@@ -150,28 +150,28 @@ void FlutterView::Create()
     }
 }
 
-void FlutterView::Destroy() {
+void FlutterWindow::Destroy() {
     FlutterEngineResult result = FlutterEngineDeinitialize(engine_);
-    View::Destroy();
+    GfxWindow::Destroy();
 }
 
-void FlutterView::Render()
+void FlutterWindow::Render()
 {
 }
 
-void FlutterView::OnResize(SDL_Event &event)
+void FlutterWindow::OnResize(SDL_Event &event)
 {
-    View::OnResize(event);
+    GfxWindow::OnResize(event);
     UpdateSize(event.window.data1, event.window.data2, 1.0, false);
 }
 
-void FlutterView::OnSize()
+void FlutterWindow::OnSize()
 {
-    View::OnSize();
+    GfxWindow::OnSize();
     UpdateSize(width(), height(), 1.0, false);
 }
 
-void FlutterView::OnShow()
+void FlutterWindow::OnShow()
 {
     FlutterWindowMetricsEvent event = {};
     event.struct_size = sizeof(event);
@@ -181,7 +181,7 @@ void FlutterView::OnShow()
     FlutterEngineSendWindowMetricsEvent(engine_, &event);
 }
 
-void FlutterView::UpdateSize(size_t width, size_t height, float pixelRatio, bool maximized)
+void FlutterWindow::UpdateSize(size_t width, size_t height, float pixelRatio, bool maximized)
 {
     //  Round up the physical window size to a multiple of the pixel ratio
     width = std::ceil(width / pixelRatio) * pixelRatio;
@@ -196,7 +196,7 @@ void FlutterView::UpdateSize(size_t width, size_t height, float pixelRatio, bool
     FlutterEngineSendWindowMetricsEvent(engine_, &event);
 }
 
-bool FlutterView::Dispatch(SDL_Event &e)
+bool FlutterWindow::Dispatch(SDL_Event &e)
 {
     /*
     switch (e.type)
@@ -207,7 +207,7 @@ bool FlutterView::Dispatch(SDL_Event &e)
     mouseInput_->Dispatch(e);
     textInput_->Dispatch(e);
 
-    return View::Dispatch(e);
+    return GfxWindow::Dispatch(e);
 }
 
 } // namespace attacus

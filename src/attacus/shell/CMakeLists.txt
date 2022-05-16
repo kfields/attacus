@@ -14,10 +14,11 @@ set(SHELL_HEADERS
     window_component.h
     surface.h
     surface_manager.h
+    view.h
     window_base.h
     platform_window.h
     window.h
-    view.h
+    gfx_window.h
 )
 
 set(SHELL_SRC
@@ -25,9 +26,10 @@ set(SHELL_SRC
     window_component.cpp
     surface.cpp
     surface_manager.cpp
+    view.cpp
     window_base.cpp
     window.cpp
-    view.cpp
+    gfx_window.cpp
 )
 
 add_library(${THIS} STATIC ${SHELL_SRC} ${SHELL_HEADERS})

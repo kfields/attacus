@@ -11,7 +11,7 @@ include(${ATT_ROOT}/cmake/Bgfx.cmake)
 
 set(FLUTTER_HEADERS
     flutter_embedder.h
-    flutter_view.h
+    flutter_window.h
     flutter_messenger.h
     flutter_runner.h
 
@@ -52,7 +52,7 @@ set(FLUTTER_HEADERS
 )
 
 set(FLUTTER_SRC
-    flutter_view.cpp
+    flutter_window.cpp
     flutter_messenger.cpp
     flutter_runner.cpp
 

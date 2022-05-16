@@ -1,10 +1,10 @@
 #pragma once
 
-#include "flutter/flutter_view.h"
+#include "flutter/flutter_window.h"
 
 namespace attacus {
 
-class App : public FlutterView {
+class App : public FlutterWindow {
 public:
     enum class State {
         kRunning,

@@ -12,7 +12,7 @@
 
 namespace attacus {
 
-class FlutterView;
+class FlutterWindow;
 class Channel;
 
 // A binary message reply callback.
@@ -30,7 +30,7 @@ typedef std::function<
 
 class FlutterMessenger {
 public:
-    explicit FlutterMessenger(FlutterView& view);
+    explicit FlutterMessenger(FlutterWindow& view);
 
     virtual ~FlutterMessenger();
 
@@ -52,7 +52,7 @@ public:
 
 private:
     // Handle for interacting with the C API.
-    FlutterView* view_;
+    FlutterWindow* view_;
     FlutterEngine engine_ = nullptr;
     std::map<std::string, Channel*> channels_;
 };

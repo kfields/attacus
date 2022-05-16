@@ -4,10 +4,10 @@
 
 namespace attacus {
 
-class View : public Window {
+class GfxWindow : public Window {
 public:
-    View(WindowParams params = WindowParams());
-    virtual ~View();
+    GfxWindow(WindowParams params = WindowParams());
+    virtual ~GfxWindow();
     virtual void Create() override;
     virtual void CreateSDLWindow() override;
     virtual void CreateGfx() {}

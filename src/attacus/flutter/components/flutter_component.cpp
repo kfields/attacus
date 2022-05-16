@@ -1,10 +1,10 @@
-#include <attacus/flutter/flutter_view.h>
+#include <attacus/flutter/flutter_window.h>
 
 #include "flutter_component.h"
 
 namespace attacus {
 
-FlutterComponent::FlutterComponent(FlutterView& view) : WindowComponent(view) {}
+FlutterComponent::FlutterComponent(FlutterWindow& view) : WindowComponent(view) {}
 
 void FlutterComponent::Create() {
     engine_ = flutter().engine_;

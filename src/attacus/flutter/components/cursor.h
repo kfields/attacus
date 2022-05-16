@@ -8,13 +8,13 @@
 
 namespace attacus {
 
-class FlutterView;
+class FlutterWindow;
 class StandardMethodChannel;
 class TextInputModel;
 
 class CursorComponent : FlutterComponent {
 public:
-    CursorComponent(FlutterView& view);
+    CursorComponent(FlutterWindow& view);
     void Create();
     // Accessors
     StandardMethodChannel& channel() { return *channel_; }

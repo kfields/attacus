@@ -3,7 +3,7 @@
 #include <nohlmann/json.hpp>
 using json = nlohmann::json;
 
-#include <attacus/shell/view.h>
+#include <attacus/shell/gfx_window.h>
 #include "flutter_embedder.h"
 
 struct SDL_Window;
@@ -24,14 +24,14 @@ class MouseInput;
 class TextInput;
 class TextureRegistrar;
 
-class FlutterView : public View {
+class FlutterWindow : public GfxWindow {
 public:
-    FlutterView(WindowParams params = WindowParams());
-    virtual ~FlutterView();
+    FlutterWindow(WindowParams params = WindowParams());
+    virtual ~FlutterWindow();
     virtual void Create() override;
     virtual void Destroy() override;
-    static FlutterView& Produce(WindowParams params = WindowParams()) {
-        FlutterView& r = *new FlutterView(params);
+    static FlutterWindow& Produce(WindowParams params = WindowParams()) {
+        FlutterWindow& r = *new FlutterWindow(params);
         r.Create();
         return r;
     }

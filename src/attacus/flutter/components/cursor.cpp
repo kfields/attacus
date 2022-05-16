@@ -1,7 +1,7 @@
 #include <iostream>
 
 #include <attacus/flutter/encodable_value.h>
-#include <attacus/flutter/flutter_view.h>
+#include <attacus/flutter/flutter_window.h>
 #include <attacus/flutter/standard_method_channel.h>
 
 #include "cursor.h"
@@ -14,7 +14,7 @@ static constexpr char kActivateSystemCursorMethod[] = "activateSystemCursor";
 
 static constexpr char kKindKey[] = "kind";
 
-CursorComponent::CursorComponent(FlutterView &view) : FlutterComponent(view)
+CursorComponent::CursorComponent(FlutterWindow &view) : FlutterComponent(view)
 {
 }
 

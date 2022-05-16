@@ -9,25 +9,25 @@
 #include "SDL.h"
 #include "SDL_syswm.h"
 
-#include "view.h"
+#include "gfx_window.h"
 
 namespace attacus {
 
-View::View(WindowParams params) : Window(params) {}
+GfxWindow::GfxWindow(WindowParams params) : Window(params) {}
 
-View::~View() {
+GfxWindow::~GfxWindow() {
 }
 
-void View::Create() {
+void GfxWindow::Create() {
     Window::Create();
     CreateGfx();
 }
 
-void View::Destroy() {
+void GfxWindow::Destroy() {
     Window::Destroy();
 }
 
-void View::CreateSDLWindow() {
+void GfxWindow::CreateSDLWindow() {
     // Request an OpenGL 4.5 context (should be core)
     SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);

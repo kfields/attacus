@@ -5,7 +5,7 @@
 #include "SDL_syswm.h"
 
 #include "window.h"
-#include <attacus/flutter/flutter_view.h>
+#include <attacus/flutter/flutter_window.h>
 
 namespace attacus {
 

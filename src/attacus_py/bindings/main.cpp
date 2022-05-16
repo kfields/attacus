@@ -8,7 +8,7 @@
 #include "bindtools.h"
 
 #include <attacus/app.h>
-#include <attacus/flutter/flutter_view.h>
+#include <attacus/flutter/flutter_window.h>
 #include <attacus/flutter/flutter_messenger.h>
 #include <attacus/flutter/standard_method_channel.h>
 
@@ -72,9 +72,9 @@ void init_main(py::module &attacus_py, Registry &registry) {
         .def_readonly("messenger", &App::messenger_)
     PYCLASS_END(attacus_py, App)
 
-    PYCLASS_BEGIN(attacus_py, FlutterView)
-        .def_readonly("messenger", &FlutterView::messenger_)
-    PYCLASS_END(attacus_py, FlutterView)
+    PYCLASS_BEGIN(attacus_py, FlutterWindow)
+        .def_readonly("messenger", &FlutterWindow::messenger_)
+    PYCLASS_END(attacus_py, FlutterWindow)
 
     PYCLASS_BEGIN(attacus_py, FlutterMessenger)
     PYCLASS_END(attacus_py, FlutterMessenger)
