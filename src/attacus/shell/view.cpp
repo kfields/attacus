@@ -13,7 +13,10 @@
 
 namespace attacus {
 
-View::View(ViewParams params) : Surface(params), origin_(params.origin), name_(params.name) {}
+View::View(ViewParams params) : Surface(params),
+    origin_(params.origin),
+    name_(params.name) {
+}
 
 View::~View() {
 }

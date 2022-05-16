@@ -5,8 +5,6 @@
 #include <map>
 #include <thread>
 
-#include <SDL.h>
-
 #include "view.h"
 
 namespace attacus {
@@ -62,8 +60,6 @@ public:
     uint32_t windowId_;
     static std::map<uint32_t, WindowBase*> windowMap_;
     uint32_t flags_;
-    SDL_Window* sdl_window_;
-    SDL_Window* sdl_resource_window_ = nullptr;
 };
 
 } //namespace attacus

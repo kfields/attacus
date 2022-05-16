@@ -13,8 +13,7 @@ std::map<uint32_t, WindowBase*> WindowBase::windowMap_;
 
 WindowBase::WindowBase(WindowParams params) : View(params),
     windowId_(0),
-    flags_(params.flags),
-    sdl_window_(nullptr)
+    flags_(params.flags)
 {
 }
 
@@ -82,12 +81,6 @@ void WindowBase::OnResize(SDL_Event& event) {
 }
 
 bool WindowBase::Dispatch(SDL_Event& event) {
-    /*if (event.window.windowID != windowId()) {
-        WindowBase* child = windowMap_[event.window.windowID];
-        if (child != nullptr)
-            return windowMap_[event.window.windowID]->Dispatch(event);
-    }*/
-
     switch (event.type) {
         case SDL_QUIT:
             return false;
@@ -98,12 +91,6 @@ bool WindowBase::Dispatch(SDL_Event& event) {
 }
 
 bool WindowBase::DispatchWindowEvent(SDL_Event& event) {
-    /*if (event.window.windowID != windowId()) {
-        WindowBase* child = windowMap_[event.window.windowID];
-        if(child != nullptr)
-            return windowMap_[event.window.windowID]->DispatchWindowEvent(event);
-    }*/
-
     Uint8 sdl_window_event = event.window.event;
     switch (sdl_window_event) {
         case SDL_WINDOWEVENT_RESIZED:

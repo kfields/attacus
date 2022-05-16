@@ -58,8 +58,6 @@ void FlutterWindow::Create()
     {
         auto self = *static_cast<FlutterWindow*>(userdata);
         auto window = self.sdl_window_;
-        //auto context = SDL_GetWindowData(window, "GL");
-        //SDL_GL_MakeCurrent(window, SDL_GetWindowData(window, "GL"));
         SDL_GL_MakeCurrent(window, self.context_);
         return true;
     };
@@ -67,8 +65,6 @@ void FlutterWindow::Create()
     {
         auto self = *static_cast<FlutterWindow*>(userdata);
         auto window = self.sdl_window_;
-        //auto context = SDL_GetWindowData(window, "GL2");
-        //SDL_GL_MakeCurrent(window, context);
         SDL_GL_MakeCurrent(window, self.resource_context_);
         return true;
     };

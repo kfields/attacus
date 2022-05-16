@@ -9,9 +9,11 @@ Surface::Surface(SurfaceParams params, Surface* parent) :
     size_(params.size), parent_(parent),
     id_(surface_count_++), frameBuffer_(BGFX_INVALID_HANDLE)
 {
-    if (parent != nullptr) {
-        parent->AddChild(*this);
+    if (parent == nullptr) {
+        return;
     }
+    parent->AddChild(*this);
+    sdl_window_ = parent->sdl_window_;
 }
 
 Surface::~Surface() {

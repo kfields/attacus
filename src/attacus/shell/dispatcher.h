@@ -1,9 +1,8 @@
 #pragma once
 
+#include <SDL.h>
+
 #include <attacus/core/component.h>
-
-
-typedef union SDL_Event SDL_Event;
 
 namespace attacus {
 

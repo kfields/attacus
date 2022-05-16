@@ -10,6 +10,8 @@
 
 namespace attacus {
 
+class View;
+
 struct Size {
     int width;
     int height;
@@ -78,6 +80,8 @@ public:
     Surface* parent_;
     std::list<Surface*> children_;
     bgfx::FrameBufferHandle frameBuffer_;
+    View* view_ = nullptr;
+    SDL_Window* sdl_window_ = nullptr;
 };
 
 } //namespace attacus
