@@ -11,12 +11,17 @@ set (CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 #
 add_subdirectory(3rdparty/fmt)
 
+
 #
 # pybind11
 #
 set(-DCMAKE_CXX_STANDARD=20 -std=c++20)
 set(PYBIND11_PYTHON_VERSION 3.10)
+
+if(${HAS_PYBIND11})
 add_subdirectory(3rdparty/pybind11)
+endif() #HAS_PYBIND11
+#
 
 #
 # SDL - Minimal build for now
@@ -33,7 +38,9 @@ set(HIDAPI OFF CACHE BOOL "Use HIDAPI for low level joystick drivers" FORCE)
 set(VIDEO_X11 ${ATT_WM_X11} CACHE BOOL "Enable X11 support" FORCE)
 set(VIDEO_WAYLAND ${ATT_WM_WAYLAND} CACHE BOOL "Enable Wayland support" FORCE)
 
+if(${HAS_SDL})
 add_subdirectory(3rdparty/sdl)
+endif() #HAS_SDL
 
 #
 # Glad
@@ -41,13 +48,17 @@ add_subdirectory(3rdparty/sdl)
 if(${ATT_RENDERER_GL})
     #add_subdirectory(${GLAD_ROOT}/cmake glad)
     #glad_add_library(glad_gl_core_45 STATIC API gl:core=4.5)
+    if(${HAS_GLAD})
     add_subdirectory(src/glad)
+    endif() #HAS_GLAD
 endif()
 
 #
 # bgfx
 #
+if(${HAS_BGFX})
 add_subdirectory(src/bgfx)
+endif() #HAS_BGFX
 
 #
 #Attacus
@@ -57,9 +68,24 @@ add_subdirectory(src/attacus)
 #
 #AttacusPy
 #
+if(${HAS_PY})
 add_subdirectory(src/attacus_py)
+endif() #HAS_PY
 
 #
 #Examples
 #
+if(${HAS_EXAMPLES})
 add_subdirectory(examples)
+endif() #HAS_EXAMPLES
+
+#
+# googletest
+#
+set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+add_subdirectory(3rdparty/googletest)
+
+#
+#Tests
+#
+add_subdirectory(tests)

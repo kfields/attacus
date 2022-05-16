@@ -11,6 +11,7 @@ set(ATT_STATIC_PIC ON)
 #
 set(ATT_ROOT ${CMAKE_SOURCE_DIR})
 
+set(GOOGLE_TEST_ROOT ${ATT_ROOT}/3rdparty/googletest)
 set(PYBIND11_ROOT ${ATT_ROOT}/3rdparty/pybind11)
 set(GLAD_ROOT ${ATT_ROOT}/src/glad)
 set(FLUTTER_ROOT ${ATT_ROOT}/src/flutter)
@@ -86,3 +87,14 @@ endif()
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
     set(BX_COMPATIBILITY ${BX_ROOT}/include/compat/msvc)
 endif()
+
+# Comment out items to minimize builds for testing
+set(HAS_APP 1)
+set(HAS_SHELL 1)
+set(HAS_FLUTTER 1)
+set(HAS_BGFX 1)
+set(HAS_PYBIND11 1)
+set(HAS_SDL 1)
+set(HAS_GLAD 1)
+set(HAS_PY 1)
+set(HAS_EXAMPLES 1)

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <map>
 #include <functional>
 
 namespace attacus {
@@ -25,6 +26,20 @@ public:
         c.Create();
         return c;
     }
+    //
+    // Data members
+    std::map<const char*, Component*> components_;
+};
+
+class ComponentKit {
+public:
+    static const char* Intern(const char* name);
+    // Accessors
+    static ComponentKit& instance();
+    // Data members
+    std::map<const char*, const char*> internalized_;
+private:
+    static ComponentKit* instance_;
 };
 
 } //namespace attacus
