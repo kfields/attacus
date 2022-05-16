@@ -1,15 +1,19 @@
 #include <gtest/gtest.h>
 
+#include <rxcpp/rx.hpp>
+
 #include <attacus/core/component.h>
 
 using namespace attacus;
 
-namespace test_component {
+namespace test_event {
 
 static const char *s_dummy_events = ComponentKit::Intern("dummy_events");
 
 class TestEvents : public Component
 {
+public:
+    rxcpp::subjects::subject<int> OnSomething;
 };
 
 void set_k_dummy_events(Component &self, TestEvents *that)
@@ -22,12 +26,24 @@ TestEvents *k_dummy_events(Component &self)
     return static_cast<TestEvents *>(self.components_[s_dummy_events]);
 }
 
+class TestPublisher : public Component
+{
+public:
+    // Accessors
+    TestEvents& events() { return events_; }
+    // Data members
+    TestEvents events_;
+};
+
 class TestConsumer : public Component
 {
+    void Subscribe(TestPublisher& publisher) {
+        publisher.events().OnSomething.get_observable().subscribe();
+    }
 };
 
 // Demonstrate some basic assertions.
-TEST(TestComponent, BasicAssertions)
+TEST(TestEvent, BasicAssertions)
 {
     TestEvents events;
     TestConsumer consumer;
@@ -41,4 +57,4 @@ TEST(TestComponent, BasicAssertions)
     EXPECT_EQ(7 * 6, 42);
 }
 
-} // namespace test_component
+} //namespace test_event
