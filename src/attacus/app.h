@@ -1,39 +1,42 @@
 #pragma once
 
-#include "flutter/flutter_window.h"
+#include <thread>
+
+#include <attacus/shell/gfx_window.h>
 
 namespace attacus {
 
-class App : public FlutterWindow {
+class App : public GfxWindow {
 public:
     enum class State {
         kRunning,
         kShutdown
     };
 
-    App(WindowParams params = WindowParams());
-    virtual ~App();
-    virtual void Create() override;
-    virtual void CreateGfx() override;
-    virtual void Destroy() override;
-    virtual bool Dispatch(SDL_Event& event) override;
-    virtual void PreRender() override;
-    virtual void PostRender() override;
-    virtual void Reset(ResetKind kind = ResetKind::kHard) override;
+    App(WindowParams params = WindowParams(), App* parent = nullptr);
 
-    int Run();
+    template<typename T = App>
+    static T* Produce(WindowParams params = WindowParams()) {
+        T* c = new T(params);
+        c->Create();
+        return c;
+    }
+
+    virtual ~App();
+    void Create() override;
+    void Destroy() override;
+    bool Dispatch(SDL_Event& event) override;
+    void Reset(ResetKind kind = ResetKind::kHard) override;
+
+    int Run() override;
 
     void RegisterResizer();
-
+    void OnSize() override;
     // Accessors
+
     // Data members
     State state_;
-    uint32_t resetFlags_;
-    uint32_t debugFlags_;
-    int64_t timeOffset_;
-    bool debug_ = false;
-    bool capture_ = false;
-
+    std::thread render_thread_;
 };
 
 } // namespace attacus

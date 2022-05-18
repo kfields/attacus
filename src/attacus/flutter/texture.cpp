@@ -31,9 +31,10 @@ namespace attacus
 {
 
 bool FrameBufferTexture::Copy(size_t width, size_t height, FlutterOpenGLTexture*  texOut) {
-    bgfx::TextureHandle texIn = bgfx::getTexture(frameBuffer_);
+    //bgfx::TextureHandle texIn = bgfx::getTexture(frameBuffer_);
     texOut->target = GL_TEXTURE_2D;
-    texOut->name = bgfx::s_ctx->m_renderCtx->getInternal(texIn);
+    //texOut->name = bgfx::s_ctx->m_renderCtx->getInternal(texIn);
+    texOut->name = nh_;
     texOut->width = width;
     texOut->height = height;
     texOut->format = GL_RGBA8;

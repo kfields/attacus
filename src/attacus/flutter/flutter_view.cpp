@@ -5,14 +5,18 @@
 #include <filesystem>
 namespace fs = std::filesystem;
 
+#include <string>
+#include <fmt/core.h>
+
 #include <SDL.h>
+#include "SDL_syswm.h"
 
 #include <attacus/app.h>
 
-#include "flutter_window.h"
 #include "flutter_embedder.h"
 #include "flutter_messenger.h"
 #include "flutter_runner.h"
+#include "flutter_view.h"
 
 #include "components/isolate.h"
 #include "components/platform.h"
@@ -28,7 +32,7 @@ namespace fs = std::filesystem;
 namespace attacus
 {
 
-FlutterWindow::FlutterWindow(WindowParams params) : GfxWindow(params)
+FlutterView::FlutterView(View& parent, ViewParams params) : GfxView(parent, params)
 {
     messenger_ = new FlutterMessenger(*this);
     runner_ = new FlutterRunner(*this);
@@ -43,41 +47,64 @@ FlutterWindow::FlutterWindow(WindowParams params) : GfxWindow(params)
     textureRegistrar_ = new TextureRegistrar(*this);
 }
 
-FlutterWindow::~FlutterWindow()
+FlutterView::~FlutterView()
 {
 }
 
-void FlutterWindow::Create()
+void FlutterView::CreateGfx() {
+    GfxView::CreateGfx();
+
+    resource_context_ = CreateContext();
+    if (resource_context_ == NULL) {
+        std::cout << fmt::format("Can't create opengl context for resource window: {}\n", SDL_GetError());
+        return;
+    }
+
+    context_ = CreateContext();
+    if (context_ == NULL) {
+        std::cout << fmt::format("Can't create opengl context: {}\n", SDL_GetError());
+        return;
+    }
+
+    //int version = gladLoadGL((GLADloadfunc)SDL_GL_GetProcAddress);
+    //std::cout << fmt::format("OpenGL {}.{} loaded\n", GLAD_VERSION_MAJOR(version), GLAD_VERSION_MINOR(version));
+    gl_proc_resolver = (GLADloadfunc)SDL_GL_GetProcAddress;
+    int version = gladLoadGL(gl_proc_resolver);
+    std::cout << fmt::format("OpenGL {}.{} loaded\n", GLAD_VERSION_MAJOR(version), GLAD_VERSION_MINOR(version));
+
+    SDL_GL_MakeCurrent(sdl_window_, nullptr);
+}
+void FlutterView::Create()
 {
-    GfxWindow::Create();
+    GfxView::Create();
 
     FlutterRendererConfig config = {};
     config.type = kOpenGL;
     config.open_gl.struct_size = sizeof(config.open_gl);
     config.open_gl.make_current = [](void *userdata) -> bool
     {
-        auto self = *static_cast<FlutterWindow*>(userdata);
+        FlutterView& self = *static_cast<FlutterView*>(userdata);
         auto window = self.sdl_window_;
         SDL_GL_MakeCurrent(window, self.context_);
         return true;
     };
     config.open_gl.make_resource_current = [](void *userdata) -> bool
     {
-        auto self = *static_cast<FlutterWindow*>(userdata);
+        FlutterView& self = *static_cast<FlutterView*>(userdata);
         auto window = self.sdl_window_;
         SDL_GL_MakeCurrent(window, self.resource_context_);
         return true;
     };
     config.open_gl.clear_current = [](void *userdata) -> bool
     {
-        auto self = *static_cast<FlutterWindow*>(userdata);
+        FlutterView& self = *static_cast<FlutterView*>(userdata);
         auto window = self.sdl_window_;
         SDL_GL_MakeCurrent(window, nullptr);
         return true;
     };
     config.open_gl.present = [](void *userdata) -> bool
     {
-        auto self = *static_cast<FlutterWindow*>(userdata);
+        FlutterView& self = *static_cast<FlutterView*>(userdata);
         auto window = self.sdl_window_;
         SDL_GL_SwapWindow(window);
         return true;
@@ -89,13 +116,19 @@ void FlutterWindow::Create()
 
     config.open_gl.gl_proc_resolver = [](void *userdata, const char *name) -> void *
     {
-        return SDL_GL_GetProcAddress(name);
+        FlutterView& self = *static_cast<FlutterView*>(userdata);
+        /*if (!self.gl_proc_resolver) {
+            self.gl_proc_resolver = (GLADloadfunc)SDL_GL_GetProcAddress;
+            int version = gladLoadGL(self.gl_proc_resolver);
+            std::cout << fmt::format("OpenGL {}.{} loaded\n", GLAD_VERSION_MAJOR(version), GLAD_VERSION_MINOR(version));
+        }*/
+        return self.gl_proc_resolver(name);
     };
 
     config.open_gl.gl_external_texture_frame_callback = 
         [](void *userdata, int64_t texId, size_t width, size_t height, FlutterOpenGLTexture*  texOut) -> bool
     {
-        auto self = *static_cast<FlutterWindow*>(userdata);
+        FlutterView& self = *static_cast<FlutterView*>(userdata);
         return self.textureRegistrar().CopyTexture(texId, width, height, texOut);
     };
 
@@ -111,7 +144,7 @@ void FlutterWindow::Create()
     args.icu_data_path = _strdup(icudtl_path.string().c_str());
     args.platform_message_callback = [](const FlutterPlatformMessage *message, void *user_data)
     {
-        FlutterWindow &self = *static_cast<FlutterWindow*>(user_data);
+        FlutterView &self = *static_cast<FlutterView*>(user_data);
         self.messenger().Receive(*message);
     };
     args.custom_task_runners = &runner_->custom_task_runners;
@@ -146,28 +179,29 @@ void FlutterWindow::Create()
     }
 }
 
-void FlutterWindow::Destroy() {
+void FlutterView::Destroy() {
     FlutterEngineResult result = FlutterEngineDeinitialize(engine_);
-    GfxWindow::Destroy();
+    Shutdown();
+    GfxView::Destroy();
 }
 
-void FlutterWindow::Render()
+void FlutterView::Render()
 {
 }
 
-void FlutterWindow::OnResize(SDL_Event &event)
+void FlutterView::OnResize(SDL_Event &event)
 {
-    GfxWindow::OnResize(event);
+    GfxView::OnResize(event);
     UpdateSize(event.window.data1, event.window.data2, 1.0, false);
 }
 
-void FlutterWindow::OnSize()
+void FlutterView::OnSize()
 {
-    GfxWindow::OnSize();
+    GfxView::OnSize();
     UpdateSize(width(), height(), 1.0, false);
 }
 
-void FlutterWindow::OnShow()
+void FlutterView::OnShow()
 {
     FlutterWindowMetricsEvent event = {};
     event.struct_size = sizeof(event);
@@ -177,7 +211,7 @@ void FlutterWindow::OnShow()
     FlutterEngineSendWindowMetricsEvent(engine_, &event);
 }
 
-void FlutterWindow::UpdateSize(size_t width, size_t height, float pixelRatio, bool maximized)
+void FlutterView::UpdateSize(size_t width, size_t height, float pixelRatio, bool maximized)
 {
     //  Round up the physical window size to a multiple of the pixel ratio
     width = std::ceil(width / pixelRatio) * pixelRatio;
@@ -192,7 +226,7 @@ void FlutterWindow::UpdateSize(size_t width, size_t height, float pixelRatio, bo
     FlutterEngineSendWindowMetricsEvent(engine_, &event);
 }
 
-bool FlutterWindow::Dispatch(SDL_Event &e)
+bool FlutterView::Dispatch(SDL_Event &e)
 {
     /*
     switch (e.type)
@@ -203,7 +237,7 @@ bool FlutterWindow::Dispatch(SDL_Event &e)
     mouseInput_->Dispatch(e);
     textInput_->Dispatch(e);
 
-    return GfxWindow::Dispatch(e);
+    return GfxView::Dispatch(e);
 }
 
 } // namespace attacus

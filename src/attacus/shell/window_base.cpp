@@ -1,7 +1,6 @@
 #include <iostream>
 #include <fmt/core.h>
 
-#include <glad/gl.h>
 #include <SDL.h>
 #include "SDL_syswm.h"
 
@@ -11,7 +10,7 @@ namespace attacus {
 
 std::map<uint32_t, WindowBase*> WindowBase::windowMap_;
 
-WindowBase::WindowBase(WindowParams params) : View(params),
+WindowBase::WindowBase(WindowBase& parent, WindowParams params) : Frame(parent, params),
     windowId_(0),
     flags_(params.flags)
 {
@@ -20,11 +19,11 @@ WindowBase::WindowBase(WindowParams params) : View(params),
 WindowBase::~WindowBase() {
 }
 
-void WindowBase::Destroy() {
+void WindowBase::CleanUp() {
+    Frame::CleanUp();
     UnmapWindow(windowId());
     SDL_DestroyWindow(sdl_window_);
     sdl_window_ = nullptr;
-    Surface::Destroy();
 }
 
 void WindowBase::Create() {
@@ -73,6 +72,7 @@ void WindowBase::SetSize(Size size) {
 
 void WindowBase::OnSize() {
     SDL_GetWindowSize(sdl_window_, &size_.width, &size_.height);
+    Frame::OnSize();
     Reset();
 }
 
@@ -80,6 +80,7 @@ void WindowBase::OnResize(SDL_Event& event) {
     OnSize();
 }
 
+/*
 bool WindowBase::Dispatch(SDL_Event& event) {
     switch (event.type) {
         case SDL_QUIT:
@@ -87,7 +88,7 @@ bool WindowBase::Dispatch(SDL_Event& event) {
         case SDL_WINDOWEVENT:
             return DispatchWindowEvent(event);
         }
-    return true;
+    return View::Dispatch(event);
 }
 
 bool WindowBase::DispatchWindowEvent(SDL_Event& event) {
@@ -104,16 +105,11 @@ bool WindowBase::DispatchWindowEvent(SDL_Event& event) {
         case SDL_WINDOWEVENT_EXPOSED:
             OnShow();
             break;
-        /*case SDL_WINDOWEVENT_MOVED:
-        case SDL_WINDOWEVENT_SHOWN:
-            break;
-        case SDL_WINDOWEVENT_EXPOSED:
-            Render();
-            break;*/
         case SDL_WINDOWEVENT_CLOSE:
             return false;
     }
-    return true;
+    return View::DispatchWindowEvent(event);
 }
+*/
 
 } //namespace attacus

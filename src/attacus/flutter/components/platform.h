@@ -4,13 +4,13 @@
 
 namespace attacus {
 
-class FlutterWindow;
+class FlutterView;
 class JsonMethodChannel;
 class TextInputModel;
 
 class PlatformComponent : FlutterComponent {
 public:
-    PlatformComponent(FlutterWindow& view);
+    PlatformComponent(FlutterView& view);
     void Create();
     // Accessors
     JsonMethodChannel& channel() { return *channel_; }

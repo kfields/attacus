@@ -1,4 +1,4 @@
-#include <attacus/flutter/flutter_window.h>
+#include <attacus/flutter/flutter_view.h>
 #include <attacus/flutter/flutter_messenger.h>
 #include <attacus/flutter/standard_method_channel.h>
 
@@ -6,13 +6,14 @@
 
 using namespace attacus;
 
-class ExampleMethodChannel : public ExampleApp {
+class ExampleMethodChannel : public FlutterView {
 public:
+    ExampleMethodChannel(View& parent, ViewParams params = ViewParams()) : FlutterView(parent, params) {}
+
     int counter_ = 0;
-    EXAMPLE_CTOR(ExampleMethodChannel)
 
     virtual void Create() override {
-        ExampleApp::Create();
+        FlutterView::Create();
 
         channel_ = new StandardMethodChannel(messenger(), "example");
 
@@ -32,10 +33,12 @@ public:
     MethodChannel<>* channel_ = nullptr;
 };
 
-EXAMPLE_MAIN(
-    ExampleMethodChannel
-    , "00-methodchannel"
-    , "Test method channels."
-    , "https://kfields.github.io/attacus/examples.html#methodchannel"
-);
-
+int main(int argc, char** argv) {
+    ExampleApp& app = *ExampleApp::Produce(ExampleParams(
+        "00-methodchannel",
+        "Test method channels.",
+        "https://kfields.github.io/attacus/examples.html#methodchannel"
+    ));
+    FlutterView& flutter = *ExampleMethodChannel::Produce<ExampleMethodChannel>(app);
+    return app.Run();
+}

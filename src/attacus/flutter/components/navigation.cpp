@@ -1,4 +1,4 @@
-#include <attacus/flutter/flutter_window.h>
+#include <attacus/flutter/flutter_view.h>
 #include <attacus/flutter/json_method_channel.h>
 
 #include "navigation.h"
@@ -7,7 +7,7 @@ namespace attacus {
 
 static constexpr char kChannelName[] = "flutter/navigation";
 
-NavigationComponent::NavigationComponent(FlutterWindow &view) : FlutterComponent(view)
+NavigationComponent::NavigationComponent(FlutterView &view) : FlutterComponent(view)
 {
 }
 

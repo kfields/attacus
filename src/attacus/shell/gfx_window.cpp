@@ -2,25 +2,21 @@
 #include <iostream>
 #include <fmt/core.h>
 
-#include <glad/gl.h>
 #include <SDL.h>
 #include "SDL_syswm.h"
 
-#include "SDL.h"
-#include "SDL_syswm.h"
 
 #include "gfx_window.h"
 
 namespace attacus {
 
-GfxWindow::GfxWindow(WindowParams params) : Window(params) {}
+GfxWindow::GfxWindow(Window& parent, WindowParams params) : Window(parent, params) {}
 
 GfxWindow::~GfxWindow() {
 }
 
 void GfxWindow::Create() {
     Window::Create();
-    CreateGfx();
 }
 
 void GfxWindow::Destroy() {
@@ -35,9 +31,9 @@ void GfxWindow::CreateSDLWindow() {
     // Also request a depth buffer
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
+    SDL_GL_SetAttribute(SDL_GL_SHARE_WITH_CURRENT_CONTEXT, 1);
 
     SDL_SetHint(SDL_HINT_RENDER_DRIVER, "opengl");
-    SDL_GL_SetAttribute(SDL_GL_SHARE_WITH_CURRENT_CONTEXT, 1);
 
     sdl_window_ = SDL_CreateWindow(name_.c_str(), x(), y(), width(), height(), flags_ | SDL_WINDOW_OPENGL);
 
@@ -55,32 +51,13 @@ void GfxWindow::CreateSDLWindow() {
     SetWindowId(SDL_GetWindowID(sdl_window_));
     MapWindow(windowId(), this);
 
-    gfx_context_ = SDL_GL_CreateContext(sdl_window_);
-    if (gfx_context_ == NULL) {
-        std::cout << fmt::format("Can't create opengl context for bgfx: {}\n", SDL_GetError());
-        return;
-    }
-
-    resource_context_ = SDL_GL_CreateContext(sdl_window_);
-    if (resource_context_ == NULL) {
-        std::cout << fmt::format("Can't create opengl context for resource window: {}\n", SDL_GetError());
-        return;
-    }
-
-    context_ = SDL_GL_CreateContext(sdl_window_);
-    if (context_ == NULL) {
-        std::cout << fmt::format("Can't create opengl context: {}\n", SDL_GetError());
-        return;
-    }
-
-    int version = gladLoadGL((GLADloadfunc)SDL_GL_GetProcAddress);
-    std::cout << fmt::format("OpenGL {}.{} loaded\n", GLAD_VERSION_MAJOR(version), GLAD_VERSION_MINOR(version));
-
     SDL_SetWindowData(sdl_window_, "Window", this);
 
-    if (SDL_GL_SetSwapInterval(1) < 0) {
+    /*if (SDL_GL_SetSwapInterval(1) < 0) {
         std::cout << fmt::format("Couldn't enable vsync: {}\n", SDL_GetError());
     }
+
+    SDL_GL_MakeCurrent(sdl_window_, nullptr);*/
 }
 
 

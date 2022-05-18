@@ -16,7 +16,7 @@ namespace attacus
     class TextureRegistrar : public FlutterComponent
     {
     public:
-        explicit TextureRegistrar(FlutterWindow& view);
+        explicit TextureRegistrar(FlutterView& view);
         virtual ~TextureRegistrar();
 
         // Prevent copying.

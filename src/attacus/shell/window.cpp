@@ -5,11 +5,11 @@
 #include "SDL_syswm.h"
 
 #include "window.h"
-#include <attacus/flutter/flutter_window.h>
+#include <attacus/flutter/flutter_view.h>
 
 namespace attacus {
 
-Window::Window(WindowParams params) : PlatformWindow(params),
+Window::Window(Window& parent, WindowParams params) : PlatformWindow(parent, params),
     state_(State::kRunning)
     {}
 
@@ -54,8 +54,7 @@ bool Window::Dispatch(SDL_Event& event) {
 }
 
 int Window::Run() {
-    CreateAndShow();
-    Startup();
+    PlatformWindow::Run();
     const int FPS = 60;
     const int frameDelay = 1000 / FPS;
     Uint32 frameStart;

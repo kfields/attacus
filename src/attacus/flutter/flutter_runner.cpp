@@ -1,11 +1,11 @@
 #include <attacus/app.h>
 
 #include "flutter_runner.h"
-#include "flutter_window.h"
+#include "flutter_view.h"
 
 namespace attacus {
 
-FlutterRunner::FlutterRunner(FlutterWindow& view) : view_(&view) {
+FlutterRunner::FlutterRunner(FlutterView& view) : view_(&view) {
     platform_task_runner.struct_size = sizeof(FlutterTaskRunnerDescription);
     platform_task_runner.user_data = this;
     platform_task_runner.runs_task_on_current_thread_callback = [](void*)  { return true; };

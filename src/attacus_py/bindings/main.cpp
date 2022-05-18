@@ -8,7 +8,7 @@
 #include "bindtools.h"
 
 #include <attacus/app.h>
-#include <attacus/flutter/flutter_window.h>
+#include <attacus/flutter/flutter_view.h>
 #include <attacus/flutter/flutter_messenger.h>
 #include <attacus/flutter/standard_method_channel.h>
 
@@ -20,7 +20,7 @@ class PyApp : public App {
 public:
     /* Inherit the constructors */
     using App::App;
-
+    PyApp() : App() {}
     /* Trampoline (need one for each virtual function) */
     void Startup() override {
         PYMETHOD_OVERRIDE(
@@ -34,6 +34,33 @@ public:
         PYMETHOD_OVERRIDE(
             void,
             App,
+            shutdown,
+            Shutdown
+        );
+    }
+};
+
+class PyFlutterView : public FlutterView {
+public:
+    /* Inherit the constructors */
+    using FlutterView::FlutterView;
+    //PyFlutterView() : FlutterView() {}
+    //PyFlutterView(const PyFlutterView&);
+    //PyFlutterView(View& parent, ViewParams params = ViewParams()) : FlutterView(parent, params) {}
+    PyFlutterView(View& parent, ViewParams params = ViewParams()) : FlutterView(parent) {}
+    /* Trampoline (need one for each virtual function) */
+    void Startup() override {
+        PYMETHOD_OVERRIDE(
+            void,       // Return type
+            FlutterView,        // Parent class
+            startup,    // Python function name
+            Startup     // C++ function name
+        );
+    }
+    void Shutdown() override {
+        PYMETHOD_OVERRIDE(
+            void,
+            FlutterView,
             shutdown,
             Shutdown
         );
@@ -63,18 +90,25 @@ public:
 void init_main(py::module &attacus_py, Registry &registry) {
 
     PYCLASS_O_BEGIN(attacus_py, App, PyApp)
-        .def(py::init<>())
+        .def(py::init<>([](){
+            return App::Produce<PyApp>();
+        }))
         .def("run", [](App& self) {
             self.Run();
         })
         .def("startup", &App::Startup)
         .def("shutdown", &App::Shutdown)
-        .def_readonly("messenger", &App::messenger_)
     PYCLASS_END(attacus_py, App)
 
-    PYCLASS_BEGIN(attacus_py, FlutterWindow)
-        .def_readonly("messenger", &FlutterWindow::messenger_)
-    PYCLASS_END(attacus_py, FlutterWindow)
+    //PYCLASS_BEGIN(attacus_py, FlutterView)
+    PYCLASS_O_BEGIN(attacus_py, FlutterView, PyFlutterView)
+        .def(py::init<>([](App& parent){
+            return FlutterView::Produce<PyFlutterView>(parent);
+        }))
+        .def("startup", &FlutterView::Startup)
+        .def("shutdown", &FlutterView::Shutdown)
+        .def_readonly("messenger", &FlutterView::messenger_)
+    PYCLASS_END(attacus_py, FlutterView)
 
     PYCLASS_BEGIN(attacus_py, FlutterMessenger)
     PYCLASS_END(attacus_py, FlutterMessenger)

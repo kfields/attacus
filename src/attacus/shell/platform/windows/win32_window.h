@@ -13,7 +13,7 @@ namespace attacus {
 class Win32Window : public WindowBase {
  public:
 
-    Win32Window(WindowParams params = WindowParams()) : WindowBase(params) {}
+    Win32Window(WindowBase& parent, WindowParams params = WindowParams()) : WindowBase(parent, params) {}
     virtual ~Win32Window();
 
     virtual void Create() override;

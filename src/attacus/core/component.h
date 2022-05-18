@@ -19,11 +19,17 @@ public:
 class Component {
 public:
     virtual void Create();
+    virtual void Destroy();
+    virtual void CleanUp() {}
+
+    virtual int Run();
+    virtual void Startup();
+    virtual void Shutdown();
 
     template<typename T = Component>
-    static T& Produce() {
-        T& c = *new T();
-        c.Create();
+    static T* Produce() {
+        T* c = new T();
+        c->Create();
         return c;
     }
     //

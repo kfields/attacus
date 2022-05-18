@@ -1,13 +1,13 @@
-from attacus import App, StandardMethodChannel, StandardMethod
+from attacus import App, FlutterView, StandardMethodChannel, StandardMethod
 
-class MyApp(App):
-    def __init__(self) -> None:
-        super().__init__()
+class MyFlutter(FlutterView):
+    def __init__(self, parent):
+        super().__init__(parent)
         self.channel = None
         self.counter = 0
 
     def startup(self):
-        print("Starting up ...")
+        print("Starting up Flutter ...")
         messenger = self.messenger
         print(messenger)
 
@@ -29,7 +29,7 @@ class MyApp(App):
 
 
     def shutdown(self):
-        print("Shutting down ...")
+        print("Shutting down Flutter ...")
 
     def increment_counter(self, method_call, result):
         print('increment_counter')
@@ -48,5 +48,19 @@ class MyApp(App):
         print(result)
         result.success()
 
+class MyApp(App):
+    def __init__(self):
+        super().__init__()
+
+    def startup(self):
+        print("Starting up App ...")
+
+    def shutdown(self):
+        print("Shutting down App ...")
+
 app = MyApp()
+#app = App()
+
+flutter = MyFlutter(app)
+
 app.run()

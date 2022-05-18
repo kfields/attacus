@@ -10,7 +10,7 @@ struct ExampleParams : WindowParams {
         Point _origin = Point(SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED),
         Size _size = Size(800, 600),
         uint32_t _flags = SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI
-    ) : WindowParams(_name, _origin, _size, _flags) {
+    ) : WindowParams(_size, _origin, _name, _flags) {
         description = _description;
         url = _url;
     }
@@ -22,6 +22,14 @@ class ExampleApp : public App {
 public:
     ExampleApp(ExampleParams params = ExampleParams());
     virtual void Create();
+
+    template<typename T = ExampleApp>
+    static T* Produce(ExampleParams params = ExampleParams()) {
+        T* c = new T(params);
+        c->Create();
+        return c;
+    }
+
     void ShowExampleDialog();
 
     // Accessors

@@ -12,24 +12,25 @@ include(${ATT_ROOT}/cmake/Bgfx.cmake)
 set(SHELL_HEADERS
     dispatcher.h
     window_component.h
-    surface.h
-    surface_manager.h
+    view_kit.h
     view.h
+    frame.h
     window_base.h
     platform_window.h
     window.h
     gfx_window.h
+    gfx_view.h
 )
 
 set(SHELL_SRC
     dispatcher.cpp
-    window_component.cpp
-    surface.cpp
-    surface_manager.cpp
+    view_kit.cpp
     view.cpp
+    frame.cpp
     window_base.cpp
     window.cpp
     gfx_window.cpp
+    gfx_view.cpp
 )
 
 add_library(${THIS} STATIC ${SHELL_SRC} ${SHELL_HEADERS})

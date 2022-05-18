@@ -10,7 +10,7 @@
 
 namespace attacus {
 
-class View;
+class Surface;
 
 struct Size {
     int width;
@@ -35,28 +35,18 @@ public:
         kHard
     };
 
-    Surface(SurfaceParams params = SurfaceParams(), Surface* parent = nullptr);
+    Surface(SurfaceParams params = SurfaceParams());
 
     template<typename T = Surface>
-    static T& Produce(SurfaceParams params = SurfaceParams(), Surface* parent = nullptr) {
-        T& c = *new T(params, parent);
-        c.Create();
+    static T* Produce(SurfaceParams params = SurfaceParams()) {
+        T* c = new T(params);
+        c->Create();
         return c;
     }
 
     virtual ~Surface();
 
     virtual void Destroy();
-
-    void AddChild(Surface& child) {
-        child.parent_ = this;
-        children_.push_back(&child);
-    }
-
-    void RemoveChild(Surface& child) {
-        child.parent_ = nullptr;
-        children_.remove(&child);
-    }
 
     void Render() { PreRender(); Draw(); PostRender(); }
     virtual void PreRender() {}
@@ -65,6 +55,7 @@ public:
 
     virtual void Reset(ResetKind kind = ResetKind::kHard) {}
 
+    virtual void* CreateContext();
     //Accessors
     int width() { return size_.width; }
     int height() { return size_.height; }
@@ -77,11 +68,9 @@ public:
 
     static int16_t surface_count_;
     int16_t id_;
-    Surface* parent_;
-    std::list<Surface*> children_;
     bgfx::FrameBufferHandle frameBuffer_;
-    View* view_ = nullptr;
     SDL_Window* sdl_window_ = nullptr;
+    static void* current_context_;
 };
 
 } //namespace attacus

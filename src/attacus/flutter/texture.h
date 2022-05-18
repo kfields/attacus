@@ -28,6 +28,7 @@ namespace attacus
         bool Copy(size_t width, size_t height, FlutterOpenGLTexture*  texOut) override;
         // Data members
         bgfx::TextureHandle th_;
+        uint32_t nh_; //native handle
         bgfx::FrameBufferHandle frameBuffer_;
     };
 

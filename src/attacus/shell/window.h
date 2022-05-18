@@ -12,16 +12,14 @@ public:
         kShutdown
     };
 
-    Window(WindowParams params = WindowParams());
+    Window(Window& parent, WindowParams params = WindowParams());
     virtual ~Window();
     virtual void Create() override;
     virtual void Destroy() override;
     virtual bool Dispatch(SDL_Event& event) override;
     virtual void Reset(ResetKind kind = ResetKind::kHard) override;
 
-    int Run();
-    virtual void Startup() {};
-    virtual void Shutdown() {};
+    int Run() override;
     //Data members
     State state_;
     uint32_t resetFlags_;

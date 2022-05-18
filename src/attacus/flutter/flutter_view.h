@@ -3,7 +3,9 @@
 #include <nohlmann/json.hpp>
 using json = nlohmann::json;
 
-#include <attacus/shell/gfx_window.h>
+#include <glad/gl.h>
+
+#include <attacus/shell/gfx_view.h>
 #include "flutter_embedder.h"
 
 struct SDL_Window;
@@ -24,16 +26,19 @@ class MouseInput;
 class TextInput;
 class TextureRegistrar;
 
-class FlutterWindow : public GfxWindow {
+class FlutterView : public GfxView {
 public:
-    FlutterWindow(WindowParams params = WindowParams());
-    virtual ~FlutterWindow();
+    FlutterView(View& parent, ViewParams params = ViewParams());
+    FlutterView(const FlutterView&);
+    virtual ~FlutterView();
     virtual void Create() override;
+    virtual void CreateGfx() override;
     virtual void Destroy() override;
-    static FlutterWindow& Produce(WindowParams params = WindowParams()) {
-        FlutterWindow& r = *new FlutterWindow(params);
-        r.Create();
-        return r;
+    template<typename T = FlutterView>
+    static T* Produce(View& parent, ViewParams params = ViewParams()) {
+        T* c = new T(parent, params);
+        c->Create();
+        return c;
     }
     void Render();
     virtual bool Dispatch(SDL_Event& event) override;
@@ -56,6 +61,10 @@ public:
     TextInput& textInput() { return *textInput_; }
     TextureRegistrar& textureRegistrar() { return *textureRegistrar_; }
     //Data members
+    void* context_ = nullptr;
+    void* resource_context_ = nullptr;
+    GLADloadfunc gl_proc_resolver = nullptr;
+    //
     float scaleFactor_ = 1.0f;
     //
     FlutterEngine engine_ = nullptr;

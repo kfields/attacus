@@ -1,13 +1,13 @@
 #include <iostream>
 
-#include <attacus/flutter/flutter_window.h>
+#include <attacus/flutter/flutter_view.h>
 
 #include "texture_registrar.h"
 
 namespace attacus
 {
 
-    TextureRegistrar::TextureRegistrar(FlutterWindow& view) : FlutterComponent(view) {}
+    TextureRegistrar::TextureRegistrar(FlutterView& view) : FlutterComponent(view) {}
 
     TextureRegistrar::~TextureRegistrar() = default;
 

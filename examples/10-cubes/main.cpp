@@ -1,14 +1,17 @@
-#include <attacus/flutter/flutter_window.h>
-#include <attacus/flutter/flutter_messenger.h>
-#include <attacus/flutter/standard_method_channel.h>
-#include <attacus/flutter/components/texture_registrar.h>
-#include <examples/example_app.h>
-
 #include <bgfx/bgfx.h>
+#include <bgfx/bgfx_p.h>
 #include <bx/math.h>
 #include <bx/timer.h>
 
 #include <bgfx/utils/utils.h>
+
+#include <attacus/flutter/flutter_view.h>
+#include <attacus/flutter/flutter_messenger.h>
+#include <attacus/flutter/standard_method_channel.h>
+#include <attacus/flutter/components/texture_registrar.h>
+#include <attacus/shell/gfx_view.h>
+
+#include <examples/example_app.h>
 
 #include "logo.h"
 
@@ -132,9 +135,9 @@ static const uint64_t s_ptState[]
 };
 BX_STATIC_ASSERT(BX_COUNTOF(s_ptState) == BX_COUNTOF(s_ptNames) );
 
-class ExampleCubesSurface : public Surface {
+class ExampleCubesView : public GfxView {
 public:
-	ExampleCubesSurface(SurfaceParams params, Surface* parent) : Surface(params, parent),
+	ExampleCubesView(View& parent, ViewParams params) : GfxView(parent, params),
 		pt_(0),
 		r_(true),
 		g_(true),
@@ -144,7 +147,7 @@ public:
     }
 
     virtual void Create() override {
-        Surface::Create();
+        GfxView::Create();
         const uint64_t tsFlags = 0
             | BGFX_SAMPLER_MIN_POINT
             | BGFX_SAMPLER_MAG_POINT
@@ -217,7 +220,7 @@ public:
     }
 
     virtual void Draw() override {
-        Surface::Draw();
+        GfxView::Draw();
         if (!texture_) return;
 
         bgfx::touch(id());
@@ -279,7 +282,9 @@ public:
 			}
 		}
 
-        texture_->th_ = bgfx::getTexture(frameBuffer_);
+		bgfx::TextureHandle th = bgfx::getTexture(frameBuffer_);
+        texture_->th_ = th;
+        texture_->nh_ = bgfx::s_ctx->m_renderCtx->getInternal(th);
     }
 
     // Data members
@@ -297,15 +302,13 @@ public:
 	bool a_;
 };
 
-class ExampleCubes : public ExampleApp {
+class ExampleCubes : public FlutterView {
 public:
-	ExampleCubes(ExampleParams params) : ExampleApp(params)
-	{
-    }
-
+    ExampleCubes(View& parent, ViewParams params = ViewParams()) : FlutterView(parent, params) {}
+    
     virtual void Create() override {
-        ExampleApp::Create();
-
+        FlutterView::Create();
+        
         channel_ = new StandardMethodChannel(messenger(), kChannelName);
 
         new StandardMethod(*channel_, kCreateMethod,
@@ -332,9 +335,8 @@ public:
                 }
                 const uint16_t height = std::get<double>(height_iter->second);
 
-                surface_ = &ExampleCubesSurface::Produce<ExampleCubesSurface>(SurfaceParams(Size(width, height)), this);
-
-                auto texId = textureRegistrar().RegisterTexture(*surface_->texture_);
+                cubes_surface_ = ExampleCubesView::Produce<ExampleCubesView>(*this, ViewParams(Size(width, height)));
+                auto texId = textureRegistrar().RegisterTexture(*cubes_surface_->texture_);
 
                 result->Success(texId);
             });
@@ -349,20 +351,23 @@ public:
     }
 
     virtual void Draw() override {
-        ExampleApp::Draw();
-		if (surface_ && surface_->texture_)
-			textureRegistrar().MarkTextureFrameAvailable(surface_->texture_->id_);
+        FlutterView::Draw();
+		if (cubes_surface_ && cubes_surface_->texture_)
+			textureRegistrar().MarkTextureFrameAvailable(cubes_surface_->texture_->id_);
     }
 
     // Data members
-    ExampleCubesSurface* surface_ = nullptr;
+    ExampleCubesView* cubes_surface_ = nullptr;
     MethodChannel<>* channel_ = nullptr;
     FrameBufferTexture* texture_ = nullptr;
 };
 
-EXAMPLE_MAIN(
-    ExampleCubes
-    , "cubes"
-    , "Show cubes."
-    , "https://kfields.github.io/attacus/examples.html#cubes"
-);
+int main(int argc, char** argv) {
+	ExampleApp& app = *ExampleApp::Produce(ExampleParams(
+        "cubes",
+        "Show cubes.",
+        "https://kfields.github.io/attacus/examples.html#cubes"
+    ));
+	FlutterView& flutter = *ExampleCubes::Produce<ExampleCubes>(app);
+	return app.Run();
+}

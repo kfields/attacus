@@ -3,7 +3,17 @@
 namespace attacus {
 
 void Component::Create() {}
+void Component::Destroy() {
+    CleanUp();
+    delete this;
+}
 
+int Component::Run() { 
+    Startup();
+    return 0; 
+}
+void Component::Startup() {}
+void Component::Shutdown() {}
 
 ComponentKit* ComponentKit::instance_ = nullptr;
 

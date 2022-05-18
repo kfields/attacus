@@ -1,21 +1,15 @@
+#include <attacus/flutter/flutter_view.h>
 #include <examples/example_app.h>
 
 using namespace attacus;
 
-class ExampleHelloWorld : public ExampleApp {
-public:
-    EXAMPLE_CTOR(ExampleHelloWorld)
+int main(int argc, char** argv) {
+    ExampleApp& app = *ExampleApp::Produce(ExampleParams(
+        "00-helloworld",
+        "Initialization.",
+        "https://kfields.github.io/attacus/examples.html#helloworld"
+    ));
+    FlutterView& flutter = *FlutterView::Produce<FlutterView>(app);
 
-    virtual void Create() override {
-        ExampleApp::Create();
-    }
-    //Data members
-};
-
-EXAMPLE_MAIN(
-    ExampleHelloWorld
-    , "00-helloworld"
-    , "Initialization."
-    , "https://kfields.github.io/attacus/examples.html#helloworld"
-);
-
+    return app.Run();
+}
