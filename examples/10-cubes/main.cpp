@@ -157,9 +157,9 @@ public:
             ;
 
         frameBuffer_ = bgfx::createFrameBuffer(width(), height(), bgfx::TextureFormat::RGBA8, tsFlags);
-        bgfx::setViewFrameBuffer(id(), frameBuffer_);
+        bgfx::setViewFrameBuffer(viewId(), frameBuffer_);
 
-        bgfx::setViewClear(id()
+        bgfx::setViewClear(viewId()
             , BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH
             //, 0x303030ff
             , 0x12345678
@@ -167,7 +167,7 @@ public:
             , 0
         );
 
-        bgfx::setViewRect(id(), 0, 0, width(), height());
+        bgfx::setViewRect(viewId(), 0, 0, width(), height());
 
         texture_ = new FrameBufferTexture(frameBuffer_);
         //auto texId = textureRegistrar().RegisterTexture(*texture_);
@@ -223,7 +223,7 @@ public:
         GfxView::Draw();
         if (!texture_) return;
 
-        bgfx::touch(id());
+        bgfx::touch(viewId());
 
 		float time = (float)((bx::getHPCounter() - timeOffset_) / double(bx::getHPFrequency()));
 
@@ -237,10 +237,10 @@ public:
 
 			float proj[16];
 			bx::mtxProj(proj, 60.0f, float(width()) / float(height()), 0.1f, 100.0f, bgfx::getCaps()->homogeneousDepth);
-			bgfx::setViewTransform(id(), view, proj);
+			bgfx::setViewTransform(viewId(), view, proj);
 
 			// Set view 0 default viewport.
-			bgfx::setViewRect(id(), 0, 0, uint16_t(width()), uint16_t(height()));
+			bgfx::setViewRect(viewId(), 0, 0, uint16_t(width()), uint16_t(height()));
 		}
 
 		bgfx::IndexBufferHandle ibh = ibh_[pt_];
@@ -278,7 +278,7 @@ public:
 				bgfx::setState(state);
 
 				// Submit primitive for rendering to view 0.
-				bgfx::submit(id(), program_);
+				bgfx::submit(viewId(), program_);
 			}
 		}
 

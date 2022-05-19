@@ -12,6 +12,7 @@ include(${ATT_ROOT}/cmake/Bgfx.cmake)
 set(SHELL_HEADERS
     dispatcher.h
     window_component.h
+    surface.h
     view_kit.h
     view.h
     frame.h
@@ -24,6 +25,7 @@ set(SHELL_HEADERS
 
 set(SHELL_SRC
     dispatcher.cpp
+    surface.cpp
     view_kit.cpp
     view.cpp
     frame.cpp

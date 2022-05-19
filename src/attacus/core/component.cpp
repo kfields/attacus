@@ -8,10 +8,16 @@ void Component::Destroy() {
     delete this;
 }
 
-int Component::Run() { 
+int Component::Run() {
+    int code = Start();
     Startup();
+    return code;
+}
+
+int Component::Start() {
     return 0; 
 }
+
 void Component::Startup() {}
 void Component::Shutdown() {}
 

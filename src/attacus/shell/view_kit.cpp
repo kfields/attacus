@@ -16,7 +16,7 @@ ViewKit::~ViewKit() = default;
 int16_t ViewKit::RegisterView(View& View)
 {
     view_count++;
-    View.id_ = view_count;
+    View.view_id_ = view_count;
     views_[view_count] = &View;
     //FlutterEngineResult result = FlutterEngineRegisterExternalView(engine_, view_id);
     return view_count;

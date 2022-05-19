@@ -30,11 +30,6 @@ struct SurfaceParams {
 
 class Surface : public Dispatcher {
 public:
-    enum class ResetKind {
-        kSoft,
-        kHard
-    };
-
     Surface(SurfaceParams params = SurfaceParams());
 
     template<typename T = Surface>
@@ -46,16 +41,13 @@ public:
 
     virtual ~Surface();
 
-    virtual void Destroy();
-
     void Render() { PreRender(); Draw(); PostRender(); }
     virtual void PreRender() {}
-    virtual void Draw();
+    virtual void Draw() {}
     virtual void PostRender() {}
 
-    virtual void Reset(ResetKind kind = ResetKind::kHard) {}
+    void SetSize(Size size);
 
-    virtual void* CreateContext();
     //Accessors
     int width() { return size_.width; }
     int height() { return size_.height; }
@@ -68,9 +60,6 @@ public:
 
     static int16_t surface_count_;
     int16_t id_;
-    bgfx::FrameBufferHandle frameBuffer_;
-    SDL_Window* sdl_window_ = nullptr;
-    static void* current_context_;
 };
 
 } //namespace attacus

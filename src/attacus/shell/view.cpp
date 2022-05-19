@@ -11,15 +11,14 @@
 namespace attacus {
 
 //TODO:Recycle handles
-int16_t View::surface_count_ = 0;
+int16_t View::view_count_ = 0;
 void* View::current_context_ = nullptr;
 
-View::View(View& parent, ViewParams params) : Dispatcher(),
+View::View(View& parent, ViewParams params) : Surface(params),
     origin_(params.origin),
     name_(params.name),
-    size_(params.size),
     parent_(&parent),
-    id_(surface_count_++), frameBuffer_(BGFX_INVALID_HANDLE) {
+    view_id_(view_count_++), frameBuffer_(BGFX_INVALID_HANDLE) {
     if (parent_ == nullptr) {
         return;
     }
@@ -31,7 +30,7 @@ View::~View() {
 }
 
 void View::Create() {
-    Dispatcher::Create();
+    Surface::Create();
 }
 
 void* View::CreateContext() {
@@ -53,7 +52,7 @@ void* View::CreateContext() {
 }
 
 int View::Run() {
-    Dispatcher::Run();
+    Surface::Run();
     for (std::list<View*>::iterator it = children_.begin(); it != children_.end(); ++it){
         View* child = *it;
         child->Run();
@@ -69,7 +68,7 @@ void View::Destroy() {
     if (parent_ != nullptr) {
         parent_->RemoveChild(*this);
     }
-    Dispatcher::Destroy();
+    Surface::Destroy();
 }
 
 bool View::Dispatch(SDL_Event& event) {
@@ -77,7 +76,7 @@ bool View::Dispatch(SDL_Event& event) {
         View* child = *it;
         child->Dispatch(event);
     }
-    return Dispatcher::Dispatch(event);
+    return Surface::Dispatch(event);
 }
 
 void View::Draw() {
@@ -94,11 +93,6 @@ void View::SetPosition(Point origin) {
 
 void View::OnPosition() {
 
-}
-
-void View::SetSize(Size size) {
-    size_ = size;
-    OnSize();
 }
 
 } //namespace attacus

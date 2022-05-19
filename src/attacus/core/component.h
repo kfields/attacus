@@ -23,6 +23,7 @@ public:
     virtual void CleanUp() {}
 
     virtual int Run();
+    virtual int Start();
     virtual void Startup();
     virtual void Shutdown();
 

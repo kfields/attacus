@@ -6,7 +6,7 @@
 
 #include <bgfx/bgfx.h>
 
-#include "dispatcher.h"
+#include "surface.h"
 
 namespace attacus {
 
@@ -18,31 +18,20 @@ struct Point {
     Point(const Point& p1) { x = p1.x; y = p1.y; }
 };
 
-struct Size {
-    int width;
-    int height;
-    Size() : width(0), height(0) {}
-    Size(int width, int height)
-        : width(width), height(height) {}
-    Size(const Size& s1) { width = s1.width; height = s1.height; }
-};
-
-struct ViewParams {
+struct ViewParams : SurfaceParams {
     ViewParams(
         Size _size = Size(800,600),
         Point _origin = Point(SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED),
         std::string _name = "Attacus"
-    ) {
+    ) : SurfaceParams(_size) {
         name = _name;
-        size = _size;
         origin = _origin;
     }
     std::string name;
     Point origin;
-    Size size;
 };
 
-class View : public Dispatcher {
+class View : public Surface {
 public:
     enum class ResetKind {
         kSoft,
@@ -63,12 +52,9 @@ public:
     void Destroy() override;
     int Run() override;
 
-    virtual bool Dispatch(SDL_Event& event) override;
+    bool Dispatch(SDL_Event& event) override;
 
-    void Render() { PreRender(); Draw(); PostRender(); }
-    virtual void PreRender() {}
-    virtual void Draw();
-    virtual void PostRender() {}
+    void Draw() override;
 
     virtual void Reset(ResetKind kind = ResetKind::kHard) {}
 
@@ -76,14 +62,10 @@ public:
     //
     void SetPosition(Point origin);
     virtual void OnPosition();
-    void SetSize(Size size);
     //Accessors
-    int width() { return size_.width; }
-    int height() { return size_.height; }
-    Size size() { return size_; }
 
-    int16_t id() { return id_; }
-    void SetId(int16_t id) { id_ = id; }
+    int16_t viewId() { return view_id_; }
+    void SetViewId(int16_t id) { view_id_ = id; }
     View& parent() { return *parent_; }
 
     void AddChild(View& child) {
@@ -104,17 +86,13 @@ public:
     std::string name_;
     Point origin_;
     View* parent_;
-    Size size_;
+    std::list<View*> children_;
 
-    static int16_t surface_count_;
-    int16_t id_;
+    static int16_t view_count_;
+    int16_t view_id_;
     bgfx::FrameBufferHandle frameBuffer_;
     SDL_Window* sdl_window_ = nullptr;
-    //
     static void* current_context_;
-
-    //
-    std::list<View*> children_;
 };
 
 } //namespace attacus
