@@ -10,7 +10,10 @@
 
 namespace attacus {
 
-GfxWindow::GfxWindow(Window& parent, WindowParams params) : Window(parent, params) {}
+GfxWindow::GfxWindow(Window& parent, WindowParams params) : Window(parent, params),
+    resetFlags_(BGFX_RESET_VSYNC),
+    debugFlags_(BGFX_DEBUG_TEXT)
+{}
 
 GfxWindow::~GfxWindow() {
 }

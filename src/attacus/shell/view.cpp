@@ -11,7 +11,7 @@
 namespace attacus {
 
 //TODO:Recycle handles
-int16_t View::view_count_ = 0;
+int16_t View::view_count_ = 1; //Reserve 0 for fullscreen/bgfx
 void* View::current_context_ = nullptr;
 
 View::View(View& parent, ViewParams params) : Surface(params),
@@ -53,7 +53,7 @@ void* View::CreateContext() {
 
 int View::Run() {
     Surface::Run();
-    for (std::list<View*>::iterator it = children_.begin(); it != children_.end(); ++it){
+    for (std::vector<View*>::iterator it = children_.begin(); it != children_.end(); ++it){
         View* child = *it;
         child->Run();
     }
@@ -72,7 +72,7 @@ void View::Destroy() {
 }
 
 bool View::Dispatch(SDL_Event& event) {
-    for (std::list<View*>::iterator it = children_.begin(); it != children_.end(); ++it){
+    for (std::vector<View*>::iterator it = children_.begin(); it != children_.end(); ++it){
         View* child = *it;
         child->Dispatch(event);
     }
@@ -80,7 +80,7 @@ bool View::Dispatch(SDL_Event& event) {
 }
 
 void View::Draw() {
-    for (std::list<View*>::iterator it = children_.begin(); it != children_.end(); ++it){
+    for (std::vector<View*>::iterator it = children_.begin(); it != children_.end(); ++it){
         View* child = *it;
         child->Render();
     }

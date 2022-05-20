@@ -13,6 +13,10 @@ public:
     virtual void Destroy() override;
     // Accessors
     // Data members
+    uint32_t resetFlags_;
+    uint32_t debugFlags_;
+    bool debug_ = false;
+    bool capture_ = false;
 };
 
 } //namespace attacus

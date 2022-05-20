@@ -26,8 +26,6 @@ void Window::Destroy() {
 
 void Window::Reset(ResetKind kind)
 {
-    //bgfx::reset(width(), height(), resetFlags_);
-    //bgfx::setViewRect(viewId(), 0, 0, width(), height());
     for (auto child : children_) {
         child->Reset(ResetKind::kSoft);
     }
@@ -37,7 +35,6 @@ bool Window::Dispatch(SDL_Event& event) {
     if (state_ == State::kShutdown)
         return false;
 
-    //flutter().Dispatch(event);
     capture_ = false;
     switch (event.type)
     {

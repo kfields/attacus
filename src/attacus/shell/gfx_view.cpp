@@ -16,11 +16,9 @@ namespace attacus {
 
 void* GfxView::gfx_context_ = nullptr;
 static bool initialized_ = false;
-static void SetupBgfxPlatformData(const GfxView& app, bgfx::PlatformData &pd, const SDL_SysWMinfo &wmi);
+static void SetupBgfxPlatformData(const GfxView& view, bgfx::PlatformData &pd, const SDL_SysWMinfo &wmi);
 
 GfxView::GfxView(View& parent, ViewParams params) : View(parent, params),
-    resetFlags_(BGFX_RESET_VSYNC),
-    debugFlags_(BGFX_DEBUG_TEXT),
     timeOffset_(bx::getHPCounter()) {
 }
 
@@ -32,11 +30,13 @@ void GfxView::Create() {
 void GfxView::PreRender() {
     View::PreRender();
     SDL_GL_MakeCurrent(sdl_window_, gfx_context_);
+    bgfx::touch(viewId());
 }
 
 void GfxView::PostRender() {
     SDL_GL_MakeCurrent(sdl_window_, gfx_context_);
     bgfx::frame(capture_);
+    Touch();
     View::PostRender();
     SDL_GL_MakeCurrent(sdl_window_, nullptr);
 }
@@ -53,6 +53,32 @@ void GfxView::CreateGfx() {
         InitGfx();
         initialized_ = true;
     }
+}
+
+void GfxView::CreateFramebuffer() {
+    const uint64_t tsFlags = 0
+        | BGFX_SAMPLER_MIN_POINT
+        | BGFX_SAMPLER_MAG_POINT
+        | BGFX_SAMPLER_MIP_POINT
+        | BGFX_SAMPLER_U_CLAMP
+        | BGFX_SAMPLER_V_CLAMP
+        ;
+    frameBuffer_ = bgfx::createFrameBuffer(width(), height(), bgfx::TextureFormat::RGBA8, tsFlags);
+    bgfx::setViewFrameBuffer(viewId(), frameBuffer_);
+}
+
+void GfxView::Reset(ResetKind kind)
+{
+    if (kind == ResetKind::kSoft) {
+        if (bgfx::isValid(frameBuffer_))
+            bgfx::setViewFrameBuffer(viewId(), frameBuffer_);
+        return;
+    }
+    
+    if (bgfx::isValid(frameBuffer_))
+        destroy(frameBuffer_);
+
+    CreateFramebuffer();    
 }
 
 void GfxView::InitGfx() {
@@ -75,10 +101,9 @@ void GfxView::InitGfx() {
     bgfx_init.resolution.reset = resetFlags_;
     bgfx_init.platformData = pd;
     bgfx::init(bgfx_init);
-    //SDL_GL_MakeCurrent(sdl_window_, nullptr);
 }
 
-void SetupBgfxPlatformData(const GfxView& app, bgfx::PlatformData &pd, const SDL_SysWMinfo &wmi) {
+void SetupBgfxPlatformData(const GfxView& view, bgfx::PlatformData &pd, const SDL_SysWMinfo &wmi) {
     switch (wmi.subsystem) {
         case SDL_SYSWM_UNKNOWN: abort();
 
@@ -140,8 +165,10 @@ void SetupBgfxPlatformData(const GfxView& app, bgfx::PlatformData &pd, const SDL
 
         //default: spdlog::critical("Unknown Window system."); std::abort();
     }
-    pd.context = app.gfx_context_;
-    pd.nwh = NULL;
+    pd.context = view.gfx_context_;
+    if (view.view_id_ != 0) {
+        pd.nwh = NULL;
+    }
     pd.backBuffer = NULL;
     pd.backBufferDS = NULL;
 }

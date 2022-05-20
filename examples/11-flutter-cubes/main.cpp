@@ -144,19 +144,13 @@ public:
 		b_(true),
 		a_(true)
 	{
-		view_id_ = 0;
     }
 
     virtual void Create() override {
         GfxView::Create();
-        const uint64_t tsFlags = 0
-            | BGFX_SAMPLER_MIN_POINT
-            | BGFX_SAMPLER_MAG_POINT
-            | BGFX_SAMPLER_MIP_POINT
-            | BGFX_SAMPLER_U_CLAMP
-            | BGFX_SAMPLER_V_CLAMP
-            ;
 
+        CreateFramebuffer();
+        
         bgfx::setViewClear(viewId()
             , BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH
             //, 0x303030ff
@@ -288,12 +282,65 @@ public:
 	bool a_;
 };
 
+class ExampleCubes : public FlutterView {
+public:
+    ExampleCubes(View& parent, ViewParams params = ViewParams()) : FlutterView(parent, params) {}
+    
+    virtual void Create() override {
+        FlutterView::Create();
+        
+        channel_ = new StandardMethodChannel(messenger(), kChannelName);
+
+        new StandardMethod(*channel_, kCreateMethod,
+            [this](const MethodCall<>& call, std::unique_ptr<MethodResult<>> result) {
+                //auto args = call.arguments();
+                const auto& args = std::get<EncodableMap>(*call.arguments());
+                //auto width = std::get<double>(args[0]);
+                //auto width = std::get<double>(args.at(EncodableValue("width")));
+                auto width_iter = args.find(EncodableValue(std::string(kWidthKey)));
+                if (width_iter == args.end()) {
+                result->Error("Argument error",
+                                "Missing argument while trying to activate system cursor");
+                return;
+                }
+                const uint16_t width = std::get<double>(width_iter->second);
+
+                //auto height = std::get<double>(args[1]);
+                //auto height = std::get<double>(args.at(EncodableValue("height")));
+                auto height_iter = args.find(EncodableValue(std::string(kHeightKey)));
+                if (height_iter == args.end()) {
+                result->Error("Argument error",
+                                "Missing argument while trying to activate system cursor");
+                return;
+                }
+                const uint16_t height = std::get<double>(height_iter->second);
+
+                cubes_view_ = ExampleCubesView::Produce<ExampleCubesView>(*this, ViewParams(Size(width, height)));
+                auto texId = textureRegistrar().RegisterTexture(*cubes_view_);
+
+                result->Success(texId);
+            });
+
+        new StandardMethod(*channel_, kDisposeMethod,
+            [this](const MethodCall<>& call, std::unique_ptr<MethodResult<>> result) {
+                auto args = call.arguments();
+                auto id = std::get<int>(args[0]);
+                result->Success();
+            });
+
+    }
+
+    // Data members
+    ExampleCubesView* cubes_view_ = nullptr;
+    MethodChannel<>* channel_ = nullptr;
+};
+
 int main(int argc, char** argv) {
 	ExampleApp& app = *ExampleApp::Produce(ExampleParams(
         "cubes",
         "Show cubes.",
         "https://kfields.github.io/attacus/examples.html#cubes"
     ));
-    ExampleCubesView& view = *ExampleCubesView::Produce<ExampleCubesView>(app);
+	FlutterView& flutter = *ExampleCubes::Produce<ExampleCubes>(app);
 	return app.Run();
 }

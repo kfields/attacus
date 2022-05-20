@@ -10,6 +10,8 @@ public:
     virtual void Create() override;
     virtual void CreateGfx();
     virtual void InitGfx();
+    virtual void CreateFramebuffer();
+    void Reset(ResetKind kind = ResetKind::kHard) override;
 
     virtual void PreRender() override;
     virtual void PostRender() override;

@@ -44,8 +44,13 @@ void App::Destroy() {
 
 void App::Reset(ResetKind kind)
 {
-    //bgfx::reset(width(), height(), resetFlags_);
-    //bgfx::setViewRect(viewId(), 0, 0, width(), height());
+    if (children_.size() == 0) {
+        return;
+    }
+    if (children_[0]->view_id_ != 0) {
+        return;
+    }
+    bgfx::reset(width(), height(), resetFlags_);
     for (auto child : children_) {
         child->Reset(ResetKind::kSoft);
     }

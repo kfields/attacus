@@ -10,7 +10,7 @@ void Frame::Create() {
 }
 
 void Frame::OnSize() {
-    for (std::list<View*>::iterator it = children_.begin(); it != children_.end(); ++it){
+    for (std::vector<View*>::iterator it = children_.begin(); it != children_.end(); ++it){
         View* child = *it;
         child->SetSize(size());
     }

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <vector>
 #include <list>
 #include <map>
 
@@ -77,7 +78,9 @@ public:
 
     void RemoveChild(View& child) {
         child.parent_ = nullptr;
-        children_.remove(&child);
+        //children_.remove(&child);
+        std::vector<View*>::iterator i = std::remove(children_.begin(), children_.end(), &child);
+        children_.erase(i);
     }
 
     // Accessors
@@ -88,7 +91,7 @@ public:
     std::string name_;
     Point origin_;
     View* parent_;
-    std::list<View*> children_;
+    std::vector<View*> children_;
 
     static int16_t view_count_;
     int16_t view_id_;
