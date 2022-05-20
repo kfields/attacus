@@ -8,6 +8,7 @@ include(${ATT_ROOT}/cmake/RxCpp.cmake)
 
 set(ATT_CORE_HEADERS
     component.h
+    event.h
 )
 
 set(ATT_CORE_SOURCES

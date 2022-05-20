@@ -8,49 +8,79 @@ using namespace attacus;
 
 namespace test_event {
 
-static const char *s_dummy_events = ComponentKit::Intern("dummy_events");
-
-class TestEvents : public Component
-{
+template<typename T>
+class EventDelegate {
 public:
-    rxcpp::subjects::subject<int> OnSomething;
+    EventDelegate() {}
+    EventDelegate(std::function<void(void)> callback) : callback_(callback) {}
+    void operator()() {
+        callback_();
+    }
+    // Data members
+    std::function<void(void)> callback_;
 };
 
-void set_k_dummy_events(Component &self, TestEvents *that)
-{
-    self.components_[s_dummy_events] = that;
-}
+template<typename T>
+class Subscription {
+public:
+    typedef std::function<void(T)> TCallback;
 
-TestEvents *k_dummy_events(Component &self)
-{
-    return static_cast<TestEvents *>(self.components_[s_dummy_events]);
-}
+    Subscription(const TCallback& callback) : callback_(callback) {
+
+    }
+    TCallback callback_;
+};
+
+template<typename T>
+class Event {
+public:
+    typedef std::function<void(T)> TCallback;
+    typedef Subscription<T> TSubscription;
+    std::list<TSubscription*> subscriptions_;
+    // Accessors
+    void publish(T& value) {
+        for (auto it = subscriptions_.begin(); it != subscriptions_.end(); ++it){
+            TSubscription* subscription = *it;
+            subscription->callback_(value);
+        }
+    }
+    void subscribe(const TCallback& callback) {
+        auto subscription = new Subscription<T>(callback);
+        subscriptions_.push_back(subscription);
+    }
+};
 
 class TestPublisher : public Component
 {
 public:
+    void Publish(bool e) {
+        test_event_.publish(e);
+    }
     // Accessors
-    TestEvents& events() { return events_; }
     // Data members
-    TestEvents events_;
+    Event<bool> test_event_;
 };
 
-class TestConsumer : public Component
+class TestSubscriber : public Component
 {
+public:
     void Subscribe(TestPublisher& publisher) {
-        publisher.events().OnSomething.get_observable().subscribe();
+        publisher.test_event_.subscribe([](bool e){
+            std::cout << "Received event:  "  << e << std::endl;
+        });
     }
 };
 
 // Demonstrate some basic assertions.
 TEST(TestEvent, BasicAssertions)
 {
-    TestEvents events;
-    TestConsumer consumer;
+    TestPublisher publisher;
+    TestSubscriber subscriber;
 
-    set_k_dummy_events(consumer, &events);
-    TestEvents* rEvents = k_dummy_events(events);
-    
+    subscriber.Subscribe(publisher);
+    publisher.Publish(true);
+    publisher.Publish(false);
+
     // Expect two strings not to be equal.
     EXPECT_STRNE("hello", "world");
     // Expect equality.

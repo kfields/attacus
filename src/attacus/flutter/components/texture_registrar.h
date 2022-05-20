@@ -8,7 +8,7 @@
 
 #include "flutter_component.h"
 
-#include <attacus/flutter/texture.h>
+#include <attacus/shell/surface.h>
 
 namespace attacus
 {
@@ -24,7 +24,7 @@ namespace attacus
         TextureRegistrar &operator=(TextureRegistrar const &) = delete;
 
         // |flutter::TextureRegistrar|
-        int64_t RegisterTexture(Texture& texture);
+        int64_t RegisterTexture(Surface& surface);
         // |flutter::TextureRegistrar|
         bool MarkTextureFrameAvailable(int64_t texture_id);
 
@@ -34,9 +34,7 @@ namespace attacus
         bool CopyTexture(int64_t texId, size_t width, size_t height, FlutterOpenGLTexture*  texOut);
 
         // Data members
-        std::map<int64_t, Texture*> textures_;
-        // TODO: Recycle id's?
-        int64_t texture_id = 0;
+        std::map<int64_t, Surface*> surfaces_;
     };
 
 } // namespace attacus

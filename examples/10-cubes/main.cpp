@@ -169,7 +169,7 @@ public:
 
         bgfx::setViewRect(viewId(), 0, 0, width(), height());
 
-        texture_ = new FrameBufferTexture(frameBuffer_);
+        //texture_ = new FrameBufferTexture(frameBuffer_);
         //auto texId = textureRegistrar().RegisterTexture(*texture_);
 
         // Create vertex stream declaration.
@@ -221,7 +221,6 @@ public:
 
     virtual void Draw() override {
         GfxView::Draw();
-        if (!texture_) return;
 
         bgfx::touch(viewId());
 
@@ -282,14 +281,10 @@ public:
 			}
 		}
 
-		bgfx::TextureHandle th = bgfx::getTexture(frameBuffer_);
-        texture_->th_ = th;
-        texture_->nh_ = bgfx::s_ctx->m_renderCtx->getInternal(th);
+        Touch();
     }
 
     // Data members
-    FrameBufferTexture* texture_ = nullptr;
-    //
 	bgfx::VertexBufferHandle vbh_;
 	bgfx::IndexBufferHandle ibh_[BX_COUNTOF(s_ptState)];
 	bgfx::ProgramHandle program_;
@@ -335,8 +330,8 @@ public:
                 }
                 const uint16_t height = std::get<double>(height_iter->second);
 
-                cubes_surface_ = ExampleCubesView::Produce<ExampleCubesView>(*this, ViewParams(Size(width, height)));
-                auto texId = textureRegistrar().RegisterTexture(*cubes_surface_->texture_);
+                cubes_view_ = ExampleCubesView::Produce<ExampleCubesView>(*this, ViewParams(Size(width, height)));
+                auto texId = textureRegistrar().RegisterTexture(*cubes_view_);
 
                 result->Success(texId);
             });
@@ -350,16 +345,9 @@ public:
 
     }
 
-    virtual void Draw() override {
-        FlutterView::Draw();
-		if (cubes_surface_ && cubes_surface_->texture_)
-			textureRegistrar().MarkTextureFrameAvailable(cubes_surface_->texture_->id_);
-    }
-
     // Data members
-    ExampleCubesView* cubes_surface_ = nullptr;
+    ExampleCubesView* cubes_view_ = nullptr;
     MethodChannel<>* channel_ = nullptr;
-    FrameBufferTexture* texture_ = nullptr;
 };
 
 int main(int argc, char** argv) {

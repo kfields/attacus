@@ -6,6 +6,8 @@
 
 #include <bgfx/bgfx.h>
 
+#include <attacus/core/event.h>
+
 #include "dispatcher.h"
 
 namespace attacus {
@@ -28,6 +30,13 @@ struct SurfaceParams {
     Size size;
 };
 
+class SurfaceEvent : public Event {
+public:
+    SurfaceEvent(Surface* surface) : surface_(surface) {}
+    // Data members
+    Surface* surface_;
+};
+
 class Surface : public Dispatcher {
 public:
     Surface(SurfaceParams params = SurfaceParams());
@@ -45,9 +54,12 @@ public:
     virtual void PreRender() {}
     virtual void Draw() {}
     virtual void PostRender() {}
+    void Touch() { touched_event_.Publish(SurfaceEvent(this)); }
 
     void SetSize(Size size);
 
+    virtual bgfx::TextureHandle GetTexture() { return texture_; }
+    virtual uintptr_t GetInternal();
     //Accessors
     int width() { return size_.width; }
     int height() { return size_.height; }
@@ -60,6 +72,9 @@ public:
 
     static int16_t surface_count_;
     int16_t id_;
+
+    bgfx::TextureHandle texture_;
+    EventSource<SurfaceEvent> touched_event_;
 };
 
 } //namespace attacus

@@ -95,4 +95,8 @@ void View::OnPosition() {
 
 }
 
+bgfx::TextureHandle View::GetTexture() {
+    return bgfx::getTexture(frameBuffer_); 
+}
+
 } //namespace attacus

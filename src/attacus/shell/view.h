@@ -57,8 +57,10 @@ public:
     void Draw() override;
 
     virtual void Reset(ResetKind kind = ResetKind::kHard) {}
+    bgfx::TextureHandle GetTexture() override;
 
     virtual void* CreateContext();
+    
     //
     void SetPosition(Point origin);
     virtual void OnPosition();

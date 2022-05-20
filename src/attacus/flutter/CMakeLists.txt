@@ -45,8 +45,6 @@ set(FLUTTER_HEADERS
     components/text_input_model.h
     components/text_range.h
     components/string_conversion.h
-
-    texture.h
     components/texture_registrar.h
 
 )
@@ -59,8 +57,6 @@ set(FLUTTER_SRC
     standard_codec.cpp
     json_message_codec.cpp
     json_method_codec.cpp
-
-    texture.cpp
 
     components/flutter_component.cpp
     components/isolate.cpp

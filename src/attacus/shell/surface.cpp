@@ -2,6 +2,8 @@
 #include <iostream>
 #include <fmt/core.h>
 
+#include <bgfx/bgfx_p.h>
+
 #include "surface.h"
 
 #include "view.h"
@@ -23,6 +25,10 @@ Surface::~Surface() {
 void Surface::SetSize(Size size) {
     size_ = size;
     OnSize();
+}
+
+uintptr_t Surface::GetInternal() {
+    return bgfx::s_ctx->m_renderCtx->getInternal(GetTexture());
 }
 
 } //namespace attacus
