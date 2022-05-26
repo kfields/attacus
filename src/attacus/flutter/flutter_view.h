@@ -29,18 +29,24 @@ class TextureRegistrar;
 class FlutterView : public GfxView {
 public:
     FlutterView(View& parent, ViewParams params = ViewParams());
-    FlutterView(const FlutterView&);
-    virtual ~FlutterView();
-    virtual void Create() override;
-    virtual void CreateGfx() override;
-    virtual void Destroy() override;
+    //FlutterView(const FlutterView&);
     template<typename T = FlutterView>
     static T* Produce(View& parent, ViewParams params = ViewParams()) {
         T* c = new T(parent, params);
         c->Create();
         return c;
     }
-    void Render();
+
+    void Create() override;
+    void CreateGfx() override;
+    virtual void InitRendererConfig(FlutterRendererConfig& config);
+    virtual void InitProjectArgs(FlutterProjectArgs& args);
+    virtual void InitEngine(FlutterRendererConfig& config, FlutterProjectArgs& args);
+
+    void Destroy() override;
+    virtual ~FlutterView();
+
+
     virtual bool Dispatch(SDL_Event& event) override;
     // Events
     virtual void OnResize(SDL_Event& event) override;

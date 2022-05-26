@@ -41,7 +41,7 @@ void GfxWindow::CreateSDLWindow() {
     sdl_window_ = SDL_CreateWindow(name_.c_str(), x(), y(), width(), height(), flags_ | SDL_WINDOW_OPENGL);
 
     if (sdl_window_ == nullptr) {
-        std::cout << fmt::format("Window could not be created: {}\n", SDL_GetError());
+        std::cout << fmt::format("SDL Window could not be created: {}\n", SDL_GetError());
         return;
     }
 
@@ -56,12 +56,40 @@ void GfxWindow::CreateSDLWindow() {
 
     SDL_SetWindowData(sdl_window_, "Window", this);
 
+    /*sdl_renderer_ = SDL_CreateRenderer(sdl_window_, -1, SDL_RENDERER_ACCELERATED);
+
+    if (sdl_renderer_ == nullptr) {
+        std::cout << fmt::format("SDL Renderer could not be created: {}\n", SDL_GetError());
+        return;
+    }*/
+
     /*if (SDL_GL_SetSwapInterval(1) < 0) {
         std::cout << fmt::format("Couldn't enable vsync: {}\n", SDL_GetError());
-    }
-
-    SDL_GL_MakeCurrent(sdl_window_, nullptr);*/
+    }*/
 }
 
+void GfxWindow::PostRender() {
+    bgfx::frame(capture_);
+    Window::PostRender();
+}
+
+bool GfxWindow::Dispatch(SDL_Event& event) {
+    if (state_ == State::kShutdown)
+        return false;
+
+    capture_ = false;
+    switch (event.type)
+    {
+        case SDL_KEYDOWN:
+        {
+            int key = event.key.keysym.scancode;
+            if (key == SDL_SCANCODE_F11) {
+                capture_ = true;
+                return true;
+            }
+        }
+    }
+    return Window::Dispatch(event);
+}
 
 } //namespace attacus

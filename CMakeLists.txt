@@ -30,7 +30,8 @@ set(HAVE_LIBC ON)
 set(SDL_SHARED OFF CACHE BOOL "Build a shared version of the library" FORCE)
 #set(SDL_STATIC_PIC ON CACHE BOOL "Static version of the library should be built with Position Independent Code" FORCE)
 
-set(SDL_RENDER OFF CACHE BOOL "Use render subsystem" FORCE)
+#set(SDL_RENDER OFF CACHE BOOL "Use render subsystem" FORCE)
+set(SDL_RENDER ON CACHE BOOL "Use render subsystem" FORCE)
 set(SDL_AUDIO OFF CACHE BOOL "Use audio subsystem" FORCE)
 set(SDL_HAPTIC OFF CACHE BOOL "Use haptic subsystem" FORCE)
 set(HIDAPI OFF CACHE BOOL "Use HIDAPI for low level joystick drivers" FORCE)
@@ -59,6 +60,11 @@ endif()
 if(${HAS_BGFX})
 add_subdirectory(src/bgfx)
 endif() #HAS_BGFX
+
+#
+# NanoVG
+#
+add_subdirectory(src/nanovg)
 
 #
 #Attacus

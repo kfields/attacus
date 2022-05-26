@@ -35,18 +35,6 @@ bool Window::Dispatch(SDL_Event& event) {
     if (state_ == State::kShutdown)
         return false;
 
-    capture_ = false;
-    switch (event.type)
-    {
-        case SDL_KEYDOWN:
-        {
-            int key = event.key.keysym.scancode;
-            if (key == SDL_SCANCODE_F11) {
-                capture_ = true;
-                return true;
-            }
-        }
-    }
     return PlatformWindow::Dispatch(event);
 }
 

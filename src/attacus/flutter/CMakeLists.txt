@@ -7,11 +7,14 @@ set(THIS ${PROJECT_NAME})
 include(${ATT_ROOT}/cmake/Sdl.cmake)
 include(${ATT_ROOT}/cmake/Shell.cmake)
 include(${ATT_ROOT}/cmake/Bgfx.cmake)
+include(${ATT_ROOT}/cmake/NanoVG.cmake)
 
 
 set(FLUTTER_HEADERS
     flutter_embedder.h
     flutter_view.h
+    flutter_composite_view.h
+    backing_store.h
     flutter_messenger.h
     flutter_runner.h
 
@@ -51,6 +54,8 @@ set(FLUTTER_HEADERS
 
 set(FLUTTER_SRC
     flutter_view.cpp
+    flutter_composite_view.cpp
+    backing_store.cpp
     flutter_messenger.cpp
     flutter_runner.cpp
 
@@ -77,7 +82,7 @@ set_target_properties(${THIS} PROPERTIES POSITION_INDEPENDENT_CODE ${ATT_STATIC_
 
 USES_SDL(${THIS})
 USES_BGFX(${THIS})
-#USES_SHELL(${THIS})
+USES_NVG(${THIS})
 
 if(${ATT_PLATFORM_WINDOWS})
 add_library(FlutterEngine SHARED IMPORTED)

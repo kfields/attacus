@@ -14,18 +14,16 @@ public:
 
     Window(Window& parent, WindowParams params = WindowParams());
     virtual ~Window();
-    virtual void Create() override;
-    virtual void Destroy() override;
-    virtual bool Dispatch(SDL_Event& event) override;
-    virtual void Reset(ResetKind kind = ResetKind::kHard) override;
+    void Create() override;
+    void Destroy() override;
+    bool Dispatch(SDL_Event& event) override;
+    void Reset(ResetKind kind = ResetKind::kHard) override;
 
     int Run() override;
     //Data members
     State state_;
     int64_t timeOffset_;
     bool debug_ = false;
-    bool capture_ = false;
-
 };
 
 } //namespace attacus

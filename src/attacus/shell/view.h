@@ -59,8 +59,6 @@ public:
 
     virtual void Reset(ResetKind kind = ResetKind::kHard) {}
     bgfx::TextureHandle GetTexture() override;
-
-    virtual void* CreateContext();
     
     //
     void SetPosition(Point origin);
@@ -78,7 +76,6 @@ public:
 
     void RemoveChild(View& child) {
         child.parent_ = nullptr;
-        //children_.remove(&child);
         std::vector<View*>::iterator i = std::remove(children_.begin(), children_.end(), &child);
         children_.erase(i);
     }
@@ -95,9 +92,8 @@ public:
 
     static int16_t view_count_;
     int16_t view_id_;
-    bgfx::FrameBufferHandle frameBuffer_;
     SDL_Window* sdl_window_ = nullptr;
-    static void* current_context_;
+    SDL_Renderer* sdl_renderer_ = nullptr;
 };
 
 } //namespace attacus

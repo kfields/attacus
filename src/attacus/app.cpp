@@ -11,8 +11,9 @@
 #include <bgfx/bgfx.h>
 #include <bgfx/platform.h>
 
+#include <attacus/shell/gfx.h>
+
 #include "app.h"
-#include <attacus/flutter/flutter_view.h>
 
 namespace attacus {
 
@@ -51,9 +52,8 @@ void App::Reset(ResetKind kind)
         return;
     }
     bgfx::reset(width(), height(), resetFlags_);
-    for (auto child : children_) {
-        child->Reset(ResetKind::kSoft);
-    }
+
+    GfxWindow::Reset(kind);
 }
 
 bool App::Dispatch(SDL_Event& event) {

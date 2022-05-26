@@ -4,19 +4,26 @@
 
 namespace attacus {
 
+class Gfx;
+
 class GfxView : public View {
 public:
     GfxView(View& parent, ViewParams params = ViewParams());
     virtual void Create() override;
+    virtual void* CreateContext();
     virtual void CreateGfx();
     virtual void InitGfx();
-    virtual void CreateFramebuffer();
+    void CreateFramebuffer() override;
     void Reset(ResetKind kind = ResetKind::kHard) override;
 
     virtual void PreRender() override;
     virtual void PostRender() override;
 
+    // Accessors
+    Gfx& gfx() { return *gfx_; }
     // Data members
+    Gfx* gfx_ = nullptr;
+    static void* current_context_;
     static void* gfx_context_;
 
     uint32_t resetFlags_;

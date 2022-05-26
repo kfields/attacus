@@ -48,7 +48,11 @@ public:
         return c;
     }
 
+    virtual void CreateTexture();
+    virtual void CreateFramebuffer();
+
     virtual ~Surface();
+    void Destroy() override;
 
     void Render() { PreRender(); Draw(); PostRender(); }
     virtual void PreRender() {}
@@ -59,7 +63,7 @@ public:
     void SetSize(Size size);
 
     virtual bgfx::TextureHandle GetTexture() { return texture_; }
-    virtual uintptr_t GetInternal();
+    virtual uintptr_t GetInternalTexture();
     //Accessors
     int width() { return size_.width; }
     int height() { return size_.height; }
@@ -73,7 +77,9 @@ public:
     static int16_t surface_count_;
     int16_t id_;
 
+    bgfx::FrameBufferHandle frameBuffer_;
     bgfx::TextureHandle texture_;
+    // Events
     EventSource<SurfaceEvent> touched_event_;
 };
 

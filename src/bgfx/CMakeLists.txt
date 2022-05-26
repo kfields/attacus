@@ -29,7 +29,6 @@ set(BGFX_HEADERS
 set(_ ${BGFX_ROOT}/src)
 
 set(BGFX_SRC
-    #${BGFX_ROOT}/src/amalgamated.cpp
     #${_}/bgfx.cpp
     bgfx.cpp
     ${_}/vertexlayout.cpp

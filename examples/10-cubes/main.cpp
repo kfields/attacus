@@ -1,14 +1,9 @@
 #include <bgfx/bgfx.h>
-#include <bgfx/bgfx_p.h>
 #include <bx/math.h>
 #include <bx/timer.h>
 
 #include <bgfx/utils/utils.h>
 
-#include <attacus/flutter/flutter_view.h>
-#include <attacus/flutter/flutter_messenger.h>
-#include <attacus/flutter/standard_method_channel.h>
-#include <attacus/flutter/components/texture_registrar.h>
 #include <attacus/shell/gfx_view.h>
 
 #include <examples/example_app.h>
@@ -147,15 +142,8 @@ public:
 		view_id_ = 0;
     }
 
-    virtual void Create() override {
+    void Create() override {
         GfxView::Create();
-        const uint64_t tsFlags = 0
-            | BGFX_SAMPLER_MIN_POINT
-            | BGFX_SAMPLER_MAG_POINT
-            | BGFX_SAMPLER_MIP_POINT
-            | BGFX_SAMPLER_U_CLAMP
-            | BGFX_SAMPLER_V_CLAMP
-            ;
 
         bgfx::setViewClear(viewId()
             , BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH
