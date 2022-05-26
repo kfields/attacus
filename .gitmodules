@@ -26,3 +26,6 @@
 [submodule "3rdparty/rxcpp"]
 	path = 3rdparty/rxcpp
 	url = https://github.com/ReactiveX/RxCpp
+[submodule "3rdparty/vg-renderer"]
+	path = 3rdparty/vg-renderer
+	url = https://github.com/jdryg/vg-renderer
