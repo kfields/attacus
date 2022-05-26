@@ -101,9 +101,11 @@ void SetupBgfxPlatformData(Gfx& gfx, bgfx::PlatformData &pd, const SDL_SysWMinfo
 #endif
 
     }
-    pd.context = gfx.view().gfx_context_;
+    
+    pd.context = NULL;
     if (gfx.view().view_id_ != 0) {
         pd.nwh = NULL;
+        pd.context = gfx.view().gfx_context_;
     }
     pd.backBuffer = NULL;
     pd.backBufferDS = NULL;

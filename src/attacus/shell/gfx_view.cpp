@@ -58,7 +58,7 @@ void* GfxView::CreateContext() {
     return context;
 }
 
-void GfxView::CreateGfx() {
+/*void GfxView::CreateGfx() {
     if (!gfx_context_) {
         gfx_context_ = CreateContext();
         if (gfx_context_ == NULL) {
@@ -67,6 +67,24 @@ void GfxView::CreateGfx() {
         }
     }
     InitGfx();
+}*/
+
+void GfxView::CreateGfx() {
+    if (!gfx_context_) {
+        if(viewId() == 0) {
+            InitGfx();
+            auto internal = bgfx::getInternalData();
+            current_context_ = gfx_context_ = internal->context;
+            SDL_GL_MakeCurrent(sdl_window_, current_context_);
+        } else {
+            gfx_context_ = CreateContext();
+            if (gfx_context_ == NULL) {
+                std::cout << fmt::format("Can't create opengl context for bgfx: {}\n", SDL_GetError());
+                return;
+            }
+            InitGfx();
+        }
+    }
 }
 
 void GfxView::CreateFramebuffer() {
