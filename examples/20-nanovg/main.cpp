@@ -98,12 +98,12 @@ public:
     void Create() override {
         GfxView::Create();
 		timeOffset_ = bx::getHPCounter();
-        int32_t edgeAntiAlias = 1;
 		bgfx::setViewName(viewId(), "NanoVG");
 		bgfx::setViewMode(viewId(), bgfx::ViewMode::Sequential);
 
 		Reset(ResetKind::kSoft);
 
+        int32_t edgeAntiAlias = 1;
 		nvg_ = nvgCreate(edgeAntiAlias, viewId());
         loadDemoData(nvg_, &data_);
     }

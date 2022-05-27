@@ -4,9 +4,9 @@
 
 namespace attacus {
 
-class BackingStore : public Surface {
+class BackingSurface : public Surface {
 public:
-    BackingStore(SurfaceParams params = SurfaceParams()) : Surface(params) {}
+    BackingSurface(SurfaceParams params = SurfaceParams()) : Surface(params) {}
     void Create() override;
     void Destroy() override;
     //Data members

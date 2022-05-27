@@ -67,6 +67,11 @@ endif() #HAS_BGFX
 add_subdirectory(src/nanovg)
 
 #
+# VgRenderer
+#
+add_subdirectory(src/vg-renderer)
+
+#
 #Attacus
 #
 add_subdirectory(src/attacus)

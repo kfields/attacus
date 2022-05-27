@@ -43,13 +43,9 @@ void Surface::CreateTexture() {
         | BGFX_SAMPLER_V_CLAMP
         ;*/
     //const uint64_t tsFlags = BGFX_SAMPLER_U_CLAMP | BGFX_SAMPLER_V_CLAMP;
-    const uint64_t tsFlags = BGFX_SAMPLER_MIN_POINT | BGFX_SAMPLER_MAG_POINT;
-    //const uint64_t tsFlags = BGFX_SAMPLER_U_CLAMP | BGFX_SAMPLER_V_CLAMP | BGFX_TEXTURE_RT | BGFX_TEXTURE_SRGB;
+    //const uint64_t tsFlags = BGFX_SAMPLER_MIN_POINT | BGFX_SAMPLER_MAG_POINT;
+    const uint64_t tsFlags = BGFX_SAMPLER_U_CLAMP | BGFX_SAMPLER_V_CLAMP | BGFX_TEXTURE_RT | BGFX_TEXTURE_SRGB;
     texture_ = bgfx::createTexture2D(width(), height(), false, 1, bgfx::TextureFormat::RGBA8, tsFlags);
-    //texture_ = bgfx::createTexture2D(width(), height(), false, 1, bgfx::TextureFormat::BGRA8, tsFlags);
-    //texture_ = bgfx::createTexture2D(width(), height(), false, 1, bgfx::TextureFormat::RGB8, tsFlags);
-    //texture_ = bgfx::createTexture2D(width(), height(), false, 1, bgfx::TextureFormat::RGBA8);
-    //texture_ = bgfx::createTexture2D(width(), height(), false, 0, bgfx::TextureFormat::RGBA8, tsFlags);
 }
 
 void Surface::CreateFramebuffer() {

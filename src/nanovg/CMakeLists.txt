@@ -8,7 +8,7 @@ include(../../cmake/Bgfx.cmake)
 
 set(NVG_HEADERS
     nanovg.h
-    nanovg_gl.h
+    nanovg_bgfx.h
 )
 
 set(NVG_SRC

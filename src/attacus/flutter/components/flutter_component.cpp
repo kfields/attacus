@@ -4,7 +4,7 @@
 
 namespace attacus {
 
-FlutterComponent::FlutterComponent(FlutterView& view) : WindowComponent(view) {}
+FlutterComponent::FlutterComponent(FlutterView& view) : ViewComponent(view) {}
 
 void FlutterComponent::Create() {
     engine_ = flutter().engine_;

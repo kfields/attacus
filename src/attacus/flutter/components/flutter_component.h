@@ -1,6 +1,6 @@
 #pragma once
 
-#include <attacus/shell/window_component.h>
+#include <attacus/shell/view_component.h>
 
 #include <attacus/flutter/flutter_embedder.h>
 
@@ -8,10 +8,10 @@ namespace attacus {
 
 class FlutterView;
 
-class FlutterComponent : public WindowComponent<FlutterView> {
+class FlutterComponent : public ViewComponent<FlutterView> {
 public:
     FlutterComponent(FlutterView& view);
-    FlutterView& flutter() { return *window_; }
+    FlutterView& flutter() { return *view_; }
     virtual void Create() override;
     // Data members
     FlutterEngine engine_;

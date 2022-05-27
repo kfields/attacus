@@ -7,14 +7,14 @@ set(THIS ${PROJECT_NAME})
 include(${ATT_ROOT}/cmake/Sdl.cmake)
 include(${ATT_ROOT}/cmake/Shell.cmake)
 include(${ATT_ROOT}/cmake/Bgfx.cmake)
-include(${ATT_ROOT}/cmake/NanoVG.cmake)
+#include(${ATT_ROOT}/cmake/NanoVG.cmake)
+include(${ATT_ROOT}/cmake/VgRenderer.cmake)
 
 
 set(FLUTTER_HEADERS
     flutter_embedder.h
     flutter_view.h
     flutter_composite_view.h
-    backing_store.h
     flutter_messenger.h
     flutter_runner.h
 
@@ -50,12 +50,14 @@ set(FLUTTER_HEADERS
     components/string_conversion.h
     components/texture_registrar.h
 
+    compositor/backing_surface.h
+    compositor/compositor.h
+
 )
 
 set(FLUTTER_SRC
     flutter_view.cpp
     flutter_composite_view.cpp
-    backing_store.cpp
     flutter_messenger.cpp
     flutter_runner.cpp
 
@@ -72,9 +74,10 @@ set(FLUTTER_SRC
     components/text_input.cpp
     components/text_input_model.cpp
     components/string_conversion.cpp
-
     components/texture_registrar.cpp
 
+    compositor/backing_surface.cpp
+    compositor/compositor.cpp
 )
 
 add_library(${THIS} STATIC ${FLUTTER_SRC} ${FLUTTER_HEADERS})
@@ -82,7 +85,8 @@ set_target_properties(${THIS} PROPERTIES POSITION_INDEPENDENT_CODE ${ATT_STATIC_
 
 USES_SDL(${THIS})
 USES_BGFX(${THIS})
-USES_NVG(${THIS})
+#USES_NVG(${THIS})
+USES_VGR(${THIS})
 
 if(${ATT_PLATFORM_WINDOWS})
 add_library(FlutterEngine SHARED IMPORTED)
