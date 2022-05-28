@@ -3,7 +3,7 @@
 #include <condition_variable>
 #include <thread>
 #include <mutex>
-#include <vector>
+#include <list>
 #include <queue>
 
 #include <attacus/flutter/components/flutter_component.h>
@@ -15,6 +15,7 @@ struct Context;
 namespace attacus {
 
 class CompositorFrame;
+class BackingSurface;
 
 class Compositor : public FlutterComponent {
 public:
@@ -23,7 +24,7 @@ public:
     FlutterCompositor* InitCompositor();
     //
     bool DelegatedCreateBackingStore(const FlutterBackingStoreConfig* config, FlutterBackingStore* backing_store_out);
-    bool CreateBackingStore(const FlutterBackingStoreConfig& config, FlutterBackingStore& backing_store_out);
+    bool CreateBackingStore(const FlutterBackingStoreConfig& config, FlutterBackingStore& backing_store_out, BackingSurface& surface);
     
     bool DelegatedCollectBackingStore(const FlutterBackingStore* renderer);
     bool CollectBackingStore(const FlutterBackingStore& renderer);
@@ -32,11 +33,15 @@ public:
     bool PresentLayers(const FlutterLayer** layers, size_t layers_count);
 
     virtual void Draw();
+
+    BackingSurface* AllocSurface(FlutterSize size);
+    void FreeSurface(BackingSurface& surface);
+    BackingSurface* GetCachedSurface();
     // Accessors
-    //std::queue<CompositorFrame*>& frames() { return frames_; }
     // Data members
     FlutterCompositor compositor_;
     std::queue<CompositorFrame*> frames_;
+    std::list<BackingSurface*> free_surfaces_;
     CompositorFrame* frame_ = nullptr;
     //
     vg::Context* vg_ = nullptr;

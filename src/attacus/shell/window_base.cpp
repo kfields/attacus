@@ -80,36 +80,4 @@ void WindowBase::OnResize(SDL_Event& event) {
     OnSize();
 }
 
-/*
-bool WindowBase::Dispatch(SDL_Event& event) {
-    switch (event.type) {
-        case SDL_QUIT:
-            return false;
-        case SDL_WINDOWEVENT:
-            return DispatchWindowEvent(event);
-        }
-    return View::Dispatch(event);
-}
-
-bool WindowBase::DispatchWindowEvent(SDL_Event& event) {
-    Uint8 sdl_window_event = event.window.event;
-    switch (sdl_window_event) {
-        case SDL_WINDOWEVENT_RESIZED:
-            OnResize(event);
-        case SDL_WINDOWEVENT_SIZE_CHANGED:
-            OnSize();
-            break;
-        case SDL_WINDOWEVENT_MOVED:
-        case SDL_WINDOWEVENT_SHOWN:
-            break;
-        case SDL_WINDOWEVENT_EXPOSED:
-            OnShow();
-            break;
-        case SDL_WINDOWEVENT_CLOSE:
-            return false;
-    }
-    return View::DispatchWindowEvent(event);
-}
-*/
-
 } //namespace attacus

@@ -29,7 +29,7 @@ class TextureRegistrar;
 class FlutterView : public GfxView {
 public:
     FlutterView(View& parent, ViewParams params = ViewParams());
-    //FlutterView(const FlutterView&);
+
     template<typename T = FlutterView>
     static T* Produce(View& parent, ViewParams params = ViewParams()) {
         T* c = new T(parent, params);

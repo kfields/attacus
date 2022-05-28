@@ -56,21 +56,14 @@ void GfxWindow::CreateSDLWindow() {
 
     SDL_SetWindowData(sdl_window_, "Window", this);
 
-    /*sdl_renderer_ = SDL_CreateRenderer(sdl_window_, -1, SDL_RENDERER_ACCELERATED);
-
-    if (sdl_renderer_ == nullptr) {
-        std::cout << fmt::format("SDL Renderer could not be created: {}\n", SDL_GetError());
-        return;
-    }*/
-
     /*if (SDL_GL_SetSwapInterval(1) < 0) {
         std::cout << fmt::format("Couldn't enable vsync: {}\n", SDL_GetError());
     }*/
 }
 
 void GfxWindow::PostRender() {
-    bgfx::frame(capture_);
     Window::PostRender();
+    bgfx::frame(capture_);
 }
 
 bool GfxWindow::Dispatch(SDL_Event& event) {

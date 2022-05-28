@@ -61,10 +61,24 @@ bool View::Dispatch(SDL_Event& event) {
     return Surface::Dispatch(event);
 }
 
+void View::PreRender() {
+    for (std::vector<View*>::iterator it = children_.begin(); it != children_.end(); ++it){
+        View* child = *it;
+        child->PreRender();
+    }
+}
+
 void View::Draw() {
     for (std::vector<View*>::iterator it = children_.begin(); it != children_.end(); ++it){
         View* child = *it;
-        child->Render();
+        child->Draw();
+    }
+}
+
+void View::PostRender() {
+    for (std::vector<View*>::iterator it = children_.begin(); it != children_.end(); ++it){
+        View* child = *it;
+        child->PostRender();
     }
 }
 

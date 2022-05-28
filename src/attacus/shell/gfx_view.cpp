@@ -31,7 +31,7 @@ void GfxView::Create() {
 void GfxView::PreRender() {
     View::PreRender();
     SDL_GL_MakeCurrent(sdl_window_, gfx_context_);
-    bgfx::touch(viewId());
+    //bgfx::touch(viewId());
 }
 
 void GfxView::PostRender() {

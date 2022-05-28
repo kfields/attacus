@@ -1,3 +1,4 @@
+#include <array>
 #include <string>
 #include <iostream>
 #include <fmt/core.h>
@@ -35,17 +36,12 @@ void Surface::Destroy() {
 }
 
 void Surface::CreateTexture() {
-    /*const uint64_t tsFlags = 0
-        | BGFX_SAMPLER_MIN_POINT
-        | BGFX_SAMPLER_MAG_POINT
-        | BGFX_SAMPLER_MIP_POINT
-        | BGFX_SAMPLER_U_CLAMP
-        | BGFX_SAMPLER_V_CLAMP
-        ;*/
-    //const uint64_t tsFlags = BGFX_SAMPLER_U_CLAMP | BGFX_SAMPLER_V_CLAMP;
-    //const uint64_t tsFlags = BGFX_SAMPLER_MIN_POINT | BGFX_SAMPLER_MAG_POINT;
-    const uint64_t tsFlags = BGFX_SAMPLER_U_CLAMP | BGFX_SAMPLER_V_CLAMP | BGFX_TEXTURE_RT | BGFX_TEXTURE_SRGB;
+    const uint64_t tsFlags = BGFX_TEXTURE_RT | BGFX_TEXTURE_SRGB;
     texture_ = bgfx::createTexture2D(width(), height(), false, 1, bgfx::TextureFormat::RGBA8, tsFlags);
+
+    /*std::array<bgfx::Attachment, 1> m_attachments{};
+    auto &[colorAttachment] = m_attachments;
+    colorAttachment.init(texture_, bgfx::Access::Write, 0);*/
 }
 
 void Surface::CreateFramebuffer() {

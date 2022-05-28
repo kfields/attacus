@@ -5,48 +5,48 @@
 
 #include <bgfx/utils/utils.h>
 
-#include "flutter_composite_view.h"
+#include "flutter_composite_view_gl.h"
 #include "backing_store.h"
 
 namespace attacus
 {
 
-FlutterCompositeView::FlutterCompositeView(View& parent, ViewParams params) : FlutterView(parent, params)
+FlutterCompositeViewGL::FlutterCompositeViewGL(View& parent, ViewParams params) : FlutterView(parent, params)
 {
 }
 
-void FlutterCompositeView::Create() {
+void FlutterCompositeViewGL::Create() {
     FlutterView::Create();
 
 }
 
-void FlutterCompositeView::InitProjectArgs(FlutterProjectArgs& args) {
+void FlutterCompositeViewGL::InitProjectArgs(FlutterProjectArgs& args) {
     FlutterView::InitProjectArgs(args);
     InitCompositor(compositor_);
     args.compositor = &compositor_;
 }
 
-void FlutterCompositeView::InitCompositor(FlutterCompositor& compositor) {
+void FlutterCompositeViewGL::InitCompositor(FlutterCompositor& compositor) {
     compositor.struct_size = sizeof(FlutterCompositor);
     compositor.user_data = this;
     compositor.create_backing_store_callback =
         [](const FlutterBackingStoreConfig* config, FlutterBackingStore* backing_store_out, void* user_data) -> bool {
-            FlutterCompositeView &self = *static_cast<FlutterCompositeView*>(user_data);
+            FlutterCompositeViewGL &self = *static_cast<FlutterCompositeViewGL*>(user_data);
             return self.CreateBackingStore(*config, *backing_store_out);
         };
     compositor.collect_backing_store_callback =
         [](const FlutterBackingStore* renderer, void* user_data) -> bool {
-            FlutterCompositeView &self = *static_cast<FlutterCompositeView*>(user_data);
+            FlutterCompositeViewGL &self = *static_cast<FlutterCompositeViewGL*>(user_data);
             return self.CollectBackingStore(*renderer);
         };
     compositor.present_layers_callback =
         [](const FlutterLayer** layers, size_t layers_count, void* user_data) -> bool {
-            FlutterCompositeView &self = *static_cast<FlutterCompositeView*>(user_data);
+            FlutterCompositeViewGL &self = *static_cast<FlutterCompositeViewGL*>(user_data);
             return self.PresentLayers(layers, layers_count);
         };
 }
 
-bool FlutterCompositeView::CreateBackingStore(const FlutterBackingStoreConfig& config, FlutterBackingStore& backing_store_out) {
+bool FlutterCompositeViewGL::CreateBackingStore(const FlutterBackingStoreConfig& config, FlutterBackingStore& backing_store_out) {
     FlutterSize size = config.size;
     auto width = size.width; auto height = size.height;
     BackingStore& surface = *BackingStore::Produce<BackingStore>(SurfaceParams(Size(width, height)));
@@ -64,34 +64,37 @@ bool FlutterCompositeView::CreateBackingStore(const FlutterBackingStoreConfig& c
     return true;
 }
 
-bool FlutterCompositeView::CollectBackingStore(const FlutterBackingStore& renderer) {
-    std::lock_guard<std::mutex> guard(guard_mutex_);
+bool FlutterCompositeViewGL::CollectBackingStore(const FlutterBackingStore& renderer) {
     Surface& surface = *static_cast<Surface*>(renderer.user_data);
     surface.Destroy();
     return true;
 }
 
-bool FlutterCompositeView::PresentLayers(const FlutterLayer** layers, size_t layers_count) {
-    std::lock_guard<std::mutex> guard(guard_mutex_);
-    layers_ = layers;
-    layers_count_ = layers_count;
+bool FlutterCompositeViewGL::PresentLayers(const FlutterLayer** layers, size_t layers_count) {
+    SDL_GL_MakeCurrent(sdl_window_, context_);
+    glViewport(0, 0, width(), height());
+    //glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    //glClear(GL_COLOR_BUFFER_BIT);
 
-    /*std::unique_lock<std::mutex> lk(cv_m_);
-    std::cerr << "Waiting... \n";
-    waiting_ = true;
-    cv_.wait(lk, [this]{return waiting_ == false;});
-    std::cerr << "...finished waiting. i == 1\n";*/
+    for (int i = 0; i < layers_count; ++i) {
+        const FlutterLayer& layer = *layers[i];
+        if (layer.type == kFlutterLayerContentTypeBackingStore) {
+            DrawBackingStore(layer);
+        }
+    }
+
+    SDL_GL_SwapWindow(sdl_window_);
 
     return true;
 }
 
-void FlutterCompositeView::Draw() {
+/*void FlutterCompositeViewGL::Draw() {
     std::lock_guard<std::mutex> guard(guard_mutex_);
     //if (!waiting_)
     //    return;
-    /*if (layers_ == nullptr) {
+    if (layers_ == nullptr) {
         return;
-    }*/
+    }
 
     //glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     //glClear(GL_COLOR_BUFFER_BIT);
@@ -105,15 +108,15 @@ void FlutterCompositeView::Draw() {
 
     SDL_GL_SwapWindow(sdl_window_);
 
-    //layers_ = nullptr;
-    //layers_count_ = 0;
+    layers_ = nullptr;
+    layers_count_ = 0;
     //waiting_ = false;
     //cv_.notify_all();
-}
+}*/
 
 #define GLSL(src) "#version 150 core\n" #src
 
-void FlutterCompositeView::DrawBackingStore(const FlutterLayer& layer) {
+void FlutterCompositeViewGL::DrawBackingStore(const FlutterLayer& layer) {
     BackingStore& surface = *static_cast<BackingStore*>(layer.backing_store->user_data);
     int width = surface.width();
     int height = surface.height();
@@ -252,44 +255,5 @@ void FlutterCompositeView::DrawBackingStore(const FlutterLayer& layer) {
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
 }
-/*void FlutterCompositeView::DrawBackingStore(const FlutterLayer& layer) {
-    BackingStore& surface = *static_cast<BackingStore*>(layer.backing_store->user_data);
-    int width = surface.width();
-    int height = surface.height();
-
-    surface.CreateTexture();
-    bgfx::overrideInternal(surface.texture_, surface.texture_id);
-
-
-    float scaleMat[16];
-    float rotateMat[16];
-    float transMat[16];
-    float scale = 1.0f;
-
-    bx::mtxScale(scaleMat, width * scale, height * scale, 1.0f);
-    //bx::mtxRotateXYZ(rotateMat, 0.0f, 0.0f, glm::radians(angle_));
-    //bx::mtxTranslate(transMat, x_, y_, 0.0f);
-
-    //float tmpMat[16];
-    //float tmpMat2[16];
-
-    //bx::mtxMul(tmpMat, scaleMat, rotateMat);
-    //bx::mtxMul(tmpMat2, tmpMat, transMat);
-
-    //bgfx::setTransform(tmpMat2);
-    bgfx::setTransform(scaleMat);
-
-    bgfx::setVertexBuffer(viewId(), vbh_);
-    bgfx::setIndexBuffer(ibh_);
-    bgfx::setTexture(viewId(), uniform_, surface.texture_);
-
-    //uint64_t state = BGFX_STATE_DEFAULT | BGFX_STATE_BLEND_ALPHA;
-    //bgfx::setState(state);
-
-    bgfx::setState(BGFX_STATE_WRITE_RGB|BGFX_STATE_WRITE_A);
-    //bgfx::setState(BGFX_STATE_DEFAULT);
-
-    bgfx::submit(viewId(), program_);
-}*/
 
 } // namespace attacus

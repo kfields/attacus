@@ -23,21 +23,24 @@ FlutterCompositeView::FlutterCompositeView(View& parent, ViewParams params) : Fl
 void FlutterCompositeView::Create() {
     FlutterView::Create();
     bgfx::setViewMode(viewId(), bgfx::ViewMode::Sequential);
+
     /*bgfx::setViewClear(viewId()
         , BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH
+        //, BGFX_CLEAR_NONE
         //, 0x303030ff
         , 0x12345678
         , 1.0f
         , 0
     );*/
 
-    bgfx::setViewRect(viewId(), 0, 0, width(), height());
+    /*bgfx::setViewClear(viewId()
+        , BGFX_CLEAR_COLOR|BGFX_CLEAR_DEPTH|BGFX_CLEAR_STENCIL
+        , 0x303030ff
+        , 1.0f
+        , 0
+        );*/
 
-    float ortho[16];
-    const bgfx::Caps* caps = bgfx::getCaps();
-    bx::mtxOrtho(ortho, 0, width(), height(), 0, 0.0f, 1000.0f, 0.0f, caps->homogeneousDepth);
-    //bx::mtxOrtho(ortho, 0, width(), 0, height(), 0.0f, 1000.0f, 0.0f, caps->homogeneousDepth);
-    bgfx::setViewTransform(viewId(), NULL, ortho);
+    bgfx::setViewRect(viewId(), 0, 0, width(), height());
 
     compositor().Create();
 }
@@ -50,16 +53,15 @@ void FlutterCompositeView::InitProjectArgs(FlutterProjectArgs& args) {
 void FlutterCompositeView::Draw() {
     FlutterView::Draw();
 
-    /*float ortho[16];
-    const bgfx::Caps* caps = bgfx::getCaps();
-    bx::mtxOrtho(ortho, 0, width(), height(), 0, 0.0f, 1000.0f, 0.0f, caps->homogeneousDepth);
-    bgfx::setViewTransform(viewId(), NULL, ortho);*/
-
-
-    // This dummy draw call is here to make sure that view 0 is cleared
-    // if no other draw calls are submitted to view 0.
-    bgfx::touch(viewId());
     compositor().Draw();
+    bgfx::touch(viewId());
+
+    float ortho[16];
+    const bgfx::Caps* caps = bgfx::getCaps();
+    // Flip y
+    bx::mtxOrtho(ortho, 0, width(), 0, height(), 0.0f, 1000.0f, 0.0f, caps->homogeneousDepth);
+    bgfx::setViewTransform(viewId(), NULL, ortho);
+
 }
 
 } // namespace attacus

@@ -55,7 +55,9 @@ public:
 
     bool Dispatch(SDL_Event& event) override;
 
+    void PreRender() override;
     void Draw() override;
+    void PostRender() override;
 
     virtual void Reset(ResetKind kind = ResetKind::kHard) {}
     bgfx::TextureHandle GetTexture() override;

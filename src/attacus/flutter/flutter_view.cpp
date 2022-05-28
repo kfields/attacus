@@ -203,6 +203,7 @@ void FlutterView::OnSize()
 
 void FlutterView::OnShow()
 {
+    GfxView::OnShow();
     FlutterWindowMetricsEvent event = {};
     event.struct_size = sizeof(event);
     event.width = width();

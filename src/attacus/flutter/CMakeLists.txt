@@ -14,7 +14,12 @@ include(${ATT_ROOT}/cmake/VgRenderer.cmake)
 set(FLUTTER_HEADERS
     flutter_embedder.h
     flutter_view.h
+
     flutter_composite_view.h
+
+    flutter_composite_view_gl.h
+    backing_store.h
+
     flutter_messenger.h
     flutter_runner.h
 
@@ -50,6 +55,9 @@ set(FLUTTER_HEADERS
     components/string_conversion.h
     components/texture_registrar.h
 
+    compositor/compositor_layer.h
+    compositor/compositor_frame.h
+    compositor/backing_layer.h
     compositor/backing_surface.h
     compositor/compositor.h
 
@@ -57,7 +65,12 @@ set(FLUTTER_HEADERS
 
 set(FLUTTER_SRC
     flutter_view.cpp
+
     flutter_composite_view.cpp
+
+    flutter_composite_view_gl.cpp
+    backing_store.cpp
+    
     flutter_messenger.cpp
     flutter_runner.cpp
 
@@ -76,6 +89,9 @@ set(FLUTTER_SRC
     components/string_conversion.cpp
     components/texture_registrar.cpp
 
+    compositor/compositor_layer.cpp
+    compositor/compositor_frame.cpp
+    compositor/backing_layer.cpp
     compositor/backing_surface.cpp
     compositor/compositor.cpp
 )
