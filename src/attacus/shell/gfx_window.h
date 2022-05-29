@@ -11,6 +11,7 @@ public:
     void Create() override;
     void CreateSDLWindow() override;
     void Destroy() override;
+    void PreRender() override;
     void PostRender() override;
     bool Dispatch(SDL_Event& event) override;
     // Accessors

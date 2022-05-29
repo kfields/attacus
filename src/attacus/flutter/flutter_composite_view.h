@@ -8,6 +8,13 @@
 
 namespace attacus {
 
+typedef std::chrono::high_resolution_clock clock;
+//typedef std::chrono::steady_clock clock;
+typedef std::chrono::nanoseconds duration;
+typedef duration::rep rep;
+typedef duration::period period;
+typedef std::chrono::time_point<clock, duration> time_point;
+
 class Compositor;
 
 class FlutterCompositeView : public FlutterView {
@@ -17,10 +24,13 @@ public:
     void InitProjectArgs(FlutterProjectArgs& args) override;
     //
     void Draw() override;
+    //
+    virtual void OnVSync(intptr_t baton);
     // Accessors
     Compositor& compositor() { return *compositor_; }
     // Data members
     Compositor* compositor_ = nullptr;
+    std::chrono::nanoseconds start_time_ = std::chrono::nanoseconds::zero();
 };
 
 } //namespace attacus

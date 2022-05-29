@@ -97,7 +97,7 @@ public:
     }
     void Create() override {
         GfxView::Create();
-		timeOffset_ = bx::getHPCounter();
+		time_offset_ = bx::getHPCounter();
 		bgfx::setViewName(viewId(), "NanoVG");
 		bgfx::setViewMode(viewId(), bgfx::ViewMode::Sequential);
 
@@ -123,7 +123,7 @@ public:
 
 		int64_t now = bx::getHPCounter();
 		const double freq = double(bx::getHPFrequency());
-		float time = (float)((now - timeOffset_) / freq);
+		float time = (float)((now - time_offset_) / freq);
 
 		int mx, my;
 		Uint32 mState = SDL_GetMouseState(&mx, &my);
@@ -134,7 +134,7 @@ public:
     }
     //Data members
     NVGcontext* nvg_;
-	int64_t timeOffset_;
+	int64_t time_offset_;
     DemoData data_;
 };
 

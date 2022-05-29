@@ -20,7 +20,7 @@ void* GfxView::gfx_context_ = nullptr;
 static bool initialized_ = false;
 
 GfxView::GfxView(View& parent, ViewParams params) : View(parent, params),
-    timeOffset_(bx::getHPCounter()) {
+    time_offset_(bx::getHPCounter()) {
 }
 
 void GfxView::Create() {

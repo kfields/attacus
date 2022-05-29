@@ -204,14 +204,14 @@ public:
         // Create program from shaders.
         program_ = loadProgram("vs_cubes", "fs_cubes");
 
-        timeOffset_ = bx::getHPCounter();
+        time_offset_ = bx::getHPCounter();
 
     }
 
     virtual void Draw() override {
         GfxView::Draw();
 
-		float time = (float)((bx::getHPCounter() - timeOffset_) / double(bx::getHPFrequency()));
+		float time = (float)((bx::getHPCounter() - time_offset_) / double(bx::getHPFrequency()));
 
 		const bx::Vec3 at = { 0.0f, 0.0f,   0.0f };
 		const bx::Vec3 eye = { 0.0f, 0.0f, -35.0f };
@@ -273,7 +273,7 @@ public:
 	bgfx::VertexBufferHandle vbh_;
 	bgfx::IndexBufferHandle ibh_[BX_COUNTOF(s_ptState)];
 	bgfx::ProgramHandle program_;
-	int64_t timeOffset_;
+	int64_t time_offset_;
 	int32_t pt_;
 
 	bool r_;

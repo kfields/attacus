@@ -22,7 +22,7 @@ public:
     int Run() override;
     //Data members
     State state_;
-    int64_t timeOffset_;
+    int64_t time_offset_;
     bool debug_ = false;
 };
 

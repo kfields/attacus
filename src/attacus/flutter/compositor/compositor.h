@@ -30,7 +30,6 @@ public:
     bool DelegatedCollectBackingStore(const FlutterBackingStore* renderer);
     bool CollectBackingStore(const FlutterBackingStore& renderer);
 
-    bool DelegatedPresentLayers(const FlutterLayer** layers, size_t layers_count);
     bool PresentLayers(const FlutterLayer** layers, size_t layers_count);
 
     virtual void Draw();
@@ -48,10 +47,14 @@ public:
     vg::Context* vg_ = nullptr;
     //
     std::mutex guard_mutex_;
-    std::binary_semaphore render_semaphore_{0};
     std::condition_variable cv_;
     std::mutex cv_m_;
     bool waiting_ = false;
+    //
+    std::mutex render_mutex_;
+    std::condition_variable render_cv_;
+    std::mutex render_cv_m_;
+    bool rendering_ = false;
 };
 
 } //namespace attacus
