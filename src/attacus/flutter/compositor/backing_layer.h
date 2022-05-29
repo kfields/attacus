@@ -17,7 +17,7 @@ public:
     // Data members
     int width_;
     int height_;
-    vg::ImageHandle image_;
+    //vg::ImageHandle image_;
     vg::ImagePatternHandle imgPaint_;
     BackingSurface* surface_ = nullptr;
 };

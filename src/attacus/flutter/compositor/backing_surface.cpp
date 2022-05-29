@@ -16,6 +16,7 @@ void BackingSurface::Create() {
     Surface::Create();
     CreateTexture();
     image_ = createImage(vg_, vg::ImageFlags::Filter_NearestUV, texture_);
+    //imgPaint_ = createImagePattern(vg_, 0, 0, width(), height(), 0.0f, image_);
 }
 
 void BackingSurface::Destroy() {

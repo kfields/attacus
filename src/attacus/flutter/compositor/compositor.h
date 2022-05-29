@@ -3,6 +3,7 @@
 #include <condition_variable>
 #include <thread>
 #include <mutex>
+#include <semaphore>
 #include <list>
 #include <queue>
 
@@ -47,7 +48,7 @@ public:
     vg::Context* vg_ = nullptr;
     //
     std::mutex guard_mutex_;
-
+    std::binary_semaphore render_semaphore_{0};
     std::condition_variable cv_;
     std::mutex cv_m_;
     bool waiting_ = false;

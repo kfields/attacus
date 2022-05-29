@@ -29,7 +29,7 @@ public:
 
     vg::Context* vg_;
     vg::ImageHandle image_;
-    vg::ImagePatternHandle imgPaint_;
+    //vg::ImagePatternHandle imgPaint_;
 
 };
 

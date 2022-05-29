@@ -75,7 +75,8 @@ FlutterCompositor* Compositor::InitCompositor() {
     compositor.present_layers_callback =
         [](const FlutterLayer** layers, size_t layers_count, void* user_data) -> bool {
             Compositor &self = *static_cast<Compositor*>(user_data);
-            bool result = self.DelegatedPresentLayers(layers, layers_count);
+            //bool result = self.DelegatedPresentLayers(layers, layers_count);
+            bool result = self.PresentLayers(layers, layers_count);
             SDL_GL_MakeCurrent(self.view().sdl_window_, self.view().context_);
             return result;
         };
@@ -83,32 +84,6 @@ FlutterCompositor* Compositor::InitCompositor() {
 }
 
 /*bool Compositor::DelegatedCreateBackingStore(const FlutterBackingStoreConfig* config, FlutterBackingStore* backing_store_out) {
-    std::unique_lock<std::mutex> lk(cv_m_);
-    std::cerr << "Waiting... \n";
-    waiting_ = true;
-
-    PushCallbackEvent(new Delegate([this, config, backing_store_out]() -> void {
-        BackingSurface* surface = AllocSurface(config->size);
-        if (surface->used()) {
-            UseBackingStore(*config, *backing_store_out, *surface);
-            waiting_ = false;
-            cv_.notify_all();
-            return;
-        }
-        PushCallbackEvent(new Delegate([this, config, backing_store_out, surface]() -> void {
-            CreateBackingStore(*config, *backing_store_out, *surface);
-            waiting_ = false;
-            cv_.notify_all();
-        }), this);
-    }), this);
-
-    cv_.wait(lk, [this]{return waiting_ == false;});
-    std::cerr << "...finished waiting. i == 1\n";
-
-    return true; //TODO: Need to get result from delegate function
-}*/
-
-bool Compositor::DelegatedCreateBackingStore(const FlutterBackingStoreConfig* config, FlutterBackingStore* backing_store_out) {
     std::unique_lock<std::mutex> lk(cv_m_);
     std::cerr << "Waiting... \n";
     waiting_ = true;
@@ -133,9 +108,9 @@ bool Compositor::DelegatedCreateBackingStore(const FlutterBackingStoreConfig* co
     std::cerr << "...finished waiting. i == 1\n";
 
     return true; //TODO: Need to get result from delegate function
-}
+}*/
 
-/*bool Compositor::DelegatedCreateBackingStore(const FlutterBackingStoreConfig* config, FlutterBackingStore* backing_store_out) {
+bool Compositor::DelegatedCreateBackingStore(const FlutterBackingStoreConfig* config, FlutterBackingStore* backing_store_out) {
     BackingSurface* surface = GetCachedSurface();
     if (surface) {
         return CreateBackingStore(*config, *backing_store_out, *surface);
@@ -158,7 +133,7 @@ bool Compositor::DelegatedCreateBackingStore(const FlutterBackingStoreConfig* co
     std::cerr << "...finished waiting. i == 1\n";
 
     return true; //TODO: Need to get result from delegate function
-}*/
+}
 
 
 BackingSurface* Compositor::AllocSurface(FlutterSize size) {
@@ -183,7 +158,8 @@ BackingSurface* Compositor::GetCachedSurface() {
 }
 
 bool Compositor::CreateBackingStore(const FlutterBackingStoreConfig& config, FlutterBackingStore& backing_store_out, BackingSurface& surface) {
-    SDL_GL_MakeCurrent(view().sdl_window_, view().gfx_context_);
+    std::lock_guard<std::mutex> guard(guard_mutex_);
+
     FlutterSize size = config.size;
     auto width = size.width; auto height = size.height;
 
@@ -203,7 +179,6 @@ bool Compositor::CreateBackingStore(const FlutterBackingStoreConfig& config, Flu
 }
 
 /*bool Compositor::CreateBackingStore(const FlutterBackingStoreConfig& config, FlutterBackingStore& backing_store_out, BackingSurface& surface) {
-    SDL_GL_MakeCurrent(view().sdl_window_, view().gfx_context_);
     bgfx::overrideInternal(surface.texture_, surface.texture_id);
     backing_store_out.user_data = &surface;
     backing_store_out.open_gl.type = kFlutterOpenGLTargetTypeFramebuffer;
@@ -235,8 +210,8 @@ bool Compositor::DelegatedCollectBackingStore(const FlutterBackingStore* rendere
 }
 
 bool Compositor::CollectBackingStore(const FlutterBackingStore& renderer) {
+    std::lock_guard<std::mutex> guard(guard_mutex_);
     return true;
-    //std::lock_guard<std::mutex> guard(guard_mutex_);
     Surface* surface = static_cast<Surface*>(renderer.user_data);
     surface->Destroy();
     return true;
@@ -259,8 +234,31 @@ bool Compositor::DelegatedPresentLayers(const FlutterLayer** layers, size_t laye
     return true; //TODO: Need to get result from delegate function
 }
 
-bool Compositor::PresentLayers(const FlutterLayer** layers, size_t layers_count) {
+/*bool Compositor::PresentLayers(const FlutterLayer** layers, size_t layers_count) {
+    std::lock_guard<std::mutex> guard(guard_mutex_);
     SDL_GL_MakeCurrent(view().sdl_window_, view().gfx_context_);
+
+    CompositorFrame& frame = *new CompositorFrame(*this);
+
+    for (int i = 0; i < layers_count; ++i) {
+        const FlutterLayer& _layer = *layers[i];
+        if (_layer.type == kFlutterLayerContentTypeBackingStore) {
+            BackingSurface& surface = *static_cast<BackingSurface*>(_layer.backing_store->user_data);
+            BackingLayer* layer = new BackingLayer(*this, surface, _layer.offset, _layer.size);
+            layer->Create();
+            frame.AddLayer(layer);
+        }
+    }
+
+    frames_.push(&frame);
+
+    return true;
+}*/
+
+bool Compositor::PresentLayers(const FlutterLayer** layers, size_t layers_count) {
+    std::lock_guard<std::mutex> guard(guard_mutex_);
+
+    //SDL_GL_MakeCurrent(view().sdl_window_, view().gfx_context_);
 
     CompositorFrame& frame = *new CompositorFrame(*this);
 
@@ -280,6 +278,8 @@ bool Compositor::PresentLayers(const FlutterLayer** layers, size_t layers_count)
 }
 
 void Compositor::Draw() {
+    std::lock_guard<std::mutex> guard(guard_mutex_);
+
     if (!frame_ && frames_.empty())
         return;
 
