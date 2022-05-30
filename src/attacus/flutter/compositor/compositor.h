@@ -55,6 +55,8 @@ public:
     std::condition_variable render_cv_;
     std::mutex render_cv_m_;
     bool rendering_ = false;
+    //
+    std::chrono::nanoseconds throttle_ = std::chrono::nanoseconds::zero();
 };
 
 } //namespace attacus

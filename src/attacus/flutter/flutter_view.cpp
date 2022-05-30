@@ -150,6 +150,13 @@ void FlutterView::InitEngine(FlutterRendererConfig& config, FlutterProjectArgs& 
         std::cout << "Could not initialize the Flutter Engine." << std::endl;
         return;
     }
+    engine_api_.struct_size = sizeof(FlutterEngineProcTable);
+    result = FlutterEngineGetProcAddresses(&engine_api_);
+    if (result != kSuccess)
+    {
+        std::cout << "Could not get the Flutter Engine Procedure Table." << std::endl;
+        return;
+    }
 }
 
 void FlutterView::Create()

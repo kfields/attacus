@@ -179,10 +179,10 @@ bool Compositor::CollectBackingStore(const FlutterBackingStore& renderer) {
 }
 
 bool Compositor::PresentLayers(const FlutterLayer** layers, size_t layers_count) {
-    std::lock_guard<std::mutex> guard(render_mutex_);
+    //std::lock_guard<std::mutex> guard(render_mutex_);
 
-    std::unique_lock<std::mutex> lk(render_cv_m_);
-    cv_.wait(lk, [this]{return rendering_ == false;});
+    //std::unique_lock<std::mutex> lk(render_cv_m_);
+    //cv_.wait(lk, [this]{return rendering_ == false;});
 
     CompositorFrame* frame = new CompositorFrame(*this);
 
@@ -197,14 +197,17 @@ bool Compositor::PresentLayers(const FlutterLayer** layers, size_t layers_count)
     }
 
     frames_.push(frame);
+
+    //std::this_thread::sleep_for(throttle_);
+
     return true;
 }
 
 void Compositor::Draw() {
-    std::lock_guard<std::mutex> guard(render_mutex_);
+    //std::lock_guard<std::mutex> guard(render_mutex_);
 
-    rendering_ = true;
-    render_cv_.notify_all();
+    //rendering_ = true;
+    //render_cv_.notify_all();
 
     /*if (!frame_ && frames_.empty())
         return;*/
@@ -239,8 +242,8 @@ void Compositor::Draw() {
 
     vg::frame(vg_);
 
-    rendering_ = false;
-    render_cv_.notify_all();
+    //rendering_ = false;
+    //render_cv_.notify_all();
 
 }
 

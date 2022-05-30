@@ -22,11 +22,16 @@ FlutterCompositeView::FlutterCompositeView(View& parent, ViewParams params) : Fl
 {
     view_id_ = 0;
     compositor_ = new Compositor(*this);
-    start_time_ = std::chrono::nanoseconds(bx::getHPCounter());
 }
 
 void FlutterCompositeView::Create() {
     FlutterView::Create();
+
+    start_time_ = std::chrono::nanoseconds(engine_api_.GetCurrentTime());
+    //start_time_ = std::chrono::nanoseconds(bx::getHPCounter());
+    last_time_ = std::chrono::nanoseconds(engine_api_.GetCurrentTime());
+    //last_time_ = std::chrono::nanoseconds(bx::getHPCounter());
+
     bgfx::setViewMode(viewId(), bgfx::ViewMode::Sequential);
 
     /*bgfx::setViewClear(viewId()
@@ -59,6 +64,10 @@ void FlutterCompositeView::InitProjectArgs(FlutterProjectArgs& args) {
         FlutterCompositeView::PushCallbackEvent(new Delegate([self, baton]() -> void {
             self->OnVSync(baton);
         }), self);
+        /*FlutterCompositeView::PushCallbackEvent(new Delegate([self, baton]() -> void {
+            self->batons_.push(baton);
+        }), self);*/
+        //self->batons_.push(baton);
     };
 
 }
@@ -84,32 +93,54 @@ static std::chrono::nanoseconds SnapToNextTick(
 }
 
 void FlutterCompositeView::OnVSync(intptr_t baton) {
-    //std::chrono::nanoseconds current_time = clock::now();
-  std::chrono::nanoseconds current_time =
-      std::chrono::nanoseconds(bx::getHPCounter());
+    std::chrono::nanoseconds current_time = std::chrono::nanoseconds(engine_api_.GetCurrentTime());
+    //std::chrono::nanoseconds current_time = std::chrono::nanoseconds(bx::getHPCounter());
+    std::chrono::nanoseconds elapsed_time = current_time - last_time_;
+    last_time_ = current_time;
+    compositor().throttle_ = elapsed_time;
 
-    std::chrono::nanoseconds frame_interval(16600000);
+    //std::chrono::nanoseconds frame_interval(elapsed_time);
+    using namespace std::chrono_literals;
+    std::chrono::nanoseconds frame_interval(16ms);
     auto next = SnapToNextTick(current_time, start_time_, frame_interval);
     FlutterEngineResult result = FlutterEngineOnVsync(engine_, baton, next.count(), (next + frame_interval).count());    
 }
 
+/*void FlutterCompositeView::OnVSync(intptr_t baton) {
+    std::chrono::nanoseconds current_time = std::chrono::nanoseconds(engine_api_.GetCurrentTime());
+
+    std::chrono::nanoseconds frame_interval(16600000);
+    auto next = std::chrono::nanoseconds(engine_api_.GetCurrentTime());
+    FlutterEngineResult result = FlutterEngineOnVsync(engine_, baton, next.count(), (next + frame_interval).count());    
+}*/
 
 /*
-static int64_t NanosSinceEpoch(time_point tp) {
-  const auto elapsed = tp.time_since_epoch();
-  return std::chrono::duration_cast<duration>(elapsed).count();
-}
-
+static bool firstCall = true;
 void FlutterCompositeView::OnVSync(intptr_t baton) {
-    time_point tp_start = clock::now();
-    time_point tp_target = tp_start + std::chrono::milliseconds(17);
-    uint64_t start = NanosSinceEpoch(tp_start);
-    //uint64_t start = std::chrono::duration_cast<duration>(tp_start).count();
-    uint64_t target = NanosSinceEpoch(tp_target);
-    //uint64_t target = std::chrono::duration_cast<duration>(tp_target).count();
-    FlutterEngineResult result = FlutterEngineOnVsync(engine_, baton, start, target);
+    std::chrono::nanoseconds current_time = std::chrono::nanoseconds(engine_api_.GetCurrentTime());
+
+    std::chrono::nanoseconds frame_interval(16600000);
+    std::chrono::nanoseconds next = std::chrono::nanoseconds::zero();
+    if (!firstCall) {
+        //next = SnapToNextTick(current_time, start_time_, frame_interval);
+        next = std::chrono::nanoseconds(engine_api_.GetCurrentTime());
+    } else {
+        start_time_ = std::chrono::nanoseconds(engine_api_.GetCurrentTime());
+        firstCall = false;
+    }
+    FlutterEngineResult result = FlutterEngineOnVsync(engine_, baton, next.count(), (next + frame_interval).count());    
 }
 */
+
+void FlutterCompositeView::PreRender() {
+    FlutterView::PreRender();
+    /*while (!batons_.empty()) {
+        auto baton = batons_.front();
+        batons_.pop();
+        OnVSync(baton);
+    }*/
+}
+
 void FlutterCompositeView::Draw() {
     FlutterView::Draw();
 
@@ -121,6 +152,7 @@ void FlutterCompositeView::Draw() {
     // Flip y
     bx::mtxOrtho(ortho, 0, width(), 0, height(), 0.0f, 1000.0f, 0.0f, caps->homogeneousDepth);
     bgfx::setViewTransform(viewId(), NULL, ortho);
+
 
 }
 

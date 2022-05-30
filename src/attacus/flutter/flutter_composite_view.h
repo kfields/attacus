@@ -4,6 +4,7 @@
 #include <thread>
 #include <mutex>
 #include <vector>
+#include <queue>
 #include "flutter_view.h"
 
 namespace attacus {
@@ -23,6 +24,7 @@ public:
     void Create() override;
     void InitProjectArgs(FlutterProjectArgs& args) override;
     //
+    void PreRender() override;
     void Draw() override;
     //
     virtual void OnVSync(intptr_t baton);
@@ -31,6 +33,9 @@ public:
     // Data members
     Compositor* compositor_ = nullptr;
     std::chrono::nanoseconds start_time_ = std::chrono::nanoseconds::zero();
+    std::chrono::nanoseconds last_time_ = std::chrono::nanoseconds::zero();;
+    //intptr_t baton_;
+    std::queue<intptr_t> batons_;
 };
 
 } //namespace attacus

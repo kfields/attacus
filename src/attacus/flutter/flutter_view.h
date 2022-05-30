@@ -74,6 +74,7 @@ public:
     float scaleFactor_ = 1.0f;
     //
     FlutterEngine engine_ = nullptr;
+    FlutterEngineProcTable engine_api_{0};
     FlutterMessenger* messenger_ = nullptr;
     FlutterRunner* runner_ = nullptr;
     //
