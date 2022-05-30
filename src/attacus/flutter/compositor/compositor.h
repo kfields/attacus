@@ -30,6 +30,7 @@ public:
     bool DelegatedCollectBackingStore(const FlutterBackingStore* renderer);
     bool CollectBackingStore(const FlutterBackingStore& renderer);
 
+    bool DelegatedPresentLayers(const FlutterLayer** layers, size_t layers_count);
     bool PresentLayers(const FlutterLayer** layers, size_t layers_count);
 
     virtual void Draw();

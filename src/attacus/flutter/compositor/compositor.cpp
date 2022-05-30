@@ -76,7 +76,8 @@ FlutterCompositor* Compositor::InitCompositor() {
     compositor.present_layers_callback =
         [](const FlutterLayer** layers, size_t layers_count, void* user_data) -> bool {
             Compositor &self = *static_cast<Compositor*>(user_data);
-            bool result = self.PresentLayers(layers, layers_count);
+            bool result = self.DelegatedPresentLayers(layers, layers_count);
+            //bool result = self.PresentLayers(layers, layers_count);
             //SDL_GL_MakeCurrent(self.view().sdl_window_, self.view().context_);
             return result;
         };
@@ -178,11 +179,25 @@ bool Compositor::CollectBackingStore(const FlutterBackingStore& renderer) {
     return true;
 }
 
+bool Compositor::DelegatedPresentLayers(const FlutterLayer** layers, size_t layers_count) {
+    std::unique_lock<std::mutex> lk(cv_m_);
+    //std::cerr << "Waiting... \n";
+    waiting_ = true;
+
+    FlutterView::PushCallbackEvent(new Delegate([this, layers, layers_count]() -> void {
+            PresentLayers(layers, layers_count);
+            waiting_ = false;
+            cv_.notify_all();
+        }), this);
+
+    cv_.wait(lk, [this] {return waiting_ == false; });
+    //std::cerr << "...finished waiting.";
+
+    return true; //TODO: Need to get result from delegate function
+}
+
 bool Compositor::PresentLayers(const FlutterLayer** layers, size_t layers_count) {
     //std::lock_guard<std::mutex> guard(render_mutex_);
-
-    //std::unique_lock<std::mutex> lk(render_cv_m_);
-    //cv_.wait(lk, [this]{return rendering_ == false;});
 
     CompositorFrame* frame = new CompositorFrame(*this);
 
@@ -197,6 +212,10 @@ bool Compositor::PresentLayers(const FlutterLayer** layers, size_t layers_count)
     }
 
     frames_.push(frame);
+
+    /*rendering_ = true;
+    std::unique_lock<std::mutex> lk(render_cv_m_);
+    render_cv_.wait(lk, [this]{return rendering_ == false;});*/
 
     //std::this_thread::sleep_for(throttle_);
 
@@ -231,20 +250,22 @@ void Compositor::Draw() {
         vg::end(vg_);
     }*/
 
+    bool hasFrames = !frames_.empty();
     while (!frames_.empty()) {
-        auto front = frames_.front();
+        auto frame = frames_.front();
         frames_.pop();
         vg::begin(vg_, view().viewId(), view().width(), view().height(), 1.0f);
-        front->Draw();
+        frame->Draw();
         vg::end(vg_);
-        front->Destroy();
+        frame->Destroy();
     }
 
     vg::frame(vg_);
 
-    //rendering_ = false;
-    //render_cv_.notify_all();
-
+    if (hasFrames) {
+        rendering_ = false;
+        render_cv_.notify_all();
+    }
 }
 
 

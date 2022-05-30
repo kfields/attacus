@@ -27,10 +27,10 @@ FlutterCompositeView::FlutterCompositeView(View& parent, ViewParams params) : Fl
 void FlutterCompositeView::Create() {
     FlutterView::Create();
 
-    start_time_ = std::chrono::nanoseconds(engine_api_.GetCurrentTime());
-    //start_time_ = std::chrono::nanoseconds(bx::getHPCounter());
-    last_time_ = std::chrono::nanoseconds(engine_api_.GetCurrentTime());
-    //last_time_ = std::chrono::nanoseconds(bx::getHPCounter());
+    //start_time_ = std::chrono::nanoseconds(engine_api_.GetCurrentTime());
+    start_time_ = std::chrono::nanoseconds(bx::getHPCounter()*16);
+    //last_time_ = std::chrono::nanoseconds(engine_api_.GetCurrentTime());
+    last_time_ = std::chrono::nanoseconds(bx::getHPCounter()*16);
 
     bgfx::setViewMode(viewId(), bgfx::ViewMode::Sequential);
 
@@ -67,19 +67,9 @@ void FlutterCompositeView::InitProjectArgs(FlutterProjectArgs& args) {
         /*FlutterCompositeView::PushCallbackEvent(new Delegate([self, baton]() -> void {
             self->batons_.push(baton);
         }), self);*/
-        //self->batons_.push(baton);
     };
 
 }
-
-/*
-FlutterEngineResult FlutterEngineOnVsync(FLUTTER_API_SYMBOL(FlutterEngine)
-                                             engine,
-                                         intptr_t baton,
-                                         uint64_t frame_start_time_nanos,
-                                         uint64_t frame_target_time_nanos);
-
-*/
 
 // Lifted from vsync_waiter_fallback.cc
 static std::chrono::nanoseconds SnapToNextTick(
@@ -93,59 +83,42 @@ static std::chrono::nanoseconds SnapToNextTick(
 }
 
 void FlutterCompositeView::OnVSync(intptr_t baton) {
+    //std::chrono::nanoseconds current_time = std::chrono::nanoseconds(engine_api_.GetCurrentTime());
+    std::chrono::nanoseconds current_time = std::chrono::nanoseconds(bx::getHPCounter()*16);
+    std::chrono::nanoseconds elapsed_time = current_time - last_time_;
+    last_time_ = current_time;
+
+    //std::chrono::nanoseconds frame_interval(elapsed_time);
+    using namespace std::chrono_literals;
+    std::chrono::nanoseconds frame_interval(16ms);
+    auto next = SnapToNextTick(current_time, start_time_, frame_interval);
+    FlutterEngineResult result = FlutterEngineOnVsync(engine_, baton, next.count(), (next + frame_interval).count());
+    //TODO: Solve the vsync problem!!!
+    //FlutterEngineResult result = FlutterEngineOnVsync(engine_, baton, 0, 0);  
+}
+
+void FlutterCompositeView::PostRender() {
+    FlutterView::PostRender();
+
     std::chrono::nanoseconds current_time = std::chrono::nanoseconds(engine_api_.GetCurrentTime());
     //std::chrono::nanoseconds current_time = std::chrono::nanoseconds(bx::getHPCounter());
     std::chrono::nanoseconds elapsed_time = current_time - last_time_;
     last_time_ = current_time;
     compositor().throttle_ = elapsed_time;
 
-    //std::chrono::nanoseconds frame_interval(elapsed_time);
-    using namespace std::chrono_literals;
-    std::chrono::nanoseconds frame_interval(16ms);
-    auto next = SnapToNextTick(current_time, start_time_, frame_interval);
-    FlutterEngineResult result = FlutterEngineOnVsync(engine_, baton, next.count(), (next + frame_interval).count());    
-}
-
-/*void FlutterCompositeView::OnVSync(intptr_t baton) {
-    std::chrono::nanoseconds current_time = std::chrono::nanoseconds(engine_api_.GetCurrentTime());
-
-    std::chrono::nanoseconds frame_interval(16600000);
-    auto next = std::chrono::nanoseconds(engine_api_.GetCurrentTime());
-    FlutterEngineResult result = FlutterEngineOnVsync(engine_, baton, next.count(), (next + frame_interval).count());    
-}*/
-
-/*
-static bool firstCall = true;
-void FlutterCompositeView::OnVSync(intptr_t baton) {
-    std::chrono::nanoseconds current_time = std::chrono::nanoseconds(engine_api_.GetCurrentTime());
-
-    std::chrono::nanoseconds frame_interval(16600000);
-    std::chrono::nanoseconds next = std::chrono::nanoseconds::zero();
-    if (!firstCall) {
-        //next = SnapToNextTick(current_time, start_time_, frame_interval);
-        next = std::chrono::nanoseconds(engine_api_.GetCurrentTime());
-    } else {
-        start_time_ = std::chrono::nanoseconds(engine_api_.GetCurrentTime());
-        firstCall = false;
-    }
-    FlutterEngineResult result = FlutterEngineOnVsync(engine_, baton, next.count(), (next + frame_interval).count());    
-}
-*/
-
-void FlutterCompositeView::PreRender() {
-    FlutterView::PreRender();
-    /*while (!batons_.empty()) {
+    while (!batons_.empty()) {
         auto baton = batons_.front();
         batons_.pop();
         OnVSync(baton);
-    }*/
+    }
 }
 
 void FlutterCompositeView::Draw() {
     FlutterView::Draw();
 
-    compositor().Draw();
     bgfx::touch(viewId());
+
+    compositor().Draw();
 
     float ortho[16];
     const bgfx::Caps* caps = bgfx::getCaps();

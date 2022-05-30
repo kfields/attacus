@@ -85,6 +85,9 @@ void GfxView::CreateGfx() {
             InitGfx();
         }
     }
+    if (SDL_GL_SetSwapInterval(1) < 0) {
+        std::cout << fmt::format("Couldn't enable vsync: {}\n", SDL_GetError());
+    }
 }
 
 void GfxView::CreateFramebuffer() {

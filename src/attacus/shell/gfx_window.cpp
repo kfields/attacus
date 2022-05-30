@@ -55,10 +55,6 @@ void GfxWindow::CreateSDLWindow() {
     MapWindow(windowId(), this);
 
     SDL_SetWindowData(sdl_window_, "Window", this);
-
-    /*if (SDL_GL_SetSwapInterval(1) < 0) {
-        std::cout << fmt::format("Couldn't enable vsync: {}\n", SDL_GetError());
-    }*/
 }
 
 void GfxWindow::PreRender() {

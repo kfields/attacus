@@ -24,7 +24,7 @@ public:
     void Create() override;
     void InitProjectArgs(FlutterProjectArgs& args) override;
     //
-    void PreRender() override;
+    void PostRender() override;
     void Draw() override;
     //
     virtual void OnVSync(intptr_t baton);
