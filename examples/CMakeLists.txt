@@ -21,8 +21,13 @@ USES_BGFX(${THIS})
 
 add_subdirectory(00-helloworld)
 add_subdirectory(01-methodchannel)
-add_subdirectory(10-cubes)
-add_subdirectory(11-flutter-cubes)
-add_subdirectory(12-compositor)
-add_subdirectory(13-compositor-gl)
-add_subdirectory(20-nanovg)
+
+add_subdirectory(10-flutter-cubes)
+
+add_subdirectory(20-compositor-vg)
+add_subdirectory(21-compositor-vg-cubes)
+
+add_subdirectory(40-compositor-gl)
+
+add_subdirectory(101-cubes)
+add_subdirectory(120-nanovg)

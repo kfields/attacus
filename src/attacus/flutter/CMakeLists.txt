@@ -15,7 +15,7 @@ set(FLUTTER_HEADERS
     flutter_embedder.h
     flutter_view.h
 
-    flutter_composite_view.h
+    flutter_composite_view_vg.h
 
     flutter_composite_view_gl.h
     backing_store.h
@@ -55,18 +55,18 @@ set(FLUTTER_HEADERS
     components/string_conversion.h
     components/texture_registrar.h
 
-    compositor/compositor_layer.h
-    compositor/compositor_frame.h
-    compositor/backing_layer.h
-    compositor/backing_surface.h
-    compositor/compositor.h
+    compositor/vg/compositor_layer_vg.h
+    compositor/vg/compositor_frame_vg.h
+    compositor/vg/backing_layer_vg.h
+    compositor/vg/backing_surface_vg.h
+    compositor/vg/compositor_vg.h
 
 )
 
 set(FLUTTER_SRC
     flutter_view.cpp
 
-    flutter_composite_view.cpp
+    flutter_composite_view_vg.cpp
 
     flutter_composite_view_gl.cpp
     backing_store.cpp
@@ -89,11 +89,11 @@ set(FLUTTER_SRC
     components/string_conversion.cpp
     components/texture_registrar.cpp
 
-    compositor/compositor_layer.cpp
-    compositor/compositor_frame.cpp
-    compositor/backing_layer.cpp
-    compositor/backing_surface.cpp
-    compositor/compositor.cpp
+    compositor/vg/compositor_layer_vg.cpp
+    compositor/vg/compositor_frame_vg.cpp
+    compositor/vg/backing_layer_vg.cpp
+    compositor/vg/backing_surface_vg.cpp
+    compositor/vg/compositor_vg.cpp
 )
 
 add_library(${THIS} STATIC ${FLUTTER_SRC} ${FLUTTER_HEADERS})
