@@ -8,11 +8,10 @@
 
 #include "flutter_component.h"
 
-#include <attacus/shell/surface.h>
-
 namespace attacus
 {
-
+    class Surface;
+    
     class TextureRegistrar : public FlutterComponent
     {
     public:

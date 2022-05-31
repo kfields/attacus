@@ -1,5 +1,7 @@
 #include <iostream>
 
+#include <attacus/shell/surface.h>
+
 #include <attacus/flutter/flutter_view.h>
 
 #include "texture_registrar.h"

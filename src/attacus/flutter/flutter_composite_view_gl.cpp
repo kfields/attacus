@@ -81,13 +81,14 @@ bool FlutterCompositeViewGL::PresentLayers(const FlutterLayer** layers, size_t l
     SDL_GL_MakeCurrent(sdl_window_, context_);
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     glViewport(0, 0, width(), height());
-    //glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-    glClearColor(128.0f, 128.0f, 128.0f, 1.0f);
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 
     for (int i = 0; i < layers_count; ++i) {
         const FlutterLayer& layer = *layers[i];
         if (layer.type == kFlutterLayerContentTypeBackingStore) {
+            DrawBackingStore(layer);
+        } else if (layer.type == kFlutterLayerContentTypePlatformView) {
             DrawBackingStore(layer);
         }
     }
@@ -113,16 +114,6 @@ void FlutterCompositeViewGL::DrawBackingStore(const FlutterLayer& layer) {
     GLuint vbo;
     glGenBuffers(1, &vbo);
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
-
-    /*    
-    float vertices[] = {
-    //  Position      Color             Texcoords
-        -1.0f,  1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, // Top-left
-        1.0f,  1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f, // Top-right
-        1.0f, -1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, // Bottom-right
-        -1.0f, -1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f  // Bottom-left
-    };
-    */
 
     float vertices[] = {
     //  Position      Color             Texcoords

@@ -30,6 +30,8 @@ add_subdirectory(21-compositor-vg-cubes)
 add_subdirectory(30-compositor-gfx)
 
 add_subdirectory(40-compositor-gl)
+add_subdirectory(41-compositor-gl-cubes)
+add_subdirectory(42-compositor-gl-view)
 
 add_subdirectory(101-cubes)
 add_subdirectory(120-nanovg)
