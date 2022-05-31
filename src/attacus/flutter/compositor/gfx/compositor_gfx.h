@@ -15,17 +15,17 @@ struct Context;
 
 namespace attacus {
 
-class CompositorFrameVg;
-class BackingSurfaceVg;
+class CompositorFrameGfx;
+class BackingSurfaceGfx;
 
-class CompositorVg : public FlutterComponent {
+class CompositorGfx : public FlutterComponent {
 public:
-    CompositorVg(FlutterView& view);
+    CompositorGfx(FlutterView& view);
     void Create() override;
     FlutterCompositor* InitCompositor();
     //
     bool DelegatedCreateBackingStore(const FlutterBackingStoreConfig* config, FlutterBackingStore* backing_store_out);
-    bool CreateBackingStore(const FlutterBackingStoreConfig& config, FlutterBackingStore& backing_store_out, BackingSurfaceVg& surface);
+    bool CreateBackingStore(const FlutterBackingStoreConfig& config, FlutterBackingStore& backing_store_out, BackingSurfaceGfx& surface);
     
     bool DelegatedCollectBackingStore(const FlutterBackingStore* renderer);
     bool CollectBackingStore(const FlutterBackingStore& renderer);
@@ -35,15 +35,15 @@ public:
 
     virtual void Draw();
 
-    BackingSurfaceVg* AllocSurface(FlutterSize size);
-    void FreeSurface(BackingSurfaceVg& surface);
-    BackingSurfaceVg* GetCachedSurface();
+    BackingSurfaceGfx* AllocSurface(FlutterSize size);
+    void FreeSurface(BackingSurfaceGfx& surface);
+    BackingSurfaceGfx* GetCachedSurface();
     // Accessors
     // Data members
     FlutterCompositor compositor_;
-    std::queue<CompositorFrameVg*> frames_;
-    std::list<BackingSurfaceVg*> free_surfaces_;
-    CompositorFrameVg* frame_ = nullptr;
+    std::queue<CompositorFrameGfx*> frames_;
+    std::list<BackingSurfaceGfx*> free_surfaces_;
+    CompositorFrameGfx* frame_ = nullptr;
     //
     vg::Context* vg_ = nullptr;
     //
@@ -51,6 +51,13 @@ public:
     std::condition_variable cv_;
     std::mutex cv_m_;
     bool waiting_ = false;
+    //
+    std::mutex render_mutex_;
+    std::condition_variable render_cv_;
+    std::mutex render_cv_m_;
+    bool rendering_ = false;
+    //
+    std::chrono::nanoseconds throttle_ = std::chrono::nanoseconds::zero();
 };
 
 } //namespace attacus

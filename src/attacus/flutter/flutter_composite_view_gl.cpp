@@ -44,9 +44,11 @@ void FlutterCompositeViewGL::InitCompositor(FlutterCompositor& compositor) {
             FlutterCompositeViewGL &self = *static_cast<FlutterCompositeViewGL*>(user_data);
             return self.PresentLayers(layers, layers_count);
         };
+    compositor.avoid_backing_store_cache = false;
 }
 
 bool FlutterCompositeViewGL::CreateBackingStore(const FlutterBackingStoreConfig& config, FlutterBackingStore& backing_store_out) {
+    SDL_GL_MakeCurrent(sdl_window_, context_);
     FlutterSize size = config.size;
     auto width = size.width; auto height = size.height;
     BackingStore& surface = *BackingStore::Produce<BackingStore>(SurfaceParams(Size(width, height)));
@@ -66,6 +68,7 @@ bool FlutterCompositeViewGL::CreateBackingStore(const FlutterBackingStoreConfig&
 
 bool FlutterCompositeViewGL::CollectBackingStore(const FlutterBackingStore& renderer) {
     Surface& surface = *static_cast<Surface*>(renderer.user_data);
+    return true;
     surface.Destroy();
     return true;
 }
@@ -74,7 +77,8 @@ bool FlutterCompositeViewGL::PresentLayers(const FlutterLayer** layers, size_t l
     SDL_GL_MakeCurrent(sdl_window_, context_);
     glViewport(0, 0, width(), height());
     //glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-    //glClear(GL_COLOR_BUFFER_BIT);
+    glClearColor(128.0f, 128.0f, 128.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
 
     for (int i = 0; i < layers_count; ++i) {
         const FlutterLayer& layer = *layers[i];
@@ -87,32 +91,6 @@ bool FlutterCompositeViewGL::PresentLayers(const FlutterLayer** layers, size_t l
 
     return true;
 }
-
-/*void FlutterCompositeViewGL::Draw() {
-    std::lock_guard<std::mutex> guard(guard_mutex_);
-    //if (!waiting_)
-    //    return;
-    if (layers_ == nullptr) {
-        return;
-    }
-
-    //glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-    //glClear(GL_COLOR_BUFFER_BIT);
-
-    for (int i = 0; i < layers_count_; ++i) {
-        const FlutterLayer& layer = *layers_[i];
-        if (layer.type == kFlutterLayerContentTypeBackingStore) {
-            DrawBackingStore(layer);
-        }
-    }
-
-    SDL_GL_SwapWindow(sdl_window_);
-
-    layers_ = nullptr;
-    layers_count_ = 0;
-    //waiting_ = false;
-    //cv_.notify_all();
-}*/
 
 #define GLSL(src) "#version 150 core\n" #src
 
@@ -177,7 +155,6 @@ void FlutterCompositeViewGL::DrawBackingStore(const FlutterLayer& layer) {
     // Create and compile the fragment shader
     const char* fragmentSource = GLSL(
         uniform sampler2D tex0;
-        //uniform sampler2D tex1;
 
         in vec3 Color;
         in vec2 Texcoord;
@@ -201,39 +178,6 @@ void FlutterCompositeViewGL::DrawBackingStore(const FlutterLayer& layer) {
     glBindFragDataLocation(shaderProgram, 0, "outColor");
     glLinkProgram(shaderProgram);
     glUseProgram(shaderProgram);
-
-    // Create 2 textures and load images to them
-    /*GLuint textures[2];
-    glGenTextures(2, textures);
-
-    int width, height, comp = 0;
-    unsigned char* img = 0;
-
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, textures[0]);
-    img = stbi_load("Content/sample.png", &width, &height, &comp, 0);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, img);
-    glUniform1i(glGetUniformLocation(shaderProgram, "tex0"), 0);
-
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-    stbi_image_free(img);
-
-    glActiveTexture(GL_TEXTURE1);
-    glBindTexture(GL_TEXTURE_2D, textures[1]);
-    img = stbi_load("Content/sample2.png", &width, &height, &comp, 0);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, img);
-    glUniform1i(glGetUniformLocation(shaderProgram, "tex1"), 1);
-
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-    stbi_image_free(img);*/
 
     // Specify the layout of the vertex data
     glActiveTexture(GL_TEXTURE0);

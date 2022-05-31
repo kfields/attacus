@@ -27,6 +27,8 @@ add_subdirectory(10-flutter-cubes)
 add_subdirectory(20-compositor-vg)
 add_subdirectory(21-compositor-vg-cubes)
 
+add_subdirectory(30-compositor-gfx)
+
 add_subdirectory(40-compositor-gl)
 
 add_subdirectory(101-cubes)

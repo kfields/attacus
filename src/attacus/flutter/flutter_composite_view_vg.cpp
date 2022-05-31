@@ -104,7 +104,6 @@ void FlutterCompositeViewVg::PostRender() {
     //std::chrono::nanoseconds current_time = std::chrono::nanoseconds(bx::getHPCounter());
     std::chrono::nanoseconds elapsed_time = current_time - last_time_;
     last_time_ = current_time;
-    compositor().throttle_ = elapsed_time;
 
     while (!batons_.empty()) {
         auto baton = batons_.front();

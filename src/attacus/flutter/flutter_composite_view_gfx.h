@@ -2,37 +2,40 @@
 
 #include <condition_variable>
 #include <thread>
-
+#include <mutex>
+#include <vector>
+#include <queue>
 #include "flutter_view.h"
 
 namespace attacus {
 
-class FlutterCompositeView : public FlutterView {
+typedef std::chrono::high_resolution_clock clock;
+//typedef std::chrono::steady_clock clock;
+typedef std::chrono::nanoseconds duration;
+typedef duration::rep rep;
+typedef duration::period period;
+typedef std::chrono::time_point<clock, duration> time_point;
+
+class CompositorGfx;
+
+class FlutterCompositeViewGfx : public FlutterView {
 public:
-    FlutterCompositeView(View& parent, ViewParams params = ViewParams());
+    FlutterCompositeViewGfx(View& parent, ViewParams params = ViewParams());
     void Create() override;
     void InitProjectArgs(FlutterProjectArgs& args) override;
-    void InitCompositor(FlutterCompositor& compositor);
     //
-    bool CreateBackingStore(const FlutterBackingStoreConfig& config, FlutterBackingStore& backing_store_out);
-    bool CollectBackingStore(const FlutterBackingStore& renderer);
-    bool PresentLayers(const FlutterLayer** layers, size_t layers_count);
-    void ScreenSpaceQuad(float _textureWidth, float _textureHeight, bool _originBottomLeft = false, float _width = 1.0f, float _height = 1.0f);
-
+    void PostRender() override;
     void Draw() override;
-    void DrawBackingStore(const FlutterLayer& layer);
-    // Data members
-    FlutterCompositor compositor_;
-    const FlutterLayer** layers_ = nullptr;
-    size_t layers_count_ = 0;
-    std::condition_variable cv_;
-    std::mutex cv_m_;
-    bool waiting_ = false;
     //
-    bgfx::ProgramHandle program_;
-    bgfx::UniformHandle uniform_;
-    bgfx::VertexBufferHandle vbh_;
-    bgfx::IndexBufferHandle ibh_;
+    virtual void OnVSync(intptr_t baton);
+    // Accessors
+    CompositorGfx& compositor() { return *compositor_; }
+    // Data members
+    CompositorGfx* compositor_ = nullptr;
+    std::chrono::nanoseconds start_time_ = std::chrono::nanoseconds::zero();
+    std::chrono::nanoseconds last_time_ = std::chrono::nanoseconds::zero();;
+    //intptr_t baton_;
+    std::queue<intptr_t> batons_;
 };
 
 } //namespace attacus

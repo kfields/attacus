@@ -219,7 +219,6 @@ public:
 			bx::mtxProj(proj, 60.0f, float(width()) / float(height()), 0.1f, 100.0f, bgfx::getCaps()->homogeneousDepth);
 			bgfx::setViewTransform(viewId(), view, proj);
 
-			// Set view 0 default viewport.
 			bgfx::setViewRect(viewId(), 0, 0, uint16_t(width()), uint16_t(height()));
 		}
 
