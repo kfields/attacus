@@ -1,9 +1,13 @@
 #include <iostream>
 
-#include <bgfx/bgfx.h>
+/*#include <bgfx/bgfx.h>
 #include <bgfx/platform.h>
+#include <bgfx/utils/utils.h>*/
 
-#include <bgfx/utils/utils.h>
+#include <glad/gl.h>
+#include <SDL.h>
+
+#include <SDL_opengl.h>
 
 #include "flutter_composite_view_gl.h"
 #include "backing_store.h"
@@ -75,6 +79,7 @@ bool FlutterCompositeViewGL::CollectBackingStore(const FlutterBackingStore& rend
 
 bool FlutterCompositeViewGL::PresentLayers(const FlutterLayer** layers, size_t layers_count) {
     SDL_GL_MakeCurrent(sdl_window_, context_);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
     glViewport(0, 0, width(), height());
     //glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClearColor(128.0f, 128.0f, 128.0f, 1.0f);
@@ -109,12 +114,22 @@ void FlutterCompositeViewGL::DrawBackingStore(const FlutterLayer& layer) {
     glGenBuffers(1, &vbo);
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
 
+    /*    
     float vertices[] = {
     //  Position      Color             Texcoords
-        -0.5f,  0.5f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, // Top-left
-         0.5f,  0.5f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, // Top-right
-         0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, // Bottom-right
-        -0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f  // Bottom-left
+        -1.0f,  1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, // Top-left
+        1.0f,  1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f, // Top-right
+        1.0f, -1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, // Bottom-right
+        -1.0f, -1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f  // Bottom-left
+    };
+    */
+
+    float vertices[] = {
+    //  Position      Color             Texcoords
+        -1.0f,  1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f, // Top-left
+        1.0f,  1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, // Top-right
+        1.0f, -1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f, // Bottom-right
+        -1.0f, -1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f  // Bottom-left
     };
 
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
