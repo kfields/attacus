@@ -55,7 +55,7 @@ set(FLUTTER_HEADERS
     components/text_range.h
     components/string_conversion.h
     components/texture_registrar.h
-    components/view_registrar.h
+    components/view_registry.h
 
     compositor/vg/compositor_layer_vg.h
     compositor/vg/compositor_frame_vg.h
@@ -97,7 +97,7 @@ set(FLUTTER_SRC
     components/text_input_model.cpp
     components/string_conversion.cpp
     components/texture_registrar.cpp
-    components/view_registrar.cpp
+    components/view_registry.cpp
 
     compositor/vg/compositor_layer_vg.cpp
     compositor/vg/compositor_frame_vg.cpp

@@ -1,11 +1,11 @@
-import 'dart:async';
-import 'dart:typed_data';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+
+import 'controller.dart';
+import 'render.dart';
 
 class AttacusViewService {
   static AttacusViewController initAttacusView({
@@ -16,7 +16,7 @@ class AttacusViewService {
     MessageCodec<dynamic>? creationParamsCodec,
     VoidCallback? onFocus,
   }) {
-    final AttacusViewController controller = AttacusViewController._(
+    final AttacusViewController controller = AttacusViewController(
       viewId: id,
       viewType: viewType,
       //layoutDirection: layoutDirection,
@@ -29,74 +29,32 @@ class AttacusViewService {
   }
 }
 
-class AttacusViewController extends PlatformViewController {
-  static const MethodChannel _channel = MethodChannel('attacus/view');
-
-  AttacusViewController._({
-    required this.viewId,
-    required String viewType,
-    //required TextDirection layoutDirection,
-    dynamic creationParams,
-    MessageCodec<dynamic>? creationParamsCodec,
-  })  : _viewType = viewType,
-        //_layoutDirection = layoutDirection,
-        _creationParams = creationParams,
-        _creationParamsCodec = creationParamsCodec;
-
-  @override
-  final int viewId;
-
-  final String _viewType;
-
-  final dynamic _creationParams;
-
-  final MessageCodec<dynamic>? _creationParamsCodec;
-
-  @override
-  Future<void> create({Size? size}) async {
-    await _sendCreateMessage(size: size);
-  }
-
-  Future<void> _sendCreateMessage({Size? size}) {
-    final Map<String, dynamic> args = <String, dynamic>{
-      'id': viewId,
-      'viewType': _viewType,
-      'width': size?.width,
-      'height': size?.height
-    };
-    if (_creationParams != null) {
-      final ByteData paramsByteData =
-          _creationParamsCodec!.encodeMessage(_creationParams)!;
-      args['params'] = Uint8List.view(
-        paramsByteData.buffer,
-        0,
-        paramsByteData.lengthInBytes,
-      );
-    }
-    return SystemChannels.platform_views.invokeMethod<void>('create', args);
+class AttacusViewSurface extends PlatformViewSurface {
+  AttacusViewSurface({
+    super.key,
+    required AttacusViewController super.controller,
+    required super.hitTestBehavior,
+    required super.gestureRecognizers,
+  }) {
+    print('AttacusViewSurface');
   }
 
   @override
-  Future<void> clearFocus() {
-    // TODO: implement clearFocus
-    throw UnimplementedError();
+  RenderObject createRenderObject(BuildContext context) {
+    print('createRenderObject');
+    final AttacusViewController viewController =
+        controller as AttacusViewController;
+    // Use GL texture based composition.
+    // App should use GL texture unless they require to embed a SurfaceView.
+    final RenderAttacusView renderBox = RenderAttacusView(
+      viewController: viewController,
+      gestureRecognizers: gestureRecognizers,
+      hitTestBehavior: hitTestBehavior,
+    );
+    /*viewController.pointTransformer =
+        (Offset position) => renderBox.globalToLocal(position);*/
+    return renderBox;
   }
-
-  @override
-  Future<void> dispatchPointerEvent(PointerEvent event) {
-    // TODO: implement dispatchPointerEvent
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<void> dispose() async {
-    await _channel.invokeMethod('dispose', {'viewId': viewId});
-  }
-
-  /*@override
-  int get viewId {
-    return _viewId;
-  }*/
 }
 
 class _AttacusPlatformViewState extends State<AttacusPlatformView> {
@@ -107,13 +65,13 @@ class _AttacusPlatformViewState extends State<AttacusPlatformView> {
       onCreatePlatformView: _onPlatformViewCreated,
       surfaceFactory:
           (BuildContext context, PlatformViewController controller) {
-        return PlatformViewSurface(
+        return AttacusViewSurface(
           gestureRecognizers: <Factory<OneSequenceGestureRecognizer>>[
             Factory<OneSequenceGestureRecognizer>(
               () => EagerGestureRecognizer(),
             ),
           ].toSet(),
-          controller: controller,
+          controller: controller as AttacusViewController,
           hitTestBehavior: PlatformViewHitTestBehavior.opaque,
         );
       },
@@ -126,10 +84,13 @@ class _AttacusPlatformViewState extends State<AttacusPlatformView> {
 
   PlatformViewController _onPlatformViewCreated(
       PlatformViewCreationParams params) {
-    return AttacusViewService.initAttacusView(
-      id: params.id,
-      viewType: params.viewType,
-    );
+    var controller = AttacusViewService.initAttacusView(
+        //id: params.id, viewType: params.viewType, creationParams: params);
+        id: params.id,
+        viewType: params.viewType);
+
+    params.onPlatformViewCreated(params.id);
+    return controller;
   }
 }
 

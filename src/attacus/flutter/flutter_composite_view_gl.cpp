@@ -10,6 +10,7 @@
 #include <SDL_opengl.h>
 
 #include "flutter_composite_view_gl.h"
+#include "components/view_registry.h"
 #include "backing_store.h"
 
 namespace attacus
@@ -87,9 +88,9 @@ bool FlutterCompositeViewGL::PresentLayers(const FlutterLayer** layers, size_t l
     for (int i = 0; i < layers_count; ++i) {
         const FlutterLayer& layer = *layers[i];
         if (layer.type == kFlutterLayerContentTypeBackingStore) {
-            DrawBackingStore(layer);
+            PresentBackingStore(*layer.backing_store, layer.offset, layer.size);
         } else if (layer.type == kFlutterLayerContentTypePlatformView) {
-            DrawBackingStore(layer);
+            PresentPlatformView(*layer.platform_view, layer.offset, layer.size);
         }
     }
 
@@ -100,12 +101,22 @@ bool FlutterCompositeViewGL::PresentLayers(const FlutterLayer** layers, size_t l
 
 #define GLSL(src) "#version 150 core\n" #src
 
-void FlutterCompositeViewGL::DrawBackingStore(const FlutterLayer& layer) {
-    BackingStore& surface = *static_cast<BackingStore*>(layer.backing_store->user_data);
-    int width = surface.width();
-    int height = surface.height();
+void FlutterCompositeViewGL::PresentPlatformView(const FlutterPlatformView& pview, FlutterPoint offset, FlutterSize size) {
+    auto id = pview.identifier;
+    View* view = viewRegistry().GetView(id);
+    auto texId = view->GetInternalTexture();
+    PresentTexture(texId, offset, size);
+}
 
- // Create Vertex Array Object
+void FlutterCompositeViewGL::PresentBackingStore(const FlutterBackingStore& store, FlutterPoint offset, FlutterSize size) {
+    BackingStore& surface = *static_cast<BackingStore*>(store.user_data);
+    //int width = surface.width();
+    //int height = surface.height();
+    PresentTexture(surface.texture_id, offset, size);
+}
+
+void FlutterCompositeViewGL::PresentTexture(uint32_t texId, FlutterPoint offset, FlutterSize size) {
+// Create Vertex Array Object
     GLuint vao;
     glGenVertexArrays(1, &vao);
     glBindVertexArray(vao);
@@ -187,7 +198,7 @@ void FlutterCompositeViewGL::DrawBackingStore(const FlutterLayer& layer) {
 
     // Specify the layout of the vertex data
     glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, surface.texture_id);
+    glBindTexture(GL_TEXTURE_2D, texId);
     glUniform1i(glGetUniformLocation(shaderProgram, "tex0"), 0);
 
     GLint posAttrib = glGetAttribLocation(shaderProgram, "position");
@@ -203,7 +214,6 @@ void FlutterCompositeViewGL::DrawBackingStore(const FlutterLayer& layer) {
     glVertexAttribPointer(texAttrib, 2, GL_FLOAT, GL_FALSE, 7 * sizeof(GLfloat), (void*)(5 * sizeof(GLfloat)));
 
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-
 }
 
 } // namespace attacus

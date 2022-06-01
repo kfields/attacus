@@ -8,7 +8,7 @@
 #include <attacus/flutter/flutter_composite_view_gl.h>
 #include <attacus/flutter/flutter_messenger.h>
 #include <attacus/flutter/standard_method_channel.h>
-#include <attacus/flutter/components/view_registrar.h>
+#include <attacus/flutter/components/view_registry.h>
 #include <attacus/shell/gfx_view.h>
 
 #include <examples/example_app.h>
@@ -286,7 +286,7 @@ class ExampleCubes : public FlutterCompositeViewGL {
 public:
     ExampleCubes(View& parent, ViewParams params = ViewParams()) : FlutterCompositeViewGL(parent, params) {}
     
-    virtual void Create() override {
+    /*virtual void Create() override {
         FlutterCompositeViewGL::Create();
         
         channel_ = new StandardMethodChannel(messenger(), kChannelName);
@@ -316,7 +316,7 @@ public:
                 const uint16_t height = std::get<double>(height_iter->second);
 
                 cubes_view_ = ExampleCubesView::Produce<ExampleCubesView>(*this, ViewParams(Size(width, height)));
-                auto id = viewRegistrar().RegisterView(*cubes_view_);
+                auto id = viewRegistry().RegisterView(*cubes_view_);
 
                 result->Success(id);
             });
@@ -328,7 +328,7 @@ public:
                 result->Success();
             });
 
-    }
+    }*/
 
     // Data members
     ExampleCubesView* cubes_view_ = nullptr;
@@ -342,5 +342,9 @@ int main(int argc, char** argv) {
         "https://kfields.github.io/attacus/examples.html#cubes"
     ));
 	FlutterView& flutter = *ExampleCubes::Produce<ExampleCubes>(app);
+    flutter.viewRegistry().RegisterViewFactory("cubes", [](View& parent, ViewParams params) -> View* {
+        View* view = ExampleCubesView::Produce<ExampleCubesView>(parent, params);
+        return view;
+    });
 	return app.Run();
 }

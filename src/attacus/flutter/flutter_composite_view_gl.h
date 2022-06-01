@@ -30,7 +30,9 @@ public:
     bool CollectBackingStore(const FlutterBackingStore& renderer);
     bool PresentLayers(const FlutterLayer** layers, size_t layers_count);
 
-    void DrawBackingStore(const FlutterLayer& layer);
+    void PresentBackingStore(const FlutterBackingStore& store, FlutterPoint offset, FlutterSize size);
+    void PresentPlatformView(const FlutterPlatformView& pview, FlutterPoint offset, FlutterSize size);
+    void PresentTexture(uint32_t texId, FlutterPoint offset, FlutterSize size);
     // Data members
     FlutterCompositor compositor_;
 

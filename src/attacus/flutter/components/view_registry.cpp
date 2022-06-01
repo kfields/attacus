@@ -4,7 +4,7 @@
 
 #include <attacus/flutter/flutter_view.h>
 
-#include "view_registrar.h"
+#include "view_registry.h"
 
 namespace attacus
 {
@@ -17,11 +17,11 @@ static constexpr char kViewTypeKey[] = "viewType";
 static constexpr char kWidthKey[] = "width";
 static constexpr char kHeightKey[] = "height";
 
-ViewRegistrar::ViewRegistrar(FlutterView& view) : FlutterComponent(view) {}
+ViewRegistry::ViewRegistry(FlutterView& view) : FlutterComponent(view) {}
 
-ViewRegistrar::~ViewRegistrar() = default;
+ViewRegistry::~ViewRegistry() = default;
 
-void ViewRegistrar::Create()
+void ViewRegistry::Create()
 {
     FlutterMessenger &messenger = flutter().messenger();
     channel_ = new StandardMethodChannel(messenger, kChannelName);
@@ -59,8 +59,10 @@ void ViewRegistrar::Create()
                 height = std::get<double>(height_iter->second);
             }
 
-            /*cubes_view_ = ExampleCubesView::Produce<ExampleCubesView>(*this, ViewParams(Size(width, height)));
-            auto id = viewRegistrar().RegisterView(*cubes_view_);*/
+            auto factory = factories_[viewType];
+            View& parent = flutter();
+            View* view = factory(parent, ViewParams(Size(width, height)));
+            RegisterView(id, *view);
 
             result->Success();
         });
@@ -74,14 +76,12 @@ void ViewRegistrar::Create()
 
 }
 
-int64_t ViewRegistrar::RegisterView(View& view)
+void ViewRegistry::RegisterView(int64_t id, View& view)
 {
-    auto id = view.id();
     views_[id] = &view;
-    return id;
 }
 
-bool ViewRegistrar::UnregisterView(int64_t id)
+bool ViewRegistry::UnregisterView(int64_t id)
 {
     return true;
 }

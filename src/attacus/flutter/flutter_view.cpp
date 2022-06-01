@@ -26,7 +26,7 @@ namespace fs = std::filesystem;
 #include "components/text_input.h"
 
 #include "components/texture_registrar.h"
-#include "components/view_registrar.h"
+#include "components/view_registry.h"
 
 #define FLUTTER_ENGINE_VERSION 1
 
@@ -46,7 +46,7 @@ FlutterView::FlutterView(View& parent, ViewParams params) : GfxView(parent, para
     textInput_ = new TextInput(*this);
 
     textureRegistrar_ = new TextureRegistrar(*this);
-    viewRegistrar_ = new ViewRegistrar(*this);
+    viewRegistry_ = new ViewRegistry(*this);
 }
 
 FlutterView::~FlutterView()
@@ -183,7 +183,7 @@ void FlutterView::Create()
     textInput().Create();
 
     textureRegistrar().Create();
-    viewRegistrar().Create();
+    viewRegistry().Create();
 
     FlutterEngineResult result = FlutterEngineRunInitialized(engine_);
     if (result != kSuccess || engine_ == nullptr)

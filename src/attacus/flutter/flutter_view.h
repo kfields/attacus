@@ -25,7 +25,7 @@ class CursorComponent;
 class MouseInput;
 class TextInput;
 class TextureRegistrar;
-class ViewRegistrar;
+class ViewRegistry;
 
 class FlutterView : public GfxView {
 public:
@@ -67,7 +67,7 @@ public:
     MouseInput& mouseInput() { return *mouseInput_; }
     TextInput& textInput() { return *textInput_; }
     TextureRegistrar& textureRegistrar() { return *textureRegistrar_; }
-    ViewRegistrar& viewRegistrar() { return *viewRegistrar_; }
+    ViewRegistry& viewRegistry() { return *viewRegistry_; }
     //Data members
     void* context_ = nullptr;
     void* resource_context_ = nullptr;
@@ -88,7 +88,7 @@ public:
     TextInput* textInput_ = nullptr;
 
     TextureRegistrar* textureRegistrar_ = nullptr;
-    ViewRegistrar* viewRegistrar_ = nullptr;
+    ViewRegistry* viewRegistry_ = nullptr;
 };
 
 } //namespace attacus
