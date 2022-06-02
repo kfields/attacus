@@ -69,6 +69,9 @@ set(FLUTTER_HEADERS
     compositor/gfx/backing_surface_gfx.h
     compositor/gfx/compositor_gfx.h
 
+    compositor/gl/backing_surface_gl.h
+    compositor/gl/compositor_gl.h
+
 )
 
 set(FLUTTER_SRC
@@ -110,6 +113,10 @@ set(FLUTTER_SRC
     compositor/gfx/backing_layer_gfx.cpp
     compositor/gfx/backing_surface_gfx.cpp
     compositor/gfx/compositor_gfx.cpp
+
+    compositor/gl/backing_surface_gl.cpp
+    compositor/gl/compositor_gl.cpp
+
 )
 
 add_library(${THIS} STATIC ${FLUTTER_SRC} ${FLUTTER_HEADERS})

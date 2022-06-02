@@ -11,7 +11,7 @@ set(ATT_STATIC_PIC ON)
 #
 set(ATT_ROOT ${CMAKE_SOURCE_DIR})
 
-set(GOOGLE_TEST_ROOT ${ATT_ROOT}/3rdparty/googletest)
+set(GLM_ROOT ${ATT_ROOT}/3rdparty/glm)
 set(PYBIND11_ROOT ${ATT_ROOT}/3rdparty/pybind11)
 set(RXCPP_ROOT ${ATT_ROOT}/3rdparty/rxcpp)
 set(GLAD_ROOT ${ATT_ROOT}/src/glad)
@@ -30,6 +30,8 @@ set(NVG_ROOT ${ATT_ROOT}/src/nanovg)
 set(VGR_ROOT ${ATT_ROOT}/3rdparty/vg-renderer)
 
 set(EXAMPLES_ROOT ${ATT_ROOT}/examples)
+
+set(GOOGLE_TEST_ROOT ${ATT_ROOT}/3rdparty/googletest)
 
 #
 # Platform

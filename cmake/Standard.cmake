@@ -4,9 +4,11 @@ include_guard()
 
 include(${CMAKE_CURRENT_LIST_DIR}/Config.cmake)
 include(${CMAKE_CURRENT_LIST_DIR}/Fmt.cmake)
+include(${CMAKE_CURRENT_LIST_DIR}/Glm.cmake)
 
 function(USES_STD THIS)
     USES_FMT(${THIS})
+    USES_GLM(${THIS})
 
     if(CMAKE_BUILD_TYPE STREQUAL "Debug")
         target_compile_definitions(${THIS} PRIVATE 

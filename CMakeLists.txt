@@ -11,6 +11,13 @@ set (CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 #
 add_subdirectory(3rdparty/fmt)
 
+#
+# GLM
+#
+set(BUILD_SHARED_LIBS OFF CACHE BOOL "Build shared library" FORCE)
+set(BUILD_STATIC_LIBS ON CACHE BOOL "Build static library" FORCE)
+
+add_subdirectory(3rdparty/glm)
 
 #
 # pybind11

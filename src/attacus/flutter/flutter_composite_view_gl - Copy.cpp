@@ -1,92 +1,55 @@
 #include <iostream>
 
 #include <glad/gl.h>
+#include <SDL.h>
 
-#include <attacus/flutter/flutter_view.h>
-#include <attacus/flutter/components/view_registry.h>
-#include "backing_surface_gl.h"
+#include "flutter_composite_view_gl.h"
+#include "components/view_registry.h"
+#include "backing_store.h"
 
-#include "compositor_gl.h"
+namespace attacus
+{
 
-namespace attacus {
-
-CompositorGL::CompositorGL(FlutterView& view) : FlutterComponent(view) {
+FlutterCompositeViewGL::FlutterCompositeViewGL(View& parent, ViewParams params) : FlutterView(parent, params)
+{
 }
 
-void CompositorGL::Create() {
-    FlutterComponent::Create();
+void FlutterCompositeViewGL::Create() {
+    FlutterView::Create();
 }
 
-FlutterCompositor* CompositorGL::InitCompositor() {
-    FlutterCompositor& compositor = compositor_;
+void FlutterCompositeViewGL::InitProjectArgs(FlutterProjectArgs& args) {
+    FlutterView::InitProjectArgs(args);
+    InitCompositor(compositor_);
+    args.compositor = &compositor_;
+}
+
+void FlutterCompositeViewGL::InitCompositor(FlutterCompositor& compositor) {
     compositor.struct_size = sizeof(FlutterCompositor);
     compositor.user_data = this;
     compositor.create_backing_store_callback =
         [](const FlutterBackingStoreConfig* config, FlutterBackingStore* backing_store_out, void* user_data) -> bool {
-            CompositorGL &self = *static_cast<CompositorGL*>(user_data);
+            FlutterCompositeViewGL &self = *static_cast<FlutterCompositeViewGL*>(user_data);
             return self.CreateBackingStore(*config, *backing_store_out);
         };
     compositor.collect_backing_store_callback =
         [](const FlutterBackingStore* renderer, void* user_data) -> bool {
-            CompositorGL &self = *static_cast<CompositorGL*>(user_data);
+            FlutterCompositeViewGL &self = *static_cast<FlutterCompositeViewGL*>(user_data);
             return self.CollectBackingStore(*renderer);
         };
     compositor.present_layers_callback =
         [](const FlutterLayer** layers, size_t layers_count, void* user_data) -> bool {
-            CompositorGL &self = *static_cast<CompositorGL*>(user_data);
+            FlutterCompositeViewGL &self = *static_cast<FlutterCompositeViewGL*>(user_data);
             return self.PresentLayers(layers, layers_count);
         };
     compositor.avoid_backing_store_cache = false;
-    return &compositor_;
 }
 
-BackingSurfaceGL* CompositorGL::AllocSurface(FlutterSize size) {
-    auto width = size.width; auto height = size.height;
-
-    SDL_GL_MakeCurrent(view().sdl_window_, view().gfx_context_);
-    BackingSurfaceGL* surface = BackingSurfaceGL::Produce<BackingSurfaceGL>(SurfaceParams(Size(width, height)));
-    return surface;
-}
-
-void CompositorGL::FreeSurface(BackingSurfaceGL& surface) {
-    if (surface.used_)
-        return;
-    surface.used_ = true;
-    free_surfaces_.push_back(&surface);
-}
-
-BackingSurfaceGL* CompositorGL::GetCachedSurface() {
-    BackingSurfaceGL* surface = nullptr;
-    for (std::list<BackingSurfaceGL*>::iterator it = free_surfaces_.begin(); it != free_surfaces_.end(); ++it) {
-        surface = *it;
-    }
-    return surface;
-}
-
-/*bool Compositor::CreateBackingStore(const FlutterBackingStoreConfig& config, FlutterBackingStore& backing_store_out, BackingSurface& surface) {
+bool FlutterCompositeViewGL::CreateBackingStore(const FlutterBackingStoreConfig& config, FlutterBackingStore& backing_store_out) {
+    SDL_GL_MakeCurrent(sdl_window_, context_);
     FlutterSize size = config.size;
     auto width = size.width; auto height = size.height;
-
-    backing_store_out.user_data = &surface;
-    backing_store_out.open_gl.type = kFlutterOpenGLTargetTypeTexture;
-    FlutterOpenGLTexture& texOut = backing_store_out.open_gl.texture;
-    texOut.target = GL_TEXTURE_2D;
-    texOut.format = GL_RGBA8;
-    texOut.name = surface.GetInternalTexture();
-    //
-    texOut.width = width;
-    texOut.height = height;
-    //
-    texOut.destruction_callback = [](void* userdata){};
-    texOut.user_data = &surface;
-    return true;
-}*/
-
-bool CompositorGL::CreateBackingStore(const FlutterBackingStoreConfig& config, FlutterBackingStore& backing_store_out) {
-    SDL_GL_MakeCurrent(view().sdl_window_, view().context_);
-    FlutterSize size = config.size;
-    auto width = size.width; auto height = size.height;
-    BackingSurfaceGL& surface = *BackingSurfaceGL::Produce<BackingSurfaceGL>(SurfaceParams(Size(width, height)));
+    BackingStore& surface = *BackingStore::Produce<BackingStore>(SurfaceParams(Size(width, height)));
     backing_store_out.user_data = &surface;
     backing_store_out.open_gl.type = kFlutterOpenGLTargetTypeFramebuffer;
     FlutterOpenGLFramebuffer& fbOut = backing_store_out.open_gl.framebuffer;
@@ -94,23 +57,23 @@ bool CompositorGL::CreateBackingStore(const FlutterBackingStoreConfig& config, F
     //fbOut.target = GL_RENDERBUFFER;
     //fbOut.target = 0;
     fbOut.target = GL_RGBA8;
-    fbOut.name = surface.framebuffer_id_;
+    fbOut.name = surface.framebuffer_id;
     //
     fbOut.destruction_callback = [](void* userdata){};
     fbOut.user_data = &surface;
     return true;
 }
 
-bool CompositorGL::CollectBackingStore(const FlutterBackingStore& renderer) {
+bool FlutterCompositeViewGL::CollectBackingStore(const FlutterBackingStore& renderer) {
     Surface& surface = *static_cast<Surface*>(renderer.user_data);
     surface.Destroy();
     return true;
 }
 
-bool CompositorGL::PresentLayers(const FlutterLayer** layers, size_t layers_count) {
-    SDL_GL_MakeCurrent(view().sdl_window_, view().context_);
+bool FlutterCompositeViewGL::PresentLayers(const FlutterLayer** layers, size_t layers_count) {
+    SDL_GL_MakeCurrent(sdl_window_, context_);
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    glViewport(0, 0, view().width(), view().height());
+    glViewport(0, 0, width(), height());
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 
@@ -123,26 +86,26 @@ bool CompositorGL::PresentLayers(const FlutterLayer** layers, size_t layers_coun
         }
     }
 
-    SDL_GL_SwapWindow(view().sdl_window_);
+    SDL_GL_SwapWindow(sdl_window_);
 
     return true;
 }
 
 #define GLSL(src) "#version 150 core\n" #src
 
-void CompositorGL::PresentPlatformView(const FlutterPlatformView& pview, FlutterPoint offset, FlutterSize size) {
+void FlutterCompositeViewGL::PresentPlatformView(const FlutterPlatformView& pview, FlutterPoint offset, FlutterSize size) {
     auto id = pview.identifier;
-    View* view = flutter().viewRegistry().GetView(id);
+    View* view = viewRegistry().GetView(id);
     auto texId = view->GetInternalTexture();
     PresentTexture(texId, offset, size);
 }
 
-void CompositorGL::PresentBackingStore(const FlutterBackingStore& store, FlutterPoint offset, FlutterSize size) {
-    BackingSurfaceGL& surface = *static_cast<BackingSurfaceGL*>(store.user_data);
-    PresentTexture(surface.texture_id_, offset, size);
+void FlutterCompositeViewGL::PresentBackingStore(const FlutterBackingStore& store, FlutterPoint offset, FlutterSize size) {
+    BackingStore& surface = *static_cast<BackingStore*>(store.user_data);
+    PresentTexture(surface.texture_id, offset, size);
 }
 
-void CompositorGL::PresentTexture(uint32_t texId, FlutterPoint offset, FlutterSize size) {
+void FlutterCompositeViewGL::PresentTexture(uint32_t texId, FlutterPoint offset, FlutterSize size) {
 // Create Vertex Array Object
     GLuint vao;
     glGenVertexArrays(1, &vao);
