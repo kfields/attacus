@@ -285,54 +285,6 @@ public:
 class ExampleCubes : public FlutterCompositeViewGL {
 public:
     ExampleCubes(View& parent, ViewParams params = ViewParams()) : FlutterCompositeViewGL(parent, params) {}
-    
-    /*virtual void Create() override {
-        FlutterCompositeViewGL::Create();
-        
-        channel_ = new StandardMethodChannel(messenger(), kChannelName);
-
-        new StandardMethod(*channel_, kCreateMethod,
-            [this](const MethodCall<>& call, std::unique_ptr<MethodResult<>> result) {
-                //auto args = call.arguments();
-                const auto& args = std::get<EncodableMap>(*call.arguments());
-                //auto width = std::get<double>(args[0]);
-                //auto width = std::get<double>(args.at(EncodableValue("width")));
-                auto width_iter = args.find(EncodableValue(std::string(kWidthKey)));
-                if (width_iter == args.end()) {
-                result->Error("Argument error",
-                                "Missing argument while trying to activate system cursor");
-                return;
-                }
-                const uint16_t width = std::get<double>(width_iter->second);
-
-                //auto height = std::get<double>(args[1]);
-                //auto height = std::get<double>(args.at(EncodableValue("height")));
-                auto height_iter = args.find(EncodableValue(std::string(kHeightKey)));
-                if (height_iter == args.end()) {
-                result->Error("Argument error",
-                                "Missing argument while trying to activate system cursor");
-                return;
-                }
-                const uint16_t height = std::get<double>(height_iter->second);
-
-                cubes_view_ = ExampleCubesView::Produce<ExampleCubesView>(*this, ViewParams(Size(width, height)));
-                auto id = viewRegistry().RegisterView(*cubes_view_);
-
-                result->Success(id);
-            });
-
-        new StandardMethod(*channel_, kDisposeMethod,
-            [this](const MethodCall<>& call, std::unique_ptr<MethodResult<>> result) {
-                auto args = call.arguments();
-                auto id = std::get<int>(args[0]);
-                result->Success();
-            });
-
-    }*/
-
-    // Data members
-    ExampleCubesView* cubes_view_ = nullptr;
-    MethodChannel<>* channel_ = nullptr;
 };
 
 int main(int argc, char** argv) {
@@ -342,9 +294,8 @@ int main(int argc, char** argv) {
         "https://kfields.github.io/attacus/examples.html#cubes"
     ));
 	FlutterView& flutter = *ExampleCubes::Produce<ExampleCubes>(app);
-    flutter.viewRegistry().RegisterViewFactory("cubes", [](View& parent, ViewParams params) -> View* {
-        View* view = ExampleCubesView::Produce<ExampleCubesView>(parent, params);
-        return view;
+    flutter.viewRegistry().RegisterViewFactory("cubes", [&app](ViewParams params) -> View* {
+        return ExampleCubesView::Produce<ExampleCubesView>(app, params);
     });
 	return app.Run();
 }

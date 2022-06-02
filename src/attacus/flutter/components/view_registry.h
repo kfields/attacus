@@ -14,7 +14,7 @@ namespace attacus
 class View;
 class StandardMethodChannel;
 
-typedef std::function<View*(View&, ViewParams)> ViewFactoryFn;
+typedef std::function<View*(ViewParams)> ViewFactoryFn;
 
 class ViewRegistry : public FlutterComponent
 {

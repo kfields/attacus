@@ -38,10 +38,6 @@ void Surface::Destroy() {
 void Surface::CreateTexture() {
     const uint64_t tsFlags = BGFX_TEXTURE_RT | BGFX_TEXTURE_SRGB;
     texture_ = bgfx::createTexture2D(width(), height(), false, 1, bgfx::TextureFormat::RGBA8, tsFlags);
-
-    /*std::array<bgfx::Attachment, 1> m_attachments{};
-    auto &[colorAttachment] = m_attachments;
-    colorAttachment.init(texture_, bgfx::Access::Write, 0);*/
 }
 
 void Surface::CreateFramebuffer() {

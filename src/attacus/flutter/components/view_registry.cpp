@@ -60,8 +60,7 @@ void ViewRegistry::Create()
             }
 
             auto factory = factories_[viewType];
-            View& parent = flutter();
-            View* view = factory(parent, ViewParams(Size(width, height)));
+            View* view = factory(ViewParams(Size(width, height)));
             RegisterView(id, *view);
 
             result->Success();
@@ -79,6 +78,9 @@ void ViewRegistry::Create()
 void ViewRegistry::RegisterView(int64_t id, View& view)
 {
     views_[id] = &view;
+    view.touched_event_.Subscribe([this](SurfaceEvent e) {
+        this->flutter().engine_api_.ScheduleFrame(this->flutter().engine_);
+    });
 }
 
 bool ViewRegistry::UnregisterView(int64_t id)

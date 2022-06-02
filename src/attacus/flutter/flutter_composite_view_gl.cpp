@@ -73,7 +73,6 @@ bool FlutterCompositeViewGL::CreateBackingStore(const FlutterBackingStoreConfig&
 
 bool FlutterCompositeViewGL::CollectBackingStore(const FlutterBackingStore& renderer) {
     Surface& surface = *static_cast<Surface*>(renderer.user_data);
-    return true;
     surface.Destroy();
     return true;
 }
@@ -110,8 +109,6 @@ void FlutterCompositeViewGL::PresentPlatformView(const FlutterPlatformView& pvie
 
 void FlutterCompositeViewGL::PresentBackingStore(const FlutterBackingStore& store, FlutterPoint offset, FlutterSize size) {
     BackingStore& surface = *static_cast<BackingStore*>(store.user_data);
-    //int width = surface.width();
-    //int height = surface.height();
     PresentTexture(surface.texture_id, offset, size);
 }
 
@@ -126,7 +123,7 @@ void FlutterCompositeViewGL::PresentTexture(uint32_t texId, FlutterPoint offset,
     glGenBuffers(1, &vbo);
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
 
-    float vertices[] = {
+    static float vertices[] = {
     //  Position      Color             Texcoords
         -1.0f,  1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f, // Top-left
         1.0f,  1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, // Top-right
@@ -141,7 +138,7 @@ void FlutterCompositeViewGL::PresentTexture(uint32_t texId, FlutterPoint offset,
     glGenBuffers(1, &ebo);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
 
-    GLuint elements[] = {
+    static GLuint elements[] = {
          0, 1, 2,
          2, 3, 0
     };
@@ -150,7 +147,7 @@ void FlutterCompositeViewGL::PresentTexture(uint32_t texId, FlutterPoint offset,
         GL_STATIC_DRAW);
 
     // Create and compile the vertex shader
-    const char* vertexSource = GLSL(
+    static const char* vertexSource = GLSL(
         in vec2 position;
         in vec3 color;
         in vec2 texcoord;
@@ -170,7 +167,7 @@ void FlutterCompositeViewGL::PresentTexture(uint32_t texId, FlutterPoint offset,
     glCompileShader(vertexShader);
 
     // Create and compile the fragment shader
-    const char* fragmentSource = GLSL(
+    static const char* fragmentSource = GLSL(
         uniform sampler2D tex0;
 
         in vec3 Color;
