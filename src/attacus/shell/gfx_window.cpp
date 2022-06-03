@@ -59,7 +59,6 @@ void GfxWindow::CreateSDLWindow() {
 
 void GfxWindow::PreRender() {
     Window::PreRender();
-    //bgfx::frame(); //Force texture creation of textures created by delegates
 }
 
 void GfxWindow::PostRender() {

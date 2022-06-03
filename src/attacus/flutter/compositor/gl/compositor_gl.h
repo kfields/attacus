@@ -1,17 +1,13 @@
 #pragma once
 
-#include <condition_variable>
-#include <thread>
-#include <mutex>
-#include <semaphore>
 #include <list>
-#include <queue>
 
 #include <attacus/flutter/components/flutter_component.h>
 
 namespace attacus {
 
 class BackingSurfaceGL;
+struct Pos2RgbTexCoord0Vertex;
 
 class CompositorGL : public FlutterComponent {
 public:

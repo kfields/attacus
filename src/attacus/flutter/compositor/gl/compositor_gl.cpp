@@ -11,7 +11,25 @@
 #include "compositor_gl.h"
 #include "definitions.h"
 
+#define GLSL(src) "#version 150 core\n" #src
+
 namespace attacus {
+
+void _check_gl_error() {
+    GLenum error = glGetError();
+    if (error != GL_NO_ERROR)
+    {
+        switch (error)
+        {
+            case GL_NO_ERROR: std::cout << "GL_NO_ERROR" << std::endl; break;
+            case GL_INVALID_ENUM: std::cout << "GL_INVALID_ENUM" << std::endl; break;
+            case GL_INVALID_VALUE: std::cout << "GL_INVALID_VALUE" << std::endl; break;
+            case GL_INVALID_OPERATION: std::cout << "GL_INVALID_OPERATION" << std::endl; break;
+            case GL_INVALID_FRAMEBUFFER_OPERATION: std::cout << "GL_INVALID_FRAMEBUFFER_OPERATION" << std::endl; break;
+            case GL_OUT_OF_MEMORY: std::cout << "GL_OUT_OF_MEMORY" << std::endl; break;
+        }
+    }
+}
 
 CompositorGL::CompositorGL(FlutterView& view) : FlutterComponent(view) {
 }
@@ -66,7 +84,7 @@ BackingSurfaceGL* CompositorGL::GetCachedSurface() {
     return surface;
 }
 
-/*bool Compositor::CreateBackingStore(const FlutterBackingStoreConfig& config, FlutterBackingStore& backing_store_out, BackingSurface& surface) {
+/*bool Compositor::CreateBackingStore(const FlutterBackingStoreConfig& config, FlutterBackingStore& backing_store_out) {
     FlutterSize size = config.size;
     auto width = size.width; auto height = size.height;
 
@@ -75,7 +93,7 @@ BackingSurfaceGL* CompositorGL::GetCachedSurface() {
     FlutterOpenGLTexture& texOut = backing_store_out.open_gl.texture;
     texOut.target = GL_TEXTURE_2D;
     texOut.format = GL_RGBA8;
-    texOut.name = surface.GetInternalTexture();
+    texOut.name = surface.texture_id_;
     //
     texOut.width = width;
     texOut.height = height;
@@ -93,9 +111,6 @@ bool CompositorGL::CreateBackingStore(const FlutterBackingStoreConfig& config, F
     backing_store_out.user_data = &surface;
     backing_store_out.open_gl.type = kFlutterOpenGLTargetTypeFramebuffer;
     FlutterOpenGLFramebuffer& fbOut = backing_store_out.open_gl.framebuffer;
-    //fbOut.target = GL_TEXTURE_2D;
-    //fbOut.target = GL_RENDERBUFFER;
-    //fbOut.target = 0;
     fbOut.target = GL_RGBA8;
     fbOut.name = surface.framebuffer_id_;
     //
@@ -131,8 +146,6 @@ bool CompositorGL::PresentLayers(const FlutterLayer** layers, size_t layers_coun
     return true;
 }
 
-#define GLSL(src) "#version 150 core\n" #src
-
 void CompositorGL::PresentPlatformView(const FlutterPlatformView& pview, FlutterPoint offset, FlutterSize size) {
     auto id = pview.identifier;
     View* view = flutter().viewRegistry().GetView(id);
@@ -144,18 +157,6 @@ void CompositorGL::PresentBackingStore(const FlutterBackingStore& store, Flutter
     BackingSurfaceGL& surface = *static_cast<BackingSurfaceGL*>(store.user_data);
     PresentTexture(surface.texture_id_, offset, size);
 }
-
-static TexCoord s_coords[4] = {
-    {0.0f,  1.0f},
-    {1.0f,  1.0f},
-    {1.0f, 0.0f},
-    {0.0f, 0.0f}
-};
-
-static GLuint elements[] = {
-        0, 1, 2,
-        2, 3, 0
-};
 
 void CompositorGL::PresentTexture(uint32_t texId, FlutterPoint offset, FlutterSize size) {
 
@@ -169,31 +170,24 @@ void CompositorGL::PresentTexture(uint32_t texId, FlutterPoint offset, FlutterSi
     float angle = 0.0f;
     float scale = 1.0f;
 
-    /*
-    static Pos2RgbTexCoord0Vertex s_vertices[4] = {
-        {-1.0f,  1.0f, ColorRgb(), 0.0f,  1.0f},
-        {1.0f,  1.0f, ColorRgb(),  1.0f,  1.0f},
-        {1.0f, -1.0f, ColorRgb(), 1.0f, 0.0f},
-        {-1.0f, -1.0f, ColorRgb(),  0.0f, 0.0f}
-    };
-    */
-    Pos2RgbTexCoord0Vertex screen_vertices[4] = {
+    Pos2RgbTexCoord0Vertex vertices[4] = {
         {x,  y, ColorRgb(), 0.0f,  1.0f},
         {x + width,  y, ColorRgb(),  1.0f,  1.0f},
         {x + width, y + height, ColorRgb(), 1.0f, 0.0f},
         {x, y + height, ColorRgb(),  0.0f, 0.0f}
     };
 
-    Pos2RgbTexCoord0Vertex vertices[4];
-
     for (int i = 0; i < 4; ++i) {
-        vertices[i].x = -1.0 + 2.0 * screen_vertices[i].x / screen_width;
-        vertices[i].y = -(1.0 - 2.0 * (screen_height - screen_vertices[i].y) / screen_height);
-        vertices[i].u = s_coords[i].u;
-        vertices[i].v = s_coords[i].v;
+        vertices[i].x = -1.0 + 2.0 * vertices[i].x / screen_width;
+        vertices[i].y = -(1.0 - 2.0 * (screen_height - vertices[i].y) / screen_height);
     }
 
-// Create Vertex Array Object
+    static GLuint elements[] = {
+            0, 1, 2,
+            2, 3, 0
+    };
+
+    // Create Vertex Array Object
     GLuint vao;
     glGenVertexArrays(1, &vao);
     glBindVertexArray(vao);
@@ -278,6 +272,20 @@ void CompositorGL::PresentTexture(uint32_t texId, FlutterPoint offset, FlutterSi
     glVertexAttribPointer(texAttrib, 2, GL_FLOAT, GL_FALSE, 7 * sizeof(GLfloat), (void*)(5 * sizeof(GLfloat)));
 
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+    // Cleanup
+    glBindVertexArray(0);
+    glDeleteVertexArrays(1, &vao);
+
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glDeleteBuffers(1, &vbo);
+    glDeleteBuffers(1, &ebo);
+
+    glUseProgram(0);
+    glDeleteProgram(shaderProgram);
+
+    glDeleteShader(vertexShader);
+    glDeleteShader(fragmentShader);
 }
 
 } // namespace attacus
