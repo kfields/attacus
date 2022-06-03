@@ -146,7 +146,7 @@ public:
 	{
     }
 
-    virtual void Create() override {
+    void Create() override {
         GfxView::Create();
 
         CreateFramebuffer();
@@ -294,8 +294,8 @@ int main(int argc, char** argv) {
         "https://kfields.github.io/attacus/examples.html#cubes"
     ));
 	FlutterView& flutter = *ExampleCubes::Produce<ExampleCubes>(app);
-    flutter.viewRegistry().RegisterViewFactory("cubes", [&app](ViewParams params) -> View* {
-        return ExampleCubesView::Produce<ExampleCubesView>(app, params);
+    flutter.viewRegistry().RegisterViewFactory("cubes", [&flutter](ViewParams params) -> View* {
+        return ExampleCubesView::Produce<ExampleCubesView>(flutter, params);
     });
 	return app.Run();
 }

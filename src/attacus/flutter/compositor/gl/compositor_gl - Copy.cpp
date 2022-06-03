@@ -1,8 +1,6 @@
 #include <iostream>
 
 #include <glad/gl.h>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
 
 #include <attacus/flutter/flutter_view.h>
 #include <attacus/flutter/components/view_registry.h>
@@ -145,54 +143,14 @@ void CompositorGL::PresentBackingStore(const FlutterBackingStore& store, Flutter
     PresentTexture(surface.texture_id_, offset, size);
 }
 
-static TexCoord s_coords[4] = {
-    {0.0f,  1.0f},
-    {1.0f,  1.0f},
-    {1.0f, 0.0f},
-    {0.0f, 0.0f}
-};
-
-static GLuint elements[] = {
-        0, 1, 2,
-        2, 3, 0
+static PosRgbaTexCoord0Vertex s_quadVertices[4] = {
+    {-1.0f,  1.0f,  1.0f, 0xff000000, 0.0f,  1.0f},
+    { 1.0f,  1.0f,  1.0f, 0xff000000,  1.0f,  1.0f},
+    {-1.0f, -1.0f,  1.0f, 0xff000000, 0.0f, 0.0f},
+    { 1.0f, -1.0f,  1.0f, 0xff000000,  1.0f, 0.0f}
 };
 
 void CompositorGL::PresentTexture(uint32_t texId, FlutterPoint offset, FlutterSize size) {
-
-    float screen_width = view().width();
-    float screen_height = view().height();
-
-    float x = offset.x;
-    float y = offset.y;
-    float width = size.width;
-    float height = size.height;
-    float angle = 0.0f;
-    float scale = 1.0f;
-
-    /*
-    static Pos2RgbTexCoord0Vertex s_vertices[4] = {
-        {-1.0f,  1.0f, ColorRgb(), 0.0f,  1.0f},
-        {1.0f,  1.0f, ColorRgb(),  1.0f,  1.0f},
-        {1.0f, -1.0f, ColorRgb(), 1.0f, 0.0f},
-        {-1.0f, -1.0f, ColorRgb(),  0.0f, 0.0f}
-    };
-    */
-    Pos2RgbTexCoord0Vertex screen_vertices[4] = {
-        {x,  y, ColorRgb(), 0.0f,  1.0f},
-        {x + width,  y, ColorRgb(),  1.0f,  1.0f},
-        {x + width, y + height, ColorRgb(), 1.0f, 0.0f},
-        {x, y + height, ColorRgb(),  0.0f, 0.0f}
-    };
-
-    Pos2RgbTexCoord0Vertex vertices[4];
-
-    for (int i = 0; i < 4; ++i) {
-        vertices[i].x = -1.0 + 2.0 * screen_vertices[i].x / screen_width;
-        vertices[i].y = -(1.0 - 2.0 * (screen_height - screen_vertices[i].y) / screen_height);
-        vertices[i].u = s_coords[i].u;
-        vertices[i].v = s_coords[i].v;
-    }
-
 // Create Vertex Array Object
     GLuint vao;
     glGenVertexArrays(1, &vao);
@@ -203,12 +161,25 @@ void CompositorGL::PresentTexture(uint32_t texId, FlutterPoint offset, FlutterSi
     glGenBuffers(1, &vbo);
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
 
+    static float vertices[] = {
+    //  Position      Color             Texcoords
+        -1.0f,  1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f, // Top-left
+        1.0f,  1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, // Top-right
+        1.0f, -1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f, // Bottom-right
+        -1.0f, -1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f  // Bottom-left
+    };
+
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
     // Create an Element Buffer Object and copy the element data to it
     GLuint ebo;
     glGenBuffers(1, &ebo);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+
+    static GLuint elements[] = {
+         0, 1, 2,
+         2, 3, 0
+    };
 
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(elements), elements,
         GL_STATIC_DRAW);

@@ -85,7 +85,7 @@ public:
 	{
 		view_id_ = 0;
     }
-    void Reset(ResetKind kind = ResetKind::kHard) override {
+    void Reset(ResetKind kind = ResetKind::kSoft) override {
         GfxView::Reset(kind);
 		bgfx::setViewMode(viewId(), bgfx::ViewMode::Sequential);
 		bgfx::setViewClear(viewId()

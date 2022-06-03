@@ -28,7 +28,7 @@ public:
     void Create() override;
     void Destroy() override;
     bool Dispatch(SDL_Event& event) override;
-    void Reset(ResetKind kind = ResetKind::kHard) override;
+    void Reset(ResetKind kind = ResetKind::kSoft) override;
 
     int Run() override;
 

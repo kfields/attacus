@@ -59,7 +59,7 @@ public:
     void Draw() override;
     void PostRender() override;
 
-    virtual void Reset(ResetKind kind = ResetKind::kHard) {}
+    virtual void Reset(ResetKind kind = ResetKind::kSoft) {}
     bgfx::TextureHandle GetTexture() override;
     
     //

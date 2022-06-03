@@ -145,6 +145,13 @@ void CompositorGL::PresentBackingStore(const FlutterBackingStore& store, Flutter
     PresentTexture(surface.texture_id_, offset, size);
 }
 
+static PosRgbaTexCoord0Vertex s_vertices[4] = {
+    {-1.0f,  1.0f,  1.0f, 0xff000000, 0.0f,  1.0f},
+    {1.0f,  1.0f,  1.0f, 0xff000000,  1.0f,  1.0f},
+    {1.0f, -1.0f,  1.0f, 0xff000000, 1.0f, 0.0f},
+    {-1.0f, -1.0f,  1.0f, 0xff000000,  0.0f, 0.0f}
+};
+
 static TexCoord s_coords[4] = {
     {0.0f,  1.0f},
     {1.0f,  1.0f},
@@ -152,15 +159,24 @@ static TexCoord s_coords[4] = {
     {0.0f, 0.0f}
 };
 
+/*
+static float vertices[] = {
+//  Position      Color             Texcoords
+    -1.0f,  1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f, // Top-left
+    1.0f,  1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, // Top-right
+    1.0f, -1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f, // Bottom-right
+    -1.0f, -1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f  // Bottom-left
+};
+
+*/
+
 static GLuint elements[] = {
         0, 1, 2,
         2, 3, 0
 };
 
 void CompositorGL::PresentTexture(uint32_t texId, FlutterPoint offset, FlutterSize size) {
-
-    float screen_width = view().width();
-    float screen_height = view().height();
+    PosRgbaTexCoord0Vertex vertices[4];
 
     float x = offset.x;
     float y = offset.y;
@@ -168,27 +184,22 @@ void CompositorGL::PresentTexture(uint32_t texId, FlutterPoint offset, FlutterSi
     float height = size.height;
     float angle = 0.0f;
     float scale = 1.0f;
+    float screen_width = view().width();
+    float screen_height = view().height();
 
-    /*
-    static Pos2RgbTexCoord0Vertex s_vertices[4] = {
-        {-1.0f,  1.0f, ColorRgb(), 0.0f,  1.0f},
-        {1.0f,  1.0f, ColorRgb(),  1.0f,  1.0f},
-        {1.0f, -1.0f, ColorRgb(), 1.0f, 0.0f},
-        {-1.0f, -1.0f, ColorRgb(),  0.0f, 0.0f}
-    };
-    */
-    Pos2RgbTexCoord0Vertex screen_vertices[4] = {
-        {x,  y, ColorRgb(), 0.0f,  1.0f},
-        {x + width,  y, ColorRgb(),  1.0f,  1.0f},
-        {x + width, y + height, ColorRgb(), 1.0f, 0.0f},
-        {x, y + height, ColorRgb(),  0.0f, 0.0f}
-    };
+    glm::mat4 model = glm::mat4(1.0f);
+    model = glm::translate(model, glm::vec3(x, y, 0.0f));
+    model = glm::rotate(model, glm::radians(angle), glm::vec3(0.0f, 0.0f, 1.0f));
+    model = glm::scale(model, glm::vec3(scale, scale, 1.0f));
 
-    Pos2RgbTexCoord0Vertex vertices[4];
-
+    float halfWidth = float(width / 2) / screen_width;
+    float halfHeight = float(height / 2) / screen_height;
     for (int i = 0; i < 4; ++i) {
-        vertices[i].x = -1.0 + 2.0 * screen_vertices[i].x / screen_width;
-        vertices[i].y = -(1.0 - 2.0 * (screen_height - screen_vertices[i].y) / screen_height);
+        glm::vec4 vert = model * glm::vec4(s_vertices[i].x * halfWidth, s_vertices[i].y * halfHeight, 0.0f, 1.0f);
+        vertices[i].x = vert[0];
+        vertices[i].y = vert[1];
+        vertices[i].z = vert[2];
+        vertices[i].rgba = 0xff000000;
         vertices[i].u = s_coords[i].u;
         vertices[i].v = s_coords[i].v;
     }
@@ -215,17 +226,18 @@ void CompositorGL::PresentTexture(uint32_t texId, FlutterPoint offset, FlutterSi
 
     // Create and compile the vertex shader
     static const char* vertexSource = GLSL(
-        in vec2 position;
-        in vec3 color;
+        in vec3 position;
+        in vec4 color;
         in vec2 texcoord;
 
-        out vec3 Color;
+        out vec4 Color;
         out vec2 Texcoord;
         
         void main() {
             Color = color;
             Texcoord = texcoord;
-            gl_Position = vec4(position, 0.0, 1.0);
+            //gl_Position = vec4(position, 0.0, 1.0);
+            gl_Position = vec4(position, 1.0);
         }
     );
 
@@ -237,14 +249,15 @@ void CompositorGL::PresentTexture(uint32_t texId, FlutterPoint offset, FlutterSi
     static const char* fragmentSource = GLSL(
         uniform sampler2D tex0;
 
-        in vec3 Color;
+        in vec4 Color;
         in vec2 Texcoord;
 
         out vec4 outColor;
         
         void main() {
             //outColor = mix(texture(tex0, Texcoord), texture(tex1, Texcoord), 0.5) * vec4(Color, 1.0);
-            outColor = texture(tex0, Texcoord) * vec4(Color, 1.0);
+            //outColor = texture(tex0, Texcoord) * vec4(Color, 1.0);
+            outColor = texture(tex0, Texcoord) * Color
         }
     );
 
@@ -267,15 +280,15 @@ void CompositorGL::PresentTexture(uint32_t texId, FlutterPoint offset, FlutterSi
 
     GLint posAttrib = glGetAttribLocation(shaderProgram, "position");
     glEnableVertexAttribArray(posAttrib);
-    glVertexAttribPointer(posAttrib, 2, GL_FLOAT, GL_FALSE, 7 * sizeof(GLfloat), 0);
+    glVertexAttribPointer(posAttrib, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(GLfloat), 0);
 
     GLint colAttrib = glGetAttribLocation(shaderProgram, "color");
     glEnableVertexAttribArray(colAttrib);
-    glVertexAttribPointer(colAttrib, 3, GL_FLOAT, GL_FALSE, 7 * sizeof(GLfloat), (void*)(2 * sizeof(GLfloat)));
+    glVertexAttribPointer(colAttrib, 4, GL_FLOAT, GL_FALSE, 9 * sizeof(GLfloat), (void*)(3 * sizeof(GLfloat)));
 
     GLint texAttrib = glGetAttribLocation(shaderProgram, "texcoord");
     glEnableVertexAttribArray(texAttrib);
-    glVertexAttribPointer(texAttrib, 2, GL_FLOAT, GL_FALSE, 7 * sizeof(GLfloat), (void*)(5 * sizeof(GLfloat)));
+    glVertexAttribPointer(texAttrib, 2, GL_FLOAT, GL_FALSE, 9 * sizeof(GLfloat), (void*)(7 * sizeof(GLfloat)));
 
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 }

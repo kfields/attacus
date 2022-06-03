@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.4)
 
-project(11-flutter-cubes LANGUAGES CXX)
+project(10-flutter-cubes LANGUAGES CXX)
 
 set(THIS ${PROJECT_NAME})
 

@@ -11,7 +11,6 @@ namespace attacus
 
 FlutterCompositeViewGL::FlutterCompositeViewGL(View& parent, ViewParams params) : FlutterView(parent, params)
 {
-    view_id_ = 0;
     compositor_ = new CompositorGL(*this);
 }
 
