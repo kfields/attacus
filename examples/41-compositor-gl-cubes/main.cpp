@@ -153,7 +153,6 @@ public:
         
         bgfx::setViewClear(viewId()
             , BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH
-            //, 0x303030ff
             , 0x12345678
             , 1.0f
             , 0

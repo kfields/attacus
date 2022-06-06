@@ -32,7 +32,9 @@ namespace attacus
 
     bool TextureRegistrar::MarkTextureFrameAvailable(int64_t id)
     {
-        FlutterEngineResult result = FlutterEngineMarkExternalTextureFrameAvailable(engine_, id);
+        //TODO: This used to work.  Now it's crashing when using the compositor
+        //FlutterEngineResult result = FlutterEngineMarkExternalTextureFrameAvailable(engine_, id);
+        this->flutter().engine_api_.ScheduleFrame(this->flutter().engine_);
         return true;
     }
 
