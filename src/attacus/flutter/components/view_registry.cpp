@@ -136,8 +136,8 @@ void ViewRegistry::Create()
             
             //result->Success();
             result->Success(EncodableValue(EncodableMap{
-                {EncodableValue(kWidthKey), EncodableValue(width)},
-                {EncodableValue(kHeightKey), EncodableValue(height)}
+                {EncodableValue(kWidthKey), EncodableValue((double)width)},
+                {EncodableValue(kHeightKey), EncodableValue((double)height)}
             }));
         });
 }
