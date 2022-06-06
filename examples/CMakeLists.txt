@@ -24,14 +24,9 @@ add_subdirectory(01-methodchannel)
 
 add_subdirectory(10-flutter-cubes)
 
-add_subdirectory(20-compositor-vg)
-add_subdirectory(21-compositor-vg-cubes)
-
-add_subdirectory(30-compositor-gfx)
-
 add_subdirectory(40-compositor-gl)
 add_subdirectory(41-compositor-gl-cubes)
 add_subdirectory(42-compositor-gl-view)
 
-add_subdirectory(101-cubes)
-add_subdirectory(120-nanovg)
+add_subdirectory(90-cubes)
+add_subdirectory(91-nanovg)

@@ -15,11 +15,7 @@ set(FLUTTER_HEADERS
     flutter_embedder.h
     flutter_view.h
 
-    flutter_composite_view_vg.h
-    flutter_composite_view_gfx.h
-
     flutter_composite_view_gl.h
-    backing_store.h
 
     flutter_messenger.h
     flutter_runner.h
@@ -57,18 +53,6 @@ set(FLUTTER_HEADERS
     components/texture_registrar.h
     components/view_registry.h
 
-    compositor/vg/compositor_layer_vg.h
-    compositor/vg/compositor_frame_vg.h
-    compositor/vg/backing_layer_vg.h
-    compositor/vg/backing_surface_vg.h
-    compositor/vg/compositor_vg.h
-
-    compositor/gfx/compositor_layer_gfx.h
-    compositor/gfx/compositor_frame_gfx.h
-    compositor/gfx/backing_layer_gfx.h
-    compositor/gfx/backing_surface_gfx.h
-    compositor/gfx/compositor_gfx.h
-
     compositor/gl/backing_surface_gl.h
     compositor/gl/compositor_gl.h
 
@@ -77,11 +61,7 @@ set(FLUTTER_HEADERS
 set(FLUTTER_SRC
     flutter_view.cpp
 
-    flutter_composite_view_vg.cpp
-    flutter_composite_view_gfx.cpp
-
     flutter_composite_view_gl.cpp
-    backing_store.cpp
     
     flutter_messenger.cpp
     flutter_runner.cpp
@@ -101,18 +81,6 @@ set(FLUTTER_SRC
     components/string_conversion.cpp
     components/texture_registrar.cpp
     components/view_registry.cpp
-
-    compositor/vg/compositor_layer_vg.cpp
-    compositor/vg/compositor_frame_vg.cpp
-    compositor/vg/backing_layer_vg.cpp
-    compositor/vg/backing_surface_vg.cpp
-    compositor/vg/compositor_vg.cpp
-
-    compositor/gfx/compositor_layer_gfx.cpp
-    compositor/gfx/compositor_frame_gfx.cpp
-    compositor/gfx/backing_layer_gfx.cpp
-    compositor/gfx/backing_surface_gfx.cpp
-    compositor/gfx/compositor_gfx.cpp
 
     compositor/gl/backing_surface_gl.cpp
     compositor/gl/compositor_gl.cpp

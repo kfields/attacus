@@ -1,12 +1,13 @@
 cmake_minimum_required(VERSION 3.4)
 
-project(14-platform-view LANGUAGES CXX)
+project(90-cubes LANGUAGES CXX)
 
 set(THIS ${PROJECT_NAME})
 
 include(${ATT_ROOT}/cmake/Examples.cmake)
 
 set(HEADERS
+    logo.h
 )
 
 set(SOURCES

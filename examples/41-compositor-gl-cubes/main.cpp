@@ -337,8 +337,8 @@ public:
 
 int main(int argc, char** argv) {
 	ExampleApp& app = *ExampleApp::Produce(ExampleParams(
-        "cubes",
-        "Show cubes.",
+        "41-compositor-gl-cubes",
+        "Show cubes as texture using compositor.",
         "https://kfields.github.io/attacus/examples.html#cubes"
     ));
 	FlutterView& flutter = *ExampleCubes::Produce<ExampleCubes>(app);

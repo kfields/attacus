@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.4)
 
-project(120-nanovg LANGUAGES CXX)
+project(91-nanovg LANGUAGES CXX)
 
 set(THIS ${PROJECT_NAME})
 

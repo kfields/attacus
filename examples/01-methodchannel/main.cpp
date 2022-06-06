@@ -35,7 +35,7 @@ public:
 
 int main(int argc, char** argv) {
     ExampleApp& app = *ExampleApp::Produce(ExampleParams(
-        "00-methodchannel",
+        "01-methodchannel",
         "Test method channels.",
         "https://kfields.github.io/attacus/examples.html#methodchannel"
     ));
