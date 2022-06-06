@@ -18,6 +18,7 @@ public:
     bool UpdatePointer(FlutterPointerPhase phase, double x, double y, size_t timestamp);
     // Accessors
     // Data members
+    bool entered_ = false;
     bool mouseDown = false;
     int mouseId = 0;
     int lastMouseX = 0, lastMouseY = 0;

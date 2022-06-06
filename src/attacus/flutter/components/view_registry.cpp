@@ -12,10 +12,16 @@ static constexpr char kChannelName[] = "flutter/platform_views";
 static constexpr char kCreateMethod[] = "create";
 static constexpr char kDisposeMethod[] = "dispose";
 
+static constexpr char kOffsetMethod[] = "offset";
+static constexpr char kResizeMethod[] = "resize";
+
 static constexpr char kIdKey[] = "id";
 static constexpr char kViewTypeKey[] = "viewType";
 static constexpr char kWidthKey[] = "width";
 static constexpr char kHeightKey[] = "height";
+
+static constexpr char kTopKey[] = "top";
+static constexpr char kLeftKey[] = "left";
 
 ViewRegistry::ViewRegistry(FlutterView& view) : FlutterComponent(view) {}
 
@@ -73,6 +79,67 @@ void ViewRegistry::Create()
             result->Success();
         });
 
+    new StandardMethod(*channel_, kOffsetMethod,
+        [this](const MethodCall<>& call, std::unique_ptr<MethodResult<>> result) {
+            const auto& args = std::get<EncodableMap>(*call.arguments());
+
+            auto id_iter = args.find(EncodableValue(std::string(kIdKey)));
+            if (id_iter == args.end()) {
+                result->Error("Argument error",
+                                "Missing view id");
+                return;
+            }
+            const uint16_t id = std::get<int>(id_iter->second);
+
+            uint16_t top = 0;
+            auto top_iter = args.find(EncodableValue(std::string(kTopKey)));
+            if (top_iter != args.end()) {
+                top = std::get<double>(top_iter->second);
+            }
+
+            uint16_t left = 0;
+            auto left_iter = args.find(EncodableValue(std::string(kLeftKey)));
+            if (left_iter != args.end()) {
+                left = std::get<double>(left_iter->second);
+            }
+
+            //TODO: Implement?
+
+            result->Success();
+        });
+
+    new StandardMethod(*channel_, kResizeMethod,
+        [this](const MethodCall<>& call, std::unique_ptr<MethodResult<>> result) {
+            const auto& args = std::get<EncodableMap>(*call.arguments());
+
+            auto id_iter = args.find(EncodableValue(std::string(kIdKey)));
+            if (id_iter == args.end()) {
+                result->Error("Argument error",
+                                "Missing view id");
+                return;
+            }
+            const uint16_t id = std::get<int>(id_iter->second);
+
+            uint16_t width = 400;
+            auto width_iter = args.find(EncodableValue(std::string(kWidthKey)));
+            if (width_iter != args.end()) {
+                width = std::get<double>(width_iter->second);
+            }
+
+            uint16_t height = 400;
+            auto height_iter = args.find(EncodableValue(std::string(kHeightKey)));
+            if (height_iter != args.end()) {
+                height = std::get<double>(height_iter->second);
+            }
+
+            views_[id]->SetSize(Size(width, height));
+            
+            //result->Success();
+            result->Success(EncodableValue(EncodableMap{
+                {EncodableValue(kWidthKey), EncodableValue(width)},
+                {EncodableValue(kHeightKey), EncodableValue(height)}
+            }));
+        });
 }
 
 void ViewRegistry::RegisterView(int64_t id, View& view)

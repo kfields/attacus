@@ -104,7 +104,7 @@ BackingSurfaceGL* CompositorGL::GetCachedSurface() {
 }*/
 
 bool CompositorGL::CreateBackingStore(const FlutterBackingStoreConfig& config, FlutterBackingStore& backing_store_out) {
-    SDL_GL_MakeCurrent(view().sdl_window_, view().context_);
+    //SDL_GL_MakeCurrent(view().sdl_window_, view().context_);
     FlutterSize size = config.size;
     auto width = size.width; auto height = size.height;
     BackingSurfaceGL& surface = *BackingSurfaceGL::Produce<BackingSurfaceGL>(SurfaceParams(Size(width, height)));
@@ -126,7 +126,7 @@ bool CompositorGL::CollectBackingStore(const FlutterBackingStore& renderer) {
 }
 
 bool CompositorGL::PresentLayers(const FlutterLayer** layers, size_t layers_count) {
-    SDL_GL_MakeCurrent(view().sdl_window_, view().context_);
+    //SDL_GL_MakeCurrent(view().sdl_window_, view().context_);
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     glViewport(0, 0, view().width(), view().height());
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);

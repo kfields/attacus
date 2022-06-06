@@ -109,6 +109,10 @@ void GfxView::Reset(ResetKind kind)
     }
 }
 
+void GfxView::OnSize() {
+    Reset(ResetKind::kHard);
+}
+
 void GfxView::InitGfx() {
     if (initialized_) {
         gfx_ = Gfx::instance_;

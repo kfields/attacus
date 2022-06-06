@@ -15,6 +15,7 @@ public:
     virtual void InitGfx();
     void CreateFramebuffer() override;
     void Reset(ResetKind kind = ResetKind::kSoft) override;
+    void OnSize() override;
 
     virtual void PreRender() override;
     virtual void PostRender() override;

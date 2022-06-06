@@ -39,16 +39,19 @@ bool MouseInput::Dispatch(SDL_Event &e)
     case SDL_WINDOWEVENT: {
         switch (e.window.event) {
         case SDL_WINDOWEVENT_ENTER:
+            entered_ = true;
             lastMouseX = e.motion.x;
             lastMouseY = e.motion.y;
             return UpdatePointer(FlutterPointerPhase::kAdd, e.motion.x, e.motion.y, e.motion.timestamp);
         case SDL_WINDOWEVENT_LEAVE:
+            entered_ = false;
             lastMouseX = e.motion.x;
             lastMouseY = e.motion.y;
             return UpdatePointer(FlutterPointerPhase::kRemove, e.motion.x, e.motion.y, e.motion.timestamp);
         }
     }
     case SDL_MOUSEMOTION: {
+        if (!entered_) break;
         if (mouseDown)
         {
             lastMouseX = e.motion.x;
@@ -62,6 +65,7 @@ bool MouseInput::Dispatch(SDL_Event &e)
         break;
     }
     case SDL_MOUSEBUTTONDOWN: {
+        if (!entered_) break;
         if (!mouseDown)
         {
             mouseDown = true;
@@ -74,6 +78,7 @@ bool MouseInput::Dispatch(SDL_Event &e)
         break;
     }
     case SDL_MOUSEBUTTONUP: {
+        if (!entered_) break;
         if (mouseDown)
         {
             mouseDown = false;

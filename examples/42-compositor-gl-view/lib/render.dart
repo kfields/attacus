@@ -84,11 +84,10 @@ class RenderAttacusView extends PlatformViewRenderBox {
   @override
   bool get isRepaintBoundary => true;
 
-  @override
+  /*@override
   void paint(PaintingContext context, Offset offset) {
-    print('painting');
     super.paint(context, offset);
-  }
+  }*/
 
   @override
   Size computeDryLayout(BoxConstraints constraints) {

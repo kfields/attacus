@@ -48,11 +48,11 @@ public:
     virtual ~FlutterView();
 
 
-    virtual bool Dispatch(SDL_Event& event) override;
+    bool Dispatch(SDL_Event& event) override;
     // Events
-    virtual void OnResize(SDL_Event& event) override;
-    virtual void OnSize() override;
-    virtual void OnShow() override;
+    void OnResize(SDL_Event& event) override;
+    void OnSize() override;
+    void OnShow() override;
     //
     void UpdateSize(size_t width, size_t height, float pixelRatio, bool maximized);
     //Accessors
