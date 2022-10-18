@@ -6,9 +6,9 @@
 
 using namespace attacus;
 
-//void renderDemo(struct NVGcontext* vg, float mx, float my, float width, float height, float t, int blowup, struct DemoData* data)
-//void renderDemo(struct NVGcontext* vg, float width, float height, float t)
-void renderDemo(struct NVGcontext* vg, float mx, float my, float width, float height, float t)
+// void renderDemo(struct NVGcontext* vg, float mx, float my, float width, float height, float t, int blowup, struct DemoData* data)
+// void renderDemo(struct NVGcontext* vg, float width, float height, float t)
+void renderDemo(struct NVGcontext *vg, float mx, float my, float width, float height, float t)
 {
 	float x, y, popx, popy;
 
@@ -37,7 +37,8 @@ void renderDemo(struct NVGcontext* vg, float mx, float my, float width, float he
 	}*/
 
 	// Widgets.
-	x = width - 520; y = height - 420;
+	x = width - 520;
+	y = height - 420;
 	drawWindow(vg, "Widgets `n Stuff", x, y, 300, 400);
 	x += 10;
 	y += 45;
@@ -78,46 +79,47 @@ void renderDemo(struct NVGcontext* vg, float mx, float my, float width, float he
 	nvgRestore(vg);
 }
 
-class ExampleNanoVGView : public GfxView {
+class ExampleNanoVGView : public GfxView
+{
 public:
-	ExampleNanoVGView(View& parent, ViewParams params) : GfxView(parent, params),
-        nvg_(nullptr)
+	ExampleNanoVGView(View &parent, ViewParams params) : GfxView(parent, params),
+																											 nvg_(nullptr)
 	{
 		view_id_ = 0;
-    }
-    void Reset(ResetKind kind = ResetKind::kSoft) override {
-        GfxView::Reset(kind);
+	}
+	void Reset(ResetKind kind = ResetKind::kSoft) override
+	{
+		GfxView::Reset(kind);
 		bgfx::setViewMode(viewId(), bgfx::ViewMode::Sequential);
-		bgfx::setViewClear(viewId()
-			, BGFX_CLEAR_COLOR|BGFX_CLEAR_DEPTH
-			, 0x303030ff
-			, 1.0f
-			, 0
-			);
-    }
-    void Create() override {
-        GfxView::Create();
+		bgfx::setViewClear(viewId(), BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH, 0x303030ff, 1.0f, 0);
+	}
+	void Create() override
+	{
+		GfxView::Create();
 		time_offset_ = bx::getHPCounter();
 		bgfx::setViewName(viewId(), "NanoVG");
 		bgfx::setViewMode(viewId(), bgfx::ViewMode::Sequential);
 
 		Reset(ResetKind::kSoft);
 
-        int32_t edgeAntiAlias = 1;
+		int32_t edgeAntiAlias = 1;
 		nvg_ = nvgCreate(edgeAntiAlias, viewId());
-        loadDemoData(nvg_, &data_);
-    }
-    void Destroy() override {
-        freeDemoData(nvg_, &data_);
-        nvgDelete(nvg_);
+		loadDemoData(nvg_, &data_);
+	}
+	void Destroy() override
+	{
+		freeDemoData(nvg_, &data_);
+		nvgDelete(nvg_);
 		GfxView::Destroy();
-    }
-    void Draw() override {
-        GfxView::Draw();
-		//ShowExampleDialog();
+	}
+	void Draw() override
+	{
+		GfxView::Draw();
+		// ShowExampleDialog();
 
 		float x, y, popx, popy;
-		x = width() - 520; y = height() - 420;
+		x = width() - 520;
+		y = height() - 420;
 
 		nvgBeginFrame(nvg_, width(), height(), 1.0f);
 
@@ -127,23 +129,22 @@ public:
 
 		int mx, my;
 		Uint32 mState = SDL_GetMouseState(&mx, &my);
-		//renderDemo(nvg_, float(m_mouseState.m_mx), float(m_mouseState.m_my), float(m_width), float(m_height), time, 0, &m_data);
+		// renderDemo(nvg_, float(m_mouseState.m_mx), float(m_mouseState.m_my), float(m_width), float(m_height), time, 0, &m_data);
 		renderDemo(nvg_, float(mx), float(my), width(), height(), time);
 		nvgEndFrame(nvg_);
-
-    }
-    //Data members
-    NVGcontext* nvg_;
+	}
+	// Data members
+	NVGcontext *nvg_;
 	int64_t time_offset_;
-    DemoData data_;
+	DemoData data_;
 };
 
-int main(int argc, char** argv) {
-	ExampleApp& app = *ExampleApp::Produce(ExampleParams(
-        "20-nanovg",
-        "NanoVG is small antialiased vector graphics rendering library",
-        "https://bkaradzic.github.io/bgfx/examples.html#nanovg"
-    ));
-    ExampleNanoVGView& view = *ExampleNanoVGView::Produce<ExampleNanoVGView>(app);
+int main(int argc, char **argv)
+{
+	ExampleApp &app = *ExampleApp::Produce(ExampleParams(
+			"20-nanovg",
+			"NanoVG is small antialiased vector graphics rendering library",
+			"https://bkaradzic.github.io/bgfx/examples.html#nanovg"));
+	ExampleNanoVGView &view = *ExampleNanoVGView::Produce<ExampleNanoVGView>(app);
 	return app.Run();
 }
