@@ -6,7 +6,7 @@ set(THIS ${PROJECT_NAME})
 
 include(../../cmake/Standard.cmake)
 
-set(BX_SRC
+set(BX_SOURCES
   ${BX_ROOT}/src/amalgamated.cpp
 )
 
@@ -14,7 +14,7 @@ set(OPTION_ASTC_TESTS OFF CACHE BOOL "Build all the unit tests" FORCE)
 
 add_subdirectory(${BIMG_ROOT}/3rdparty/astc-codec astc-codec)
 
-set(BIMG_SRC
+set(BIMG_SOURCES
   ${BIMG_ROOT}/src/image.cpp
   ${BIMG_ROOT}/src/image_gnf.cpp
   ${BIMG_ROOT}/src/image_decode.cpp
@@ -23,14 +23,14 @@ set(BIMG_SRC
 
 set(BGFX_HEADERS
     ${BGFX_ROOT}/include/bgfx/bgfx.h
-    bgfx_p.h
+    #bgfx_p.h
 )
 
 set(_ ${BGFX_ROOT}/src)
 
 set(BGFX_SRC
-    #${_}/bgfx.cpp
-    bgfx.cpp
+    ${_}/bgfx.cpp
+    #bgfx.cpp
     ${_}/vertexlayout.cpp
     ${_}/shader.cpp
     ${_}/topology.cpp
@@ -72,9 +72,9 @@ set(BGFX_SRC ${BGFX_SRC}
 endif()
 
 add_library(${THIS} STATIC
-  ${BX_SRC}
+  ${BX_SOURCES}
   ${BX_ROOT}/include
-  ${BIMG_SRC}
+  ${BIMG_SOURCES}
   ${BIMG_ROOT}/include
   ${BGFX_SRC}
   ${BGFX_ROOT}/include
@@ -110,6 +110,7 @@ target_include_directories(${THIS}
         ${BGFX_ROOT}/3rdparty
         ${BGFX_ROOT}/3rdparty/khronos
         ${BGFX_ROOT}/3rdparty/dxsdk/include
+        ${BGFX_ROOT}/3rdparty/directx-headers/include/directx
 )
 
 target_link_libraries(${THIS} PRIVATE astc-codec)
