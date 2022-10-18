@@ -1,5 +1,4 @@
 #include <bgfx/bgfx.h>
-#include <bgfx/bgfx_p.h>
 #include <bx/math.h>
 #include <bx/timer.h>
 
@@ -153,7 +152,6 @@ public:
         
         bgfx::setViewClear(viewId()
             , BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH
-            //, 0x303030ff
             , 0x12345678
             , 1.0f
             , 0

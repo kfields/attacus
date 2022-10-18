@@ -1,5 +1,4 @@
 #include <bgfx/bgfx.h>
-#include <bgfx/bgfx_p.h>
 #include <bx/math.h>
 #include <bx/timer.h>
 
@@ -146,7 +145,7 @@ public:
 	{
     }
 
-    virtual void Create() override {
+    void Create() override {
         GfxView::Create();
 
         CreateFramebuffer();

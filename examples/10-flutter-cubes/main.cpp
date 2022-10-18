@@ -1,5 +1,4 @@
 #include <bgfx/bgfx.h>
-#include <bgfx/bgfx_p.h>
 #include <bx/math.h>
 #include <bx/timer.h>
 

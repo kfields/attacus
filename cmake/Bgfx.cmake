@@ -16,6 +16,7 @@ function(USES_BGFX THIS)
         ${BIMG_ROOT}/3rdparty
 
         ${BGFX_ROOT}/include
+        ${BGFX_ROOT}/src
         ${BGFX_ROOT}/3rdparty
         ${BGFX_ROOT}/3rdparty/khronos
         ${BGFX_ROOT}/examples/common

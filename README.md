@@ -16,8 +16,10 @@ Flutter SDL Python
 
 ## Clone
 
-        git clone --recursive https://github.com/kfields/attacus
-        cd attacus
+```bash
+git clone --recursive https://github.com/kfields/attacus
+cd attacus
+```
 
 ## Extra Steps
 
@@ -34,46 +36,50 @@ Extract to: [project-root]/binaries/flutter
 [pybind11](https://github.com/pybind/pybind11)
 
 ## Build
-
-        poetry shell
-        poetry install
-        python setup.py build [--build-type [Release|Debug]}
+```bash
+poetry shell
+poetry install
+python setup.py build [--build-type [Release|Debug]}
+```
 
 ### Generate Bindings
-
-        aimgen gen
+```bash
+aimgen gen
+```
 
 ### Release
-
-        python setup.py build
+```bash
+python setup.py build
+```
 
 ### Debug
-
-        python setup.py build --build-type Debug
-
-        python setup.py build -G "Visual Studio 16 2019" --build-type Debug
+```bash
+python setup.py build --build-type Debug
+python setup.py build -G "Visual Studio 16 2019" --build-type Debug
+```
 
 ## Quick Start
-
-    git clone --recursive https://github.com/kfields/attacus
-    cd attacus
-    mkdir build
-    cd build
-    cmake ..
-
+```bash
+git clone --recursive https://github.com/kfields/attacus
+cd attacus
+mkdir build
+cd build
+cmake ..
+```
 ### Or
-
-    mkdir build-debug
-    cd build-debug
-    cmake -DCMAKE_BUILD_TYPE=Debug ..
-
+```bash
+mkdir build-debug
+cd build-debug
+cmake -DCMAKE_BUILD_TYPE=Debug ..
+```
 ## Wayland
+```bash
+sudo apt install libwayland-dev
+sudo apt install libxkbcommon-dev
+sudo add-apt-repository ppa:christianrauch/libdecoration
 
-    sudo apt install libwayland-dev
-    sudo apt install libxkbcommon-dev
-    sudo add-apt-repository ppa:christianrauch/libdecoration
-
-    cmake -DATT_WM_WAYLAND=ON -DCMAKE_BUILD_TYPE=Debug ..
+cmake -DATT_WM_WAYLAND=ON -DCMAKE_BUILD_TYPE=Debug ..
+```
 
 ## Glad
     v1

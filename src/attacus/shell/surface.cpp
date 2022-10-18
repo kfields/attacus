@@ -4,7 +4,9 @@
 #include <fmt/core.h>
 
 #include <bgfx/bgfx.h>
-#include <bgfx/bgfx_p.h>
+//Forked Bgfx to access the Context
+//Uses bgfx/src/bgfx_p.h
+#include <bgfx_p.h>
 
 #include "surface.h"
 
