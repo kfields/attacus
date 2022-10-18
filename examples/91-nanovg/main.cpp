@@ -100,7 +100,7 @@ public:
 		bgfx::setViewName(viewId(), "NanoVG");
 		bgfx::setViewMode(viewId(), bgfx::ViewMode::Sequential);
 
-		Reset(ResetKind::kSoft);
+		Reset();
 
 		int32_t edgeAntiAlias = 1;
 		nvg_ = nvgCreate(edgeAntiAlias, viewId());

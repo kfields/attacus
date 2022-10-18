@@ -10,8 +10,6 @@
 
 namespace attacus {
 
-static void SetupBgfxPlatformData(Gfx& gfx, bgfx::PlatformData &pd, const SDL_SysWMinfo &wmi);
-
 Gfx* Gfx::instance_ = nullptr;
 
 Gfx::Gfx(GfxView& view) : view_(&view) {
@@ -26,7 +24,7 @@ void Gfx::Create() {
     SDL_VERSION(&wmInfo.version);
     SDL_GetWindowWMInfo(view().sdl_window_, &wmInfo);
 
-    SetupBgfxPlatformData(*this, pd, wmInfo);
+    SetupBgfxPlatformData(pd, wmInfo);
 
     bgfx::Init bgfx_init;
     bgfx_init.debug = view().debug_;
@@ -40,7 +38,7 @@ void Gfx::Create() {
 
 }
 
-void SetupBgfxPlatformData(Gfx& gfx, bgfx::PlatformData &pd, const SDL_SysWMinfo &wmi) {
+void Gfx::SetupBgfxPlatformData(bgfx::PlatformData &pd, const SDL_SysWMinfo &wmi) {
     switch (wmi.subsystem) {
         case SDL_SYSWM_UNKNOWN: abort();
 
@@ -103,9 +101,9 @@ void SetupBgfxPlatformData(Gfx& gfx, bgfx::PlatformData &pd, const SDL_SysWMinfo
     }
     
     pd.context = NULL;
-    if (gfx.view().view_id_ != 0) {
+    if (view().view_id_ != 0) {
         pd.nwh = NULL;
-        pd.context = gfx.view().gfx_context_;
+        pd.context = view().gfx_context_;
     }
     pd.backBuffer = NULL;
     pd.backBufferDS = NULL;

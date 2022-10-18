@@ -14,10 +14,9 @@ public:
 
     Window(Window& parent, WindowParams params = WindowParams());
     virtual ~Window();
-    void Create() override;
-    void Destroy() override;
     bool Dispatch(SDL_Event& event) override;
-    void Reset(ResetKind kind = ResetKind::kSoft) override;
+    bool DispatchWindowEvent(SDL_Event& event) override;
+    void OnShow() override;
 
     int Run() override;
     //Data members

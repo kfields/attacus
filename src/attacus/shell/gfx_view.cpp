@@ -131,6 +131,7 @@ namespace attacus
 
   void GfxView::OnSize()
   {
+    //Reset(ResetKind::kHard);
     if (viewId() == 0)
     {
       Reset();
@@ -138,6 +139,7 @@ namespace attacus
     else
     {
       Reset(ResetKind::kHard);
+      //Reset();
     }
   }
 

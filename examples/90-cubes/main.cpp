@@ -140,70 +140,71 @@ public:
 		a_(true)
 	{
 		view_id_ = 0;
-    }
+  }
 
-    void Create() override {
-        GfxView::Create();
+	void Reset(ResetKind kind = ResetKind::kSoft) override {
+		GfxView::Reset(kind);
+		bgfx::setViewClear(viewId()
+			, BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH
+			, 0x12345678
+			, 1.0f
+			, 0
+		);
+		bgfx::setViewRect(viewId(), 0, 0, width(), height());
+	}
 
-        bgfx::setViewClear(viewId()
-            , BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH
-            //, 0x303030ff
-            , 0x12345678
-            , 1.0f
-            , 0
-        );
+	void Create() override {
+		GfxView::Create();
+		Reset();
 
-        bgfx::setViewRect(viewId(), 0, 0, width(), height());
+		// Create vertex stream declaration.
+		PosColorVertex::init();
 
-        // Create vertex stream declaration.
-        PosColorVertex::init();
+		// Create static vertex buffer.
+		vbh_ = bgfx::createVertexBuffer(
+			// Static data can be passed with bgfx::makeRef
+			bgfx::makeRef(s_cubeVertices, sizeof(s_cubeVertices))
+			, PosColorVertex::ms_layout
+		);
 
-        // Create static vertex buffer.
-        vbh_ = bgfx::createVertexBuffer(
-            // Static data can be passed with bgfx::makeRef
-            bgfx::makeRef(s_cubeVertices, sizeof(s_cubeVertices))
-            , PosColorVertex::ms_layout
-        );
+		// Create static index buffer for triangle list rendering.
+		ibh_[0] = bgfx::createIndexBuffer(
+			// Static data can be passed with bgfx::makeRef
+			bgfx::makeRef(s_cubeTriList, sizeof(s_cubeTriList))
+		);
 
-        // Create static index buffer for triangle list rendering.
-        ibh_[0] = bgfx::createIndexBuffer(
-            // Static data can be passed with bgfx::makeRef
-            bgfx::makeRef(s_cubeTriList, sizeof(s_cubeTriList))
-        );
+		// Create static index buffer for triangle strip rendering.
+		ibh_[1] = bgfx::createIndexBuffer(
+			// Static data can be passed with bgfx::makeRef
+			bgfx::makeRef(s_cubeTriStrip, sizeof(s_cubeTriStrip))
+		);
 
-        // Create static index buffer for triangle strip rendering.
-        ibh_[1] = bgfx::createIndexBuffer(
-            // Static data can be passed with bgfx::makeRef
-            bgfx::makeRef(s_cubeTriStrip, sizeof(s_cubeTriStrip))
-        );
+		// Create static index buffer for line list rendering.
+		ibh_[2] = bgfx::createIndexBuffer(
+			// Static data can be passed with bgfx::makeRef
+			bgfx::makeRef(s_cubeLineList, sizeof(s_cubeLineList))
+		);
 
-        // Create static index buffer for line list rendering.
-        ibh_[2] = bgfx::createIndexBuffer(
-            // Static data can be passed with bgfx::makeRef
-            bgfx::makeRef(s_cubeLineList, sizeof(s_cubeLineList))
-        );
+		// Create static index buffer for line strip rendering.
+		ibh_[3] = bgfx::createIndexBuffer(
+			// Static data can be passed with bgfx::makeRef
+			bgfx::makeRef(s_cubeLineStrip, sizeof(s_cubeLineStrip))
+		);
 
-        // Create static index buffer for line strip rendering.
-        ibh_[3] = bgfx::createIndexBuffer(
-            // Static data can be passed with bgfx::makeRef
-            bgfx::makeRef(s_cubeLineStrip, sizeof(s_cubeLineStrip))
-        );
+		// Create static index buffer for point list rendering.
+		ibh_[4] = bgfx::createIndexBuffer(
+			// Static data can be passed with bgfx::makeRef
+			bgfx::makeRef(s_cubePoints, sizeof(s_cubePoints))
+		);
 
-        // Create static index buffer for point list rendering.
-        ibh_[4] = bgfx::createIndexBuffer(
-            // Static data can be passed with bgfx::makeRef
-            bgfx::makeRef(s_cubePoints, sizeof(s_cubePoints))
-        );
+		// Create program from shaders.
+		program_ = loadProgram("vs_cubes", "fs_cubes");
 
-        // Create program from shaders.
-        program_ = loadProgram("vs_cubes", "fs_cubes");
+		time_offset_ = bx::getHPCounter();
+	}
 
-        time_offset_ = bx::getHPCounter();
-
-    }
-
-    virtual void Draw() override {
-        GfxView::Draw();
+	void Draw() override {
+		GfxView::Draw();
 
 		float time = (float)((bx::getHPCounter() - time_offset_) / double(bx::getHPFrequency()));
 
@@ -260,7 +261,7 @@ public:
 				bgfx::submit(viewId(), program_);
 			}
 		}
-    }
+	}
 
     // Data members
 	bgfx::VertexBufferHandle vbh_;
@@ -277,10 +278,10 @@ public:
 
 int main(int argc, char** argv) {
 	ExampleApp& app = *ExampleApp::Produce(ExampleParams(
-        "cubes",
-        "Show cubes.",
-        "https://kfields.github.io/attacus/examples.html#cubes"
-    ));
-    ExampleCubesView& view = *ExampleCubesView::Produce<ExampleCubesView>(app);
+		"cubes",
+		"Show cubes.",
+		"https://kfields.github.io/attacus/examples.html#cubes"
+  ));
+  ExampleCubesView& view = *ExampleCubesView::Produce<ExampleCubesView>(app);
 	return app.Run();
 }

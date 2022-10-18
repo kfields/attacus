@@ -8,6 +8,7 @@ class Gfx {
 public:
     Gfx(GfxView& view);
     void Create();
+    void SetupBgfxPlatformData(bgfx::PlatformData &pd, const SDL_SysWMinfo &wmi);
     // Accessors
     static Gfx& instance() { return *instance_; }
     GfxView& view() { return *view_; }

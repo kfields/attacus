@@ -16,19 +16,11 @@ Window::Window(Window& parent, WindowParams params) : PlatformWindow(parent, par
 Window::~Window() {
 }
 
-void Window::Create() {
-    PlatformWindow::Create();
-}
-
-void Window::Destroy() {
-    PlatformWindow::Destroy();
-}
-
-void Window::Reset(ResetKind kind)
-{
+void Window::OnShow() {
     for (auto child : children_) {
-        child->Reset(ResetKind::kSoft);
+        child->OnShow();
     }
+    PlatformWindow::OnShow();
 }
 
 bool Window::Dispatch(SDL_Event& event) {
@@ -36,6 +28,26 @@ bool Window::Dispatch(SDL_Event& event) {
         return false;
 
     return PlatformWindow::Dispatch(event);
+}
+
+bool Window::DispatchWindowEvent(SDL_Event& event) {
+    Uint8 sdl_window_event = event.window.event;
+    switch (sdl_window_event) {
+    case SDL_WINDOWEVENT_RESIZED:
+        OnResize(event);
+    case SDL_WINDOWEVENT_SIZE_CHANGED:
+        OnSize();
+        break;
+    case SDL_WINDOWEVENT_MOVED:
+    case SDL_WINDOWEVENT_SHOWN:
+        break;
+    case SDL_WINDOWEVENT_EXPOSED:
+        OnShow();
+        break;
+    case SDL_WINDOWEVENT_CLOSE:
+        return false;
+    }
+    return true;
 }
 
 int Window::Run() {

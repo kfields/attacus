@@ -134,7 +134,12 @@ C:\Users\kurti\AppData\Roaming\.flutter_custom_devices.json
 
 ## [Flutter Embedder](https://github.com/flutter/flutter/wiki/Custom-Flutter-Engine-Embedders)
 Get the SHA of the Flutter engine you wish to use
-```
+```bash
 cd flutter/bin/internal
 code engine.version
+```
+
+## Flutter Examples
+```bash
+flutter build bundle
 ```

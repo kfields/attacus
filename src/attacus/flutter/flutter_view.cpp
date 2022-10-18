@@ -239,12 +239,6 @@ void FlutterView::UpdateSize(size_t width, size_t height, float pixelRatio, bool
 
 bool FlutterView::Dispatch(SDL_Event &e)
 {
-    /*
-    switch (e.type)
-    {
-    }
-    */
-
     mouseInput_->Dispatch(e);
     textInput_->Dispatch(e);
 
