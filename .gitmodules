@@ -29,3 +29,6 @@
 [submodule "3rdparty/glm"]
 	path = 3rdparty/glm
 	url = https://github.com/g-truc/glm
+[submodule "3rdparty/bgfx"]
+	path = 3rdparty/bgfx
+	url = https://github.com/kfields/bgfx
