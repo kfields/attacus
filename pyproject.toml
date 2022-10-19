@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "attacus-root"
+name = "attacus"
 version = "0.1.0"
 description = ""
 authors = ["Kurtis Fields <kurtisfields@gmail.com>"]

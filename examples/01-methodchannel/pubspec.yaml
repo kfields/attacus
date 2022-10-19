@@ -1,4 +1,4 @@
-name: panner
+name: attacus_flutter
 description: A new Flutter project.
 
 # The following line prevents the package from being accidentally published to
@@ -25,7 +25,7 @@ dependencies:
     sdk: flutter
 
   cupertino_icons: ^1.0.2
-  rxdart: ^0.27.3
+  rxdart: ^0.27.5
 
 dev_dependencies:
   flutter_test:
