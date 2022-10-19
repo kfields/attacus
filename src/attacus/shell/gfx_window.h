@@ -18,8 +18,6 @@ namespace attacus
     bool Dispatch(SDL_Event &event) override;
     // Accessors
     // Data members
-    uint32_t resetFlags_;
-    uint32_t debugFlags_;
     bool capture_ = false;
   };
 

@@ -5,21 +5,19 @@ project(NanoVG LANGUAGES CXX)
 set(THIS ${PROJECT_NAME})
 
 include(../../cmake/Bgfx.cmake)
-#include(../../cmake/Utils.cmake)
 
 set(NVG_HEADERS
-    ${NVG_ROOT}/nanovg.h
+    nanovg.h
+    nanovg_bgfx.h
 )
 
-set(_ ${NVG_ROOT})
-
 set(NVG_SRC
-    ${_}/nanovg.cpp
-    ${_}/nanovg_bgfx.cpp
+    nanovg.cpp
+    nanovg_bgfx.cpp
 )
 
 add_library(${THIS} STATIC
-  ${NVG_SRC}
+  ${NVG_SRC} ${NVG_HEADERS}
 )
 USES_BGFX(${THIS})
-#USES_BGFX_UTILS(${THIS})
+USES_BGFX_UTILS(${THIS})

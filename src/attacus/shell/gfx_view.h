@@ -27,10 +27,7 @@ public:
     static void* current_context_;
     static void* gfx_context_;
 
-    uint32_t resetFlags_;
-    uint32_t debugFlags_;
     int64_t time_offset_;
-    bool debug_ = false;
     bool capture_ = false;
 
 };

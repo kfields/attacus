@@ -22,7 +22,6 @@ View::View(View& parent, ViewParams params) : Surface(params),
         return;
     }
     sdl_window_ = parent.sdl_window_;
-    sdl_renderer_ = parent.sdl_renderer_;
     parent.AddChild(*this);
 }
 

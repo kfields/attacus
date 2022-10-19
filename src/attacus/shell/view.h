@@ -107,7 +107,6 @@ namespace attacus
     static int16_t view_count_;
     int16_t view_id_;
     SDL_Window *sdl_window_ = nullptr;
-    SDL_Renderer *sdl_renderer_ = nullptr;
   };
 
 } // namespace attacus

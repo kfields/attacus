@@ -35,7 +35,7 @@ namespace attacus
   {
     View::PreRender();
     SDL_GL_MakeCurrent(sdl_window_, gfx_context_);
-    // bgfx::touch(viewId());
+    //bgfx::touch(viewId());
   }
 
   void GfxView::PostRender()
@@ -117,8 +117,8 @@ namespace attacus
   {
     if (kind == ResetKind::kSoft)
     {
-      if (bgfx::isValid(frameBuffer_))
-        bgfx::setViewFrameBuffer(viewId(), frameBuffer_);
+      // if (bgfx::isValid(frameBuffer_))
+      bgfx::setViewFrameBuffer(viewId(), frameBuffer_);
     }
     else
     {
@@ -131,7 +131,7 @@ namespace attacus
 
   void GfxView::OnSize()
   {
-    //Reset(ResetKind::kHard);
+    // Reset(ResetKind::kHard);
     if (viewId() == 0)
     {
       Reset();
@@ -139,7 +139,7 @@ namespace attacus
     else
     {
       Reset(ResetKind::kHard);
-      //Reset();
+      // Reset();
     }
   }
 

@@ -90,15 +90,14 @@ public:
 	void Reset(ResetKind kind = ResetKind::kSoft) override
 	{
 		GfxView::Reset(kind);
+		bgfx::setViewName(viewId(), "NanoVG");
 		bgfx::setViewMode(viewId(), bgfx::ViewMode::Sequential);
-		bgfx::setViewClear(viewId(), BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH, 0x303030ff, 1.0f, 0);
+		bgfx::setViewClear(viewId(), BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH, 0x12345678, 1.0f, 0);
 	}
 	void Create() override
 	{
 		GfxView::Create();
 		time_offset_ = bx::getHPCounter();
-		bgfx::setViewName(viewId(), "NanoVG");
-		bgfx::setViewMode(viewId(), bgfx::ViewMode::Sequential);
 
 		Reset();
 
