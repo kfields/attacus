@@ -26,7 +26,7 @@ endif()
 set(BIMG_ROOT ${ATT_ROOT}/3rdparty/bimg)
 set(BGFX_ROOT ${ATT_ROOT}/3rdparty/bgfx)
 
-set(NVG_ROOT ${ATT_ROOT}/src/nanovg)
+set(NVG_ROOT ${ATT_ROOT}/3rdparty/bgfx/examples/common/nanovg)
 set(VGR_ROOT ${ATT_ROOT}/3rdparty/vg-renderer)
 
 set(EXAMPLES_ROOT ${ATT_ROOT}/examples)

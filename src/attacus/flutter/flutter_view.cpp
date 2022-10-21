@@ -112,6 +112,8 @@ void FlutterView::InitRendererConfig(FlutterRendererConfig& config) {
     {
         return 0; // FBO0
     };
+    //config.open_gl.fbo_reset_after_present = true;
+    //config.open_gl.fbo_reset_after_present = false;
 
     config.open_gl.gl_proc_resolver = [](void *userdata, const char *name) -> void *
     {
@@ -125,6 +127,8 @@ void FlutterView::InitRendererConfig(FlutterRendererConfig& config) {
         FlutterView& self = *static_cast<FlutterView*>(userdata);
         return self.textureRegistrar().CopyTexture(texId, width, height, texOut);
     };
+
+    config.open_gl.populate_existing_damage = nullptr;
 }
 
 void FlutterView::InitProjectArgs(FlutterProjectArgs& args) {
@@ -214,12 +218,7 @@ void FlutterView::OnSize()
 void FlutterView::OnShow()
 {
     GfxView::OnShow();
-    FlutterWindowMetricsEvent event = {};
-    event.struct_size = sizeof(event);
-    event.width = width();
-    event.height = height();
-    event.pixel_ratio = 1.0;
-    FlutterEngineSendWindowMetricsEvent(engine_, &event);
+    UpdateSize(width(), height(), 1.0, false);
 }
 
 void FlutterView::UpdateSize(size_t width, size_t height, float pixelRatio, bool maximized)
@@ -235,6 +234,7 @@ void FlutterView::UpdateSize(size_t width, size_t height, float pixelRatio, bool
     event.pixel_ratio = pixelRatio * scaleFactor_;
 
     FlutterEngineSendWindowMetricsEvent(engine_, &event);
+    FlutterEngineScheduleFrame(engine_);
 }
 
 bool FlutterView::Dispatch(SDL_Event &e)

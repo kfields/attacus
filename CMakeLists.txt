@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.4)
 
 include(./cmake/Config.cmake)
 
+set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+
 #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W3 /O2 /bigobj")
 set (CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 set (CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})

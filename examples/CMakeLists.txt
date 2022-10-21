@@ -19,14 +19,15 @@ add_library(${THIS} STATIC ${HEADERS} ${SOURCES})
 USES_ATT(${THIS})
 USES_BGFX(${THIS})
 
-add_subdirectory(00-helloworld)
-add_subdirectory(01-methodchannel)
+add_subdirectory(basic)
+add_subdirectory(helloworld)
+add_subdirectory(methodchannel)
 
-add_subdirectory(10-flutter-cubes)
+add_subdirectory(flutter-cubes)
 
-add_subdirectory(40-compositor-gl)
-add_subdirectory(41-compositor-gl-cubes)
-add_subdirectory(42-compositor-gl-view)
+add_subdirectory(compositor-gl)
+add_subdirectory(compositor-gl-cubes)
+add_subdirectory(compositor-gl-view)
 
-add_subdirectory(90-cubes)
-add_subdirectory(91-nanovg)
+add_subdirectory(cubes)
+add_subdirectory(nanovg)

@@ -63,10 +63,10 @@ namespace attacus
 
     Gfx::instance().Reset();
 
-    for (std::vector<View*>::iterator it = children_.begin(); it != children_.end(); ++it){
+    /*for (std::vector<View*>::iterator it = children_.begin(); it != children_.end(); ++it){
         View* child = *it;
         child->Reset();
-    }
+    }*/
 
     GfxWindow::Reset(kind);
   }

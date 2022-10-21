@@ -15,10 +15,18 @@ function(USES_EXAMPLES THIS)
     target_include_directories(${THIS} PRIVATE
         ${ATT_ROOT}
     )
+
     target_link_libraries(${THIS} PRIVATE AttExamples)
+    
     set_target_properties(
         ${THIS} PROPERTIES
-        VS_DEBUGGER_WORKING_DIRECTORY "${ATT_ROOT}/examples/${THIS}")
+        VS_DEBUGGER_WORKING_DIRECTORY "${ATT_ROOT}/examples/${THIS}"
+    )
+
+    set_target_properties(
+        ${THIS} PROPERTIES
+        FOLDER "Examples"
+    )
 
     if(${ATT_PLATFORM_WINDOWS})
     add_custom_command(TARGET ${THIS} POST_BUILD

@@ -10,6 +10,7 @@ class Dispatcher : public Component {
 public:
     virtual bool Dispatch(SDL_Event& event);
     virtual bool DispatchWindowEvent(SDL_Event& event) { return true; }
+    //virtual bool DispatchWindowEvent(SDL_Event& event);
     virtual void OnResize(SDL_Event& event) {}
     virtual void OnSize() {}
     virtual void OnShow() {}

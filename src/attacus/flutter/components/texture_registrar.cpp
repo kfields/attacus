@@ -34,7 +34,7 @@ namespace attacus
     {
         //TODO: This used to work.  Now it's crashing when using the compositor
         //FlutterEngineResult result = FlutterEngineMarkExternalTextureFrameAvailable(engine_, id);
-        this->flutter().engine_api_.ScheduleFrame(this->flutter().engine_);
+        FlutterEngineScheduleFrame(flutter().engine_);
         return true;
     }
 
