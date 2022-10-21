@@ -10,16 +10,15 @@ set(BX_SOURCES
   ${BX_ROOT}/src/amalgamated.cpp
 )
 
-set(OPTION_ASTC_TESTS OFF CACHE BOOL "Build all the unit tests" FORCE)
+#set(OPTION_ASTC_TESTS OFF CACHE BOOL "Build all the unit tests" FORCE)
+#add_subdirectory(${BIMG_ROOT}/3rdparty/astc-codec astc-codec)
 
-add_subdirectory(${BIMG_ROOT}/3rdparty/astc-codec astc-codec)
-
-set(BIMG_SOURCES
-  ${BIMG_ROOT}/src/image.cpp
-  ${BIMG_ROOT}/src/image_gnf.cpp
-  ${BIMG_ROOT}/src/image_decode.cpp
-  ${BIMG_ROOT}/3rdparty/tinyexr/deps/miniz/miniz.c
-)
+#set(BIMG_SOURCES
+#  ${BIMG_ROOT}/src/image.cpp
+#  ${BIMG_ROOT}/src/image_gnf.cpp
+#  ${BIMG_ROOT}/src/image_decode.cpp
+#  ${BIMG_ROOT}/3rdparty/tinyexr/deps/miniz/miniz.c
+#)
 
 set(BGFX_HEADERS
     ${BGFX_ROOT}/include/bgfx/bgfx.h
@@ -74,8 +73,8 @@ endif()
 add_library(${THIS} STATIC
   ${BX_SOURCES}
   ${BX_ROOT}/include
-  ${BIMG_SOURCES}
-  ${BIMG_ROOT}/include
+  #${BIMG_SOURCES}
+  #${BIMG_ROOT}/include
   ${BGFX_SRC}
   ${BGFX_ROOT}/include
 )
@@ -103,8 +102,8 @@ target_include_directories(${THIS}
         ${BX_ROOT}/include
         ${BX_ROOT}/3rdparty
         ${BIMG_ROOT}/include
-        ${BIMG_ROOT}/3rdparty
-        ${BIMG_ROOT}/3rdparty/tinyexr/deps/miniz
+        #${BIMG_ROOT}/3rdparty
+        #${BIMG_ROOT}/3rdparty/tinyexr/deps/miniz
         ${BGFX_ROOT}/include
         ${BGFX_ROOT}/src
         ${BGFX_ROOT}/3rdparty
@@ -113,6 +112,6 @@ target_include_directories(${THIS}
         ${BGFX_ROOT}/3rdparty/directx-headers/include/directx
 )
 
-target_link_libraries(${THIS} PRIVATE astc-codec)
+target_link_libraries(${THIS} PRIVATE bimg)
 
 add_subdirectory(utils)

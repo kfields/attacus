@@ -29,7 +29,7 @@ namespace attacus
   {
     ViewParams(
         Size _size = Size(800, 600),
-        Point _origin = Point(SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED),
+        Point _origin = Point(0, 0),
         std::string _name = "Attacus") : SurfaceParams(_size)
     {
       name = _name;

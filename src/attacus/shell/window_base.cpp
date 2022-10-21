@@ -52,7 +52,7 @@ void WindowBase::CreateSDLWindow() {
 
 void WindowBase::Show() {
     SDL_ShowWindow(sdl_window_);
-    Reset();
+    //Reset();
 }
 
 void WindowBase::SetPosition(Point origin) {

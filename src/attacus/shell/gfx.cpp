@@ -33,7 +33,7 @@ namespace attacus
     SetupBgfxPlatformData(pd, wmInfo);
 
     bgfx::Init bgfx_init;
-    bgfx_init.debug = debug_;
+    bgfx_init.debug = true;
     // bgfx_init.type = bgfx::RendererType::Count; // auto choose renderer
     bgfx_init.type = bgfx::RendererType::OpenGL;
     bgfx_init.resolution.width = view().width();

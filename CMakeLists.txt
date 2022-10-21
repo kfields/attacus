@@ -66,6 +66,7 @@ endif()
 # bgfx
 #
 if(${HAS_BGFX})
+add_subdirectory(src/bimg)
 add_subdirectory(src/bgfx)
 endif() #HAS_BGFX
 
