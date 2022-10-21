@@ -27,7 +27,10 @@ FlutterRunner::FlutterRunner(FlutterView& view) : view_(&view) {
         FlutterTask task,
         uint64_t target_time_nanos,
         void* user_data) {
-
+            FlutterRunner& self = *static_cast<FlutterRunner*>(user_data);
+            App::PushCallbackEvent(new Delegate([self, task]() -> void {
+                FlutterEngineResult result = FlutterEngineRunTask(self.engine_, &task);
+            }), &self);
     };
     //
     custom_task_runners.struct_size = sizeof(FlutterCustomTaskRunners);
