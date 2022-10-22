@@ -1,7 +1,5 @@
 #include <gtest/gtest.h>
 
-#include <rxcpp/rx.hpp>
-
 #include <attacus/core/component.h>
 
 using namespace attacus;
