@@ -1,9 +1,6 @@
 [submodule "3rdparty/sdl"]
 	path = 3rdparty/sdl
 	url = https://github.com/libsdl-org/SDL
-[submodule "3rdparty/pybind11"]
-	path = 3rdparty/pybind11
-	url = https://github.com/pybind/pybind11
 [submodule "3rdparty/fmt"]
 	path = 3rdparty/fmt
 	url = https://github.com/fmtlib/fmt
