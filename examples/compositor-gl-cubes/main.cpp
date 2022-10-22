@@ -4,7 +4,7 @@
 
 #include <bgfx/utils/utils.h>
 
-#include <attacus/flutter/flutter_composite_view_gl.h>
+#include <attacus/flutter/flutter_view.h>
 #include <attacus/flutter/flutter_messenger.h>
 #include <attacus/flutter/standard_method_channel.h>
 #include <attacus/flutter/components/texture_registrar.h>
@@ -280,12 +280,12 @@ public:
 	bool a_;
 };
 
-class ExampleCubes : public FlutterCompositeViewGL {
+class ExampleCubes : public FlutterView {
 public:
-    ExampleCubes(View& parent, ViewParams params = ViewParams()) : FlutterCompositeViewGL(parent, params) {}
+    ExampleCubes(View& parent, ViewParams params = ViewParams()) : FlutterView(parent, params) {}
     
     virtual void Create() override {
-        FlutterCompositeViewGL::Create();
+        FlutterView::Create();
         
         channel_ = new StandardMethodChannel(messenger(), kChannelName);
 

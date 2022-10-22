@@ -18,6 +18,9 @@ namespace fs = std::filesystem;
 #include "flutter_runner.h"
 #include "flutter_view.h"
 
+// TODO: Fix:  Depends on OpenGL
+#include "compositor/gl/compositor_gl.h"
+
 #include "components/isolate.h"
 #include "components/platform.h"
 #include "components/navigation.h"
@@ -33,10 +36,12 @@ namespace fs = std::filesystem;
 namespace attacus
 {
 
-FlutterView::FlutterView(View& parent, ViewParams params) : GfxView(parent, params)
-{
+  FlutterView::FlutterView(View &parent, ViewParams params) : GfxView(parent, params)
+  {
     messenger_ = new FlutterMessenger(*this);
     runner_ = new FlutterRunner(*this);
+
+    compositor_ = new CompositorGL(*this);
 
     isolate_ = new IsolateComponent(*this);
     platform_ = new PlatformComponent(*this);
@@ -47,91 +52,96 @@ FlutterView::FlutterView(View& parent, ViewParams params) : GfxView(parent, para
 
     textureRegistrar_ = new TextureRegistrar(*this);
     viewRegistry_ = new ViewRegistry(*this);
-}
+  }
 
-FlutterView::~FlutterView()
-{
-}
+  FlutterView::~FlutterView()
+  {
+  }
 
-void FlutterView::CreateGfx() {
+  void FlutterView::CreateGfx()
+  {
     GfxView::CreateGfx();
 
     resource_context_ = CreateContext();
-    if (resource_context_ == NULL) {
-        std::cout << fmt::format("Can't create opengl context for resource window: {}\n", SDL_GetError());
-        return;
+    if (resource_context_ == NULL)
+    {
+      std::cout << fmt::format("Can't create opengl context for resource window: {}\n", SDL_GetError());
+      return;
     }
 
     context_ = CreateContext();
-    if (context_ == NULL) {
-        std::cout << fmt::format("Can't create opengl context: {}\n", SDL_GetError());
-        return;
+    if (context_ == NULL)
+    {
+      std::cout << fmt::format("Can't create opengl context: {}\n", SDL_GetError());
+      return;
     }
 
-    //int version = gladLoadGL((GLADloadfunc)SDL_GL_GetProcAddress);
-    //std::cout << fmt::format("OpenGL {}.{} loaded\n", GLAD_VERSION_MAJOR(version), GLAD_VERSION_MINOR(version));
+    // int version = gladLoadGL((GLADloadfunc)SDL_GL_GetProcAddress);
+    // std::cout << fmt::format("OpenGL {}.{} loaded\n", GLAD_VERSION_MAJOR(version), GLAD_VERSION_MINOR(version));
     gl_proc_resolver = (GLADloadfunc)SDL_GL_GetProcAddress;
     int version = gladLoadGL(gl_proc_resolver);
     std::cout << fmt::format("OpenGL {}.{} loaded\n", GLAD_VERSION_MAJOR(version), GLAD_VERSION_MINOR(version));
 
     SDL_GL_MakeCurrent(sdl_window_, nullptr);
-}
+  }
 
-void FlutterView::InitRendererConfig(FlutterRendererConfig& config) {
+  void FlutterView::InitRendererConfig(FlutterRendererConfig &config)
+  {
     config.type = kOpenGL;
     config.open_gl.struct_size = sizeof(config.open_gl);
     config.open_gl.make_current = [](void *userdata) -> bool
     {
-        FlutterView& self = *static_cast<FlutterView*>(userdata);
-        auto window = self.sdl_window_;
-        SDL_GL_MakeCurrent(window, self.context_);
-        return true;
+      FlutterView &self = *static_cast<FlutterView *>(userdata);
+      auto window = self.sdl_window_;
+      SDL_GL_MakeCurrent(window, self.context_);
+      return true;
     };
     config.open_gl.make_resource_current = [](void *userdata) -> bool
     {
-        FlutterView& self = *static_cast<FlutterView*>(userdata);
-        auto window = self.sdl_window_;
-        SDL_GL_MakeCurrent(window, self.resource_context_);
-        return true;
+      FlutterView &self = *static_cast<FlutterView *>(userdata);
+      auto window = self.sdl_window_;
+      SDL_GL_MakeCurrent(window, self.resource_context_);
+      return true;
     };
     config.open_gl.clear_current = [](void *userdata) -> bool
     {
-        FlutterView& self = *static_cast<FlutterView*>(userdata);
-        auto window = self.sdl_window_;
-        SDL_GL_MakeCurrent(window, nullptr);
-        return true;
+      FlutterView &self = *static_cast<FlutterView *>(userdata);
+      auto window = self.sdl_window_;
+      SDL_GL_MakeCurrent(window, nullptr);
+      return true;
     };
     config.open_gl.present = [](void *userdata) -> bool
     {
-        FlutterView& self = *static_cast<FlutterView*>(userdata);
-        auto window = self.sdl_window_;
-        SDL_GL_SwapWindow(window);
-        return true;
+      FlutterView &self = *static_cast<FlutterView *>(userdata);
+      auto window = self.sdl_window_;
+      SDL_GL_SwapWindow(window);
+      return true;
     };
     config.open_gl.fbo_callback = [](void *userdata) -> uint32_t
     {
-        return 0; // FBO0
+      return 0; // FBO0
     };
-    //config.open_gl.fbo_reset_after_present = true;
-    //config.open_gl.fbo_reset_after_present = false;
+    // config.open_gl.fbo_reset_after_present = true;
+    // config.open_gl.fbo_reset_after_present = false;
 
     config.open_gl.gl_proc_resolver = [](void *userdata, const char *name) -> void *
     {
-        FlutterView& self = *static_cast<FlutterView*>(userdata);
-        return self.gl_proc_resolver(name);
+      FlutterView &self = *static_cast<FlutterView *>(userdata);
+      return self.gl_proc_resolver(name);
     };
 
-    config.open_gl.gl_external_texture_frame_callback = 
-        [](void *userdata, int64_t texId, size_t width, size_t height, FlutterOpenGLTexture*  texOut) -> bool
+    config.open_gl.gl_external_texture_frame_callback =
+        [](void *userdata, int64_t texId, size_t width, size_t height, FlutterOpenGLTexture *texOut) -> bool
     {
-        FlutterView& self = *static_cast<FlutterView*>(userdata);
-        return self.textureRegistrar().CopyTexture(texId, width, height, texOut);
+      FlutterView &self = *static_cast<FlutterView *>(userdata);
+      return self.textureRegistrar().CopyTexture(texId, width, height, texOut);
     };
 
     config.open_gl.populate_existing_damage = nullptr;
-}
+  }
 
-void FlutterView::InitProjectArgs(FlutterProjectArgs& args) {
+  void FlutterView::InitProjectArgs(FlutterProjectArgs &args)
+  {
     // This directory is generated by `flutter build bundle`.
     fs::path project_path = fs::current_path();
     // fs::path project_path(SDL_GetBasePath());
@@ -143,30 +153,33 @@ void FlutterView::InitProjectArgs(FlutterProjectArgs& args) {
     args.icu_data_path = _strdup(icudtl_path.string().c_str());
     args.platform_message_callback = [](const FlutterPlatformMessage *message, void *user_data)
     {
-        FlutterView &self = *static_cast<FlutterView*>(user_data);
-        self.messenger().Receive(*message);
+      FlutterView &self = *static_cast<FlutterView *>(user_data);
+      self.messenger().Receive(*message);
     };
     args.custom_task_runners = &runner_->custom_task_runners;
-}
 
-void FlutterView::InitEngine(FlutterRendererConfig& config, FlutterProjectArgs& args) {
+    args.compositor = compositor().InitCompositor();
+  }
+
+  void FlutterView::InitEngine(FlutterRendererConfig &config, FlutterProjectArgs &args)
+  {
     FlutterEngineResult result = FlutterEngineInitialize(FLUTTER_ENGINE_VERSION, &config, &args, this, &engine_);
     if (result != kSuccess || engine_ == nullptr)
     {
-        std::cout << "Could not initialize the Flutter Engine." << std::endl;
-        return;
+      std::cout << "Could not initialize the Flutter Engine." << std::endl;
+      return;
     }
     engine_api_.struct_size = sizeof(FlutterEngineProcTable);
     result = FlutterEngineGetProcAddresses(&engine_api_);
     if (result != kSuccess)
     {
-        std::cout << "Could not get the Flutter Engine Procedure Table." << std::endl;
-        return;
+      std::cout << "Could not get the Flutter Engine Procedure Table." << std::endl;
+      return;
     }
-}
+  }
 
-void FlutterView::Create()
-{
+  void FlutterView::Create()
+  {
     GfxView::Create();
 
     FlutterRendererConfig config = {};
@@ -175,9 +188,11 @@ void FlutterView::Create()
     InitProjectArgs(args);
 
     InitEngine(config, args);
-    
+
     messenger().Create();
     runner().Create();
+
+    compositor().Create();
 
     isolate().Create();
     platform().Create();
@@ -192,37 +207,38 @@ void FlutterView::Create()
     FlutterEngineResult result = FlutterEngineRunInitialized(engine_);
     if (result != kSuccess || engine_ == nullptr)
     {
-        std::cout << "Could not run the Flutter Engine." << std::endl;
-        return;
+      std::cout << "Could not run the Flutter Engine." << std::endl;
+      return;
     }
-}
+  }
 
-void FlutterView::Destroy() {
+  void FlutterView::Destroy()
+  {
     FlutterEngineResult result = FlutterEngineDeinitialize(engine_);
     Shutdown();
     GfxView::Destroy();
-}
+  }
 
-void FlutterView::OnResize(SDL_Event &event)
-{
+  void FlutterView::OnResize(SDL_Event &event)
+  {
     GfxView::OnResize(event);
     UpdateSize(event.window.data1, event.window.data2, 1.0, false);
-}
+  }
 
-void FlutterView::OnSize()
-{
+  void FlutterView::OnSize()
+  {
     GfxView::OnSize();
     UpdateSize(width(), height(), 1.0, false);
-}
+  }
 
-void FlutterView::OnShow()
-{
+  void FlutterView::OnShow()
+  {
     GfxView::OnShow();
     UpdateSize(width(), height(), 1.0, false);
-}
+  }
 
-void FlutterView::UpdateSize(size_t width, size_t height, float pixelRatio, bool maximized)
-{
+  void FlutterView::UpdateSize(size_t width, size_t height, float pixelRatio, bool maximized)
+  {
     //  Round up the physical window size to a multiple of the pixel ratio
     width = std::ceil(width / pixelRatio) * pixelRatio;
     height = std::ceil(height / pixelRatio) * pixelRatio;
@@ -235,14 +251,14 @@ void FlutterView::UpdateSize(size_t width, size_t height, float pixelRatio, bool
 
     FlutterEngineSendWindowMetricsEvent(engine_, &event);
     FlutterEngineScheduleFrame(engine_);
-}
+  }
 
-bool FlutterView::Dispatch(SDL_Event &e)
-{
+  bool FlutterView::Dispatch(SDL_Event &e)
+  {
     mouseInput_->Dispatch(e);
     textInput_->Dispatch(e);
 
     return GfxView::Dispatch(e);
-}
+  }
 
 } // namespace attacus

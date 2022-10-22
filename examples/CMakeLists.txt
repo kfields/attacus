@@ -20,7 +20,6 @@ USES_ATT(${THIS})
 USES_BGFX(${THIS})
 
 add_subdirectory(basic)
-add_subdirectory(helloworld)
 add_subdirectory(methodchannel)
 
 add_subdirectory(flutter-cubes)

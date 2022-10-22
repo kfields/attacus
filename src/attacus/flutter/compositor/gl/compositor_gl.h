@@ -2,18 +2,16 @@
 
 #include <list>
 
-#include <attacus/flutter/components/flutter_component.h>
+#include <attacus/flutter/compositor/compositor.h>
 
 namespace attacus {
 
 class BackingSurfaceGL;
-struct Pos2RgbTexCoord0Vertex;
 
-class CompositorGL : public FlutterComponent {
+class CompositorGL : public Compositor {
 public:
     CompositorGL(FlutterView& view);
-    void Create() override;
-    FlutterCompositor* InitCompositor();
+    FlutterCompositor* InitCompositor() override;
     //
     bool CreateBackingStore(const FlutterBackingStoreConfig& config, FlutterBackingStore& backing_store_out);    
     bool CollectBackingStore(const FlutterBackingStore& renderer);
@@ -28,7 +26,7 @@ public:
     BackingSurfaceGL* GetCachedSurface();
     // Accessors
     // Data members
-    FlutterCompositor compositor_;
+    //FlutterCompositor compositor_;
     std::list<BackingSurfaceGL*> free_surfaces_;
 };
 

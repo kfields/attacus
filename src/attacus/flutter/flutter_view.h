@@ -18,6 +18,8 @@ class Window;
 class FlutterMessenger;
 class FlutterRunner;
 
+class Compositor;
+
 class IsolateComponent;
 class PlatformComponent;
 class NavigationComponent;
@@ -60,6 +62,8 @@ public:
     FlutterMessenger& messenger() { return *messenger_; }
     FlutterRunner& runner() { return *runner_; }
 
+    Compositor& compositor() { return *compositor_; }
+
     IsolateComponent& isolate() { return *isolate_; }
     PlatformComponent& platform() { return *platform_; }
     NavigationComponent& navigation() { return *navigation_; }
@@ -79,6 +83,8 @@ public:
     FlutterEngineProcTable engine_api_{0};
     FlutterMessenger* messenger_ = nullptr;
     FlutterRunner* runner_ = nullptr;
+    //
+    Compositor* compositor_ = nullptr;
     //
     IsolateComponent* isolate_ = nullptr;
     PlatformComponent* platform_ = nullptr;
