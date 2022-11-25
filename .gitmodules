@@ -1,9 +1,6 @@
 [submodule "3rdparty/sdl"]
 	path = 3rdparty/sdl
 	url = https://github.com/libsdl-org/SDL
-[submodule "3rdparty/fmt"]
-	path = 3rdparty/fmt
-	url = https://github.com/fmtlib/fmt
 [submodule "3rdparty/glad"]
 	path = 3rdparty/glad
 	url = https://github.com/Dav1dde/glad
