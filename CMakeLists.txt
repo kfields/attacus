@@ -11,11 +11,6 @@ set (CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 set (CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 
 #
-# fmt
-#
-add_subdirectory(3rdparty/fmt)
-
-#
 # GLM
 #
 set(BUILD_SHARED_LIBS OFF CACHE BOOL "Build shared library" FORCE)
