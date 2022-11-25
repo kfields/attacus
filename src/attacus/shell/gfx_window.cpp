@@ -50,8 +50,8 @@ namespace attacus
     }
 
     SDL_SysWMinfo wmi;
-    SDL_VERSION(&wmi.version);
-    if (!SDL_GetWindowWMInfo(sdl_window_, &wmi))
+    //SDL_VERSION(&wmi.version);
+    if (!SDL_GetWindowWMInfo(sdl_window_, &wmi, SDL_SYSWM_CURRENT_VERSION))
     {
       std::cout << fmt::format("SDL_SysWMinfo could not be retrieved: {}\n", SDL_GetError());
       return;

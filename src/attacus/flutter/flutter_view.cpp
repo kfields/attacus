@@ -9,7 +9,7 @@ namespace fs = std::filesystem;
 #include <fmt/core.h>
 
 #include <SDL.h>
-#include "SDL_syswm.h"
+#include <SDL_syswm.h>
 
 #include <attacus/app.h>
 
