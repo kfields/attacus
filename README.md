@@ -137,7 +137,7 @@ C:\Users\kurti\AppData\Roaming\.flutter_custom_devices.json
 Get the SHA of the Flutter engine you wish to use
 ```bash
 cd flutter/bin/internal
-code engine.version
+cat engine.version
 ```
 
 ## Flutter Examples

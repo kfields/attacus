@@ -5,12 +5,6 @@
 #include "SDL.h"
 #include "SDL_syswm.h"
 
-#include <bx/math.h>
-#include <bx/timer.h>
-
-#include <bgfx/bgfx.h>
-#include <bgfx/platform.h>
-
 #include <attacus/shell/gfx.h>
 
 #include "app.h"

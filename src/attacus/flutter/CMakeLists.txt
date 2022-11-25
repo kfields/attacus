@@ -6,13 +6,10 @@ set(THIS ${PROJECT_NAME})
 
 include(${ATT_ROOT}/cmake/Sdl.cmake)
 include(${ATT_ROOT}/cmake/Shell.cmake)
-include(${ATT_ROOT}/cmake/Bgfx.cmake)
-#include(${ATT_ROOT}/cmake/NanoVG.cmake)
-include(${ATT_ROOT}/cmake/VgRenderer.cmake)
 
 
 set(FLUTTER_HEADERS
-    flutter_embedder.h
+    ${FLUTTER_OUT}/flutter_embedder.h
     flutter_view.h
     flutter_messenger.h
     flutter_runner.h
@@ -87,16 +84,17 @@ add_library(${THIS} STATIC ${FLUTTER_SRC} ${FLUTTER_HEADERS})
 set_target_properties(${THIS} PROPERTIES POSITION_INDEPENDENT_CODE ${ATT_STATIC_PIC})
 
 USES_SDL(${THIS})
-USES_BGFX(${THIS})
-#USES_NVG(${THIS})
-USES_VGR(${THIS})
 
 if(${ATT_PLATFORM_WINDOWS})
 add_library(FlutterEngine SHARED IMPORTED)
 set_property(TARGET FlutterEngine PROPERTY
-             IMPORTED_LOCATION ${ATT_ROOT}/binaries/flutter/windows-x64-embedder/flutter_engine.dll)
+             IMPORTED_LOCATION ${FLUTTER_OUT}/flutter_engine.dll)
 set_property(TARGET FlutterEngine PROPERTY
-             IMPORTED_IMPLIB ${ATT_ROOT}/binaries/flutter/windows-x64-embedder/flutter_engine.dll.lib)
+             IMPORTED_IMPLIB ${FLUTTER_OUT}/flutter_engine.dll.lib)
 endif()
+
+target_include_directories(${THIS} PRIVATE
+    ${FLUTTER_OUT}
+)
 
 target_link_libraries(${THIS} PRIVATE FlutterEngine)

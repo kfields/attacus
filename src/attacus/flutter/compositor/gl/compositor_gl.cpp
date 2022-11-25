@@ -157,7 +157,7 @@ namespace attacus
   {
     auto id = pview.identifier;
     View *view = flutter().viewRegistry().GetView(id);
-    auto texId = view->GetInternalTexture();
+    auto texId = view->GetTexture();
     PresentTexture(texId, offset, size);
   }
 

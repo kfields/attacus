@@ -90,8 +90,9 @@ void View::OnPosition() {
 
 }
 
-bgfx::TextureHandle View::GetTexture() {
-    return bgfx::getTexture(frameBuffer_); 
+uintptr_t View::GetTexture() {
+    //return bgfx::getTexture(frameBuffer_);
+    return 0; //TODO: get texture from OpenGL framebuffer
 }
 
 } //namespace attacus

@@ -6,10 +6,6 @@
 #include "SDL.h"
 #include "SDL_syswm.h"
 
-#include <bx/timer.h>
-#include <bgfx/bgfx.h>
-#include <bgfx/platform.h>
-
 #include "gfx_view.h"
 #include "gfx.h"
 
@@ -21,7 +17,7 @@ namespace attacus
   static bool initialized_ = false;
 
   GfxView::GfxView(View &parent, ViewParams params) : View(parent, params),
-                                                      time_offset_(bx::getHPCounter())
+                                                      time_offset_(0)
   {
   }
 
@@ -35,12 +31,10 @@ namespace attacus
   {
     View::PreRender();
     SDL_GL_MakeCurrent(sdl_window_, gfx_context_);
-    //bgfx::touch(viewId());
   }
 
   void GfxView::PostRender()
   {
-    // bgfx::frame(capture_);
     Touch();
     View::PostRender();
   }
@@ -72,15 +66,6 @@ namespace attacus
   {
     if (!gfx_context_)
     {
-      if (viewId() == 0)
-      {
-        InitGfx();
-        auto internal = bgfx::getInternalData();
-        current_context_ = gfx_context_ = internal->context;
-        SDL_GL_MakeCurrent(sdl_window_, current_context_);
-      }
-      else
-      {
         gfx_context_ = CreateContext();
         if (gfx_context_ == NULL)
         {
@@ -88,7 +73,6 @@ namespace attacus
           return;
         }
         InitGfx();
-      }
     }
     if (SDL_GL_SetSwapInterval(1) < 0)
     {
@@ -99,37 +83,16 @@ namespace attacus
   void GfxView::CreateFramebuffer()
   {
     View::CreateFramebuffer();
-    bgfx::setViewFrameBuffer(viewId(), frameBuffer_);
   }
 
   void GfxView::Reset(ResetKind kind)
   {
-    if (kind == ResetKind::kSoft)
-    {
-      // if (bgfx::isValid(frameBuffer_))
-      bgfx::setViewFrameBuffer(viewId(), frameBuffer_);
-    }
-    else
-    {
-      if (bgfx::isValid(frameBuffer_))
-        destroy(frameBuffer_);
-
-      CreateFramebuffer();
-    }
+    CreateFramebuffer();
   }
 
   void GfxView::OnSize()
   {
-    // Reset(ResetKind::kHard);
-    if (viewId() == 0)
-    {
-      Reset();
-    }
-    else
-    {
-      Reset(ResetKind::kHard);
-      // Reset();
-    }
+    Reset(ResetKind::kHard);
   }
 
   void GfxView::InitGfx()

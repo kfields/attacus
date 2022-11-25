@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.4)
 
+project(AttacusAll LANGUAGES CXX)
+
 include(./cmake/Config.cmake)
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
@@ -36,6 +38,7 @@ endif() #HAS_PYBIND11
 # SDL - Minimal build for now
 #
 set(HAVE_LIBC ON)
+set(SDL_TEST OFF CACHE BOOL "Build the SDL2_test library" FORCE)
 set(SDL_SHARED OFF CACHE BOOL "Build a shared version of the library" FORCE)
 #set(SDL_STATIC_PIC ON CACHE BOOL "Static version of the library should be built with Position Independent Code" FORCE)
 
@@ -61,24 +64,6 @@ if(${ATT_RENDERER_GL})
     add_subdirectory(src/glad)
     endif() #HAS_GLAD
 endif()
-
-#
-# bgfx
-#
-if(${HAS_BGFX})
-add_subdirectory(src/bimg)
-add_subdirectory(src/bgfx)
-endif() #HAS_BGFX
-
-#
-# NanoVG
-#
-add_subdirectory(src/nanovg)
-
-#
-# VgRenderer
-#
-add_subdirectory(src/vg-renderer)
 
 #
 #Attacus

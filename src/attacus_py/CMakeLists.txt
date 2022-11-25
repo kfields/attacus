@@ -6,7 +6,6 @@ set(THIS ${PROJECT_NAME})
 
 include(${ATT_ROOT}/cmake/Pybind11.cmake)
 include(${ATT_ROOT}/cmake/Attacus.cmake)
-include(${ATT_ROOT}/cmake/Bgfx.cmake)
 
 set(ATTPY_HEADERS
     bindings/bindtools.h
@@ -26,7 +25,6 @@ set_target_properties(${THIS} PROPERTIES OUTPUT_NAME "attacus_py")
 
 USES_PYBIND11(${THIS})
 USES_ATT(${THIS})
-USES_BGFX(${THIS})
 
 #target_compile_definitions(${THIS} PRIVATE ATT_DLL)
 

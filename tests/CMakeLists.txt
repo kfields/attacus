@@ -7,7 +7,6 @@ set(THIS ${PROJECT_NAME})
 include(${ATT_ROOT}/cmake/Test.cmake)
 
 include(${ATT_ROOT}/cmake/Core.cmake)
-include(${ATT_ROOT}/cmake/RxCpp.cmake)
 
 enable_testing()
 
@@ -19,7 +18,6 @@ add_executable(${THIS}
 USES_TEST(${THIS})
 
 USES_CORE(${THIS})
-USES_RXCPP(${THIS})
 
 include(GoogleTest)
 gtest_discover_tests(${THIS})

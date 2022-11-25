@@ -2,9 +2,6 @@
 #include "SDL.h"
 #include "SDL_syswm.h"
 
-#include <bgfx/bgfx.h>
-#include <bgfx/platform.h>
-
 #include "gfx_view.h"
 #include "gfx.h"
 
@@ -14,8 +11,8 @@ namespace attacus
   Gfx *Gfx::instance_ = nullptr;
 
   Gfx::Gfx(GfxView &view) : view_(&view),
-                            resetFlags_(BGFX_RESET_VSYNC),
-                            debugFlags_(BGFX_DEBUG_TEXT)
+                            resetFlags_(0),
+                            debugFlags_(0)
 
   {
     instance_ = this;
@@ -23,7 +20,7 @@ namespace attacus
 
   void Gfx::Create()
   {
-    auto result = bgfx::renderFrame(); // single threaded mode
+    /*auto result = bgfx::renderFrame(); // single threaded mode
 
     bgfx::PlatformData pd{};
     SDL_SysWMinfo wmInfo;
@@ -40,10 +37,10 @@ namespace attacus
     bgfx_init.resolution.height = view().height();
     bgfx_init.resolution.reset = resetFlags_;
     bgfx_init.platformData = pd;
-    bgfx::init(bgfx_init);
+    bgfx::init(bgfx_init);*/
   }
 
-  void Gfx::SetupBgfxPlatformData(bgfx::PlatformData &pd, const SDL_SysWMinfo &wmi)
+  /*void Gfx::SetupBgfxPlatformData(bgfx::PlatformData &pd, const SDL_SysWMinfo &wmi)
   {
     switch (wmi.subsystem)
     {
@@ -115,9 +112,9 @@ namespace attacus
     }
     pd.backBuffer = NULL;
     pd.backBufferDS = NULL;
-  }
+  }*/
 
   void Gfx::Reset() {
-    bgfx::reset(view().width(), view().height(), resetFlags_);
+    //bgfx::reset(view().width(), view().height(), resetFlags_);
   }
 } // namespace attacus

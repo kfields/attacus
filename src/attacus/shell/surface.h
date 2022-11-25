@@ -4,8 +4,6 @@
 #include <list>
 #include <map>
 
-#include <bgfx/bgfx.h>
-
 #include <attacus/core/event.h>
 
 #include "dispatcher.h"
@@ -62,8 +60,7 @@ public:
 
     void SetSize(Size size);
 
-    virtual bgfx::TextureHandle GetTexture() { return texture_; }
-    virtual uintptr_t GetInternalTexture();
+    virtual uintptr_t GetTexture() { return texture_; }
     //Accessors
     int width() { return size_.width; }
     int height() { return size_.height; }
@@ -77,8 +74,8 @@ public:
     static int16_t surface_count_;
     int16_t id_;
 
-    bgfx::FrameBufferHandle frameBuffer_;
-    bgfx::TextureHandle texture_;
+    uintptr_t frameBuffer_;
+    uintptr_t texture_;
     // Events
     EventSource<SurfaceEvent> touched_event_;
 };

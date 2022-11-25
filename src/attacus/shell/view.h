@@ -5,8 +5,6 @@
 #include <list>
 #include <map>
 
-#include <bgfx/bgfx.h>
-
 #include "surface.h"
 
 namespace attacus
@@ -70,7 +68,7 @@ namespace attacus
     void PostRender() override;
 
     virtual void Reset(ResetKind kind = ResetKind::kSoft) {}
-    bgfx::TextureHandle GetTexture() override;
+    uintptr_t GetTexture() override;
 
     //
     void SetPosition(Point origin);

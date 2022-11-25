@@ -41,7 +41,7 @@ namespace attacus
     bool TextureRegistrar::CopyTexture(int64_t texId, size_t width, size_t height, FlutterOpenGLTexture*  texOut) {
         Surface& surface = *surfaces_[texId];
         texOut->target = GL_TEXTURE_2D;
-        texOut->name = surface.GetInternalTexture();
+        texOut->name = surface.GetTexture();
         texOut->width = width;
         texOut->height = height;
         texOut->format = GL_RGBA8;

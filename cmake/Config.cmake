@@ -15,19 +15,11 @@ set(GLM_ROOT ${ATT_ROOT}/3rdparty/glm)
 set(PYBIND11_ROOT ${ATT_ROOT}/3rdparty/pybind11)
 set(RXCPP_ROOT ${ATT_ROOT}/3rdparty/rxcpp)
 set(GLAD_ROOT ${ATT_ROOT}/src/glad)
-set(FLUTTER_ROOT ${ATT_ROOT}/src/flutter)
 
+set(FLUTTER_ROOT ${ATT_ROOT}/3rdparty/engine/src) #TODO: Set as option where to find flutter repo
+#set(FLUTTER_OUT ${FLUTTER_ROOT}/out/host_debug_unopt)
+set(FLUTTER_OUT ${ATT_ROOT}/binaries/windows-x64-embedder)
 
-set(BX_ROOT ${ATT_ROOT}/3rdparty/bx)
-if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-set(BX_COMPATIBILITY ${BX_ROOT}/include/compat/msvc)
-endif()
-
-set(BIMG_ROOT ${ATT_ROOT}/3rdparty/bimg)
-set(BGFX_ROOT ${ATT_ROOT}/3rdparty/bgfx)
-
-set(NVG_ROOT ${ATT_ROOT}/3rdparty/bgfx/examples/common/nanovg)
-set(VGR_ROOT ${ATT_ROOT}/3rdparty/vg-renderer)
 
 set(EXAMPLES_ROOT ${ATT_ROOT}/examples)
 

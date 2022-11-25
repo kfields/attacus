@@ -70,7 +70,6 @@ namespace attacus
   void GfxWindow::PostRender()
   {
     Window::PostRender();
-    bgfx::frame(capture_);
   }
 
   bool GfxWindow::Dispatch(SDL_Event &event)
