@@ -1,6 +1,6 @@
 #include <string>
 #include <iostream>
-#include <fmt/core.h>
+#include <format>
 
 #include <glad/gl.h>
 #include "SDL.h"
@@ -55,7 +55,7 @@ namespace attacus
     current_context_ = context;
     if (context == NULL)
     {
-      std::cout << fmt::format("Can't create opengl context: {}\n", SDL_GetError());
+      std::cout << std::format("Can't create opengl context: {}\n", SDL_GetError());
       return nullptr;
     }
 
@@ -69,14 +69,14 @@ namespace attacus
         gfx_context_ = CreateContext();
         if (gfx_context_ == NULL)
         {
-          std::cout << fmt::format("Can't create opengl context for bgfx: {}\n", SDL_GetError());
+          std::cout << std::format("Can't create opengl context for bgfx: {}\n", SDL_GetError());
           return;
         }
         InitGfx();
     }
     if (SDL_GL_SetSwapInterval(1) < 0)
     {
-      std::cout << fmt::format("Couldn't enable vsync: {}\n", SDL_GetError());
+      std::cout << std::format("Couldn't enable vsync: {}\n", SDL_GetError());
     }
   }
 

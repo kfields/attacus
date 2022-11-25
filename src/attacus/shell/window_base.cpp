@@ -1,5 +1,5 @@
 #include <iostream>
-#include <fmt/core.h>
+#include <format>
 
 #include <SDL.h>
 #include "SDL_syswm.h"
@@ -34,14 +34,14 @@ void WindowBase::CreateSDLWindow() {
     sdl_window_ = SDL_CreateWindow(name_.c_str(), x(), y(), width(), height(), flags_);
 
     if (sdl_window_ == nullptr) {
-        std::cout << fmt::format("Window could not be created: {}\n", SDL_GetError());
+        std::cout << std::format("Window could not be created: {}\n", SDL_GetError());
         return;
     }
 
     SDL_SysWMinfo wmi;
     //SDL_VERSION(&wmi.version);
     if (!SDL_GetWindowWMInfo(sdl_window_, &wmi, SDL_SYSWM_CURRENT_VERSION)) {
-        std::cout << fmt::format("SDL_SysWMinfo could not be retrieved: {}\n", SDL_GetError());
+        std::cout << std::format("SDL_SysWMinfo could not be retrieved: {}\n", SDL_GetError());
         return;
     }
     SetWindowId(SDL_GetWindowID(sdl_window_));

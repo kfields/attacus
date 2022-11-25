@@ -1,7 +1,7 @@
 #include <array>
 #include <string>
 #include <iostream>
-#include <fmt/core.h>
+#include <format>
 
 #include "surface.h"
 

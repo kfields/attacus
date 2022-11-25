@@ -6,7 +6,7 @@
 namespace fs = std::filesystem;
 
 #include <string>
-#include <fmt/core.h>
+#include <format>
 
 #include <SDL.h>
 #include <SDL_syswm.h>
@@ -65,22 +65,22 @@ namespace attacus
     resource_context_ = CreateContext();
     if (resource_context_ == NULL)
     {
-      std::cout << fmt::format("Can't create opengl context for resource window: {}\n", SDL_GetError());
+      std::cout << std::format("Can't create opengl context for resource window: {}\n", SDL_GetError());
       return;
     }
 
     context_ = CreateContext();
     if (context_ == NULL)
     {
-      std::cout << fmt::format("Can't create opengl context: {}\n", SDL_GetError());
+      std::cout << std::format("Can't create opengl context: {}\n", SDL_GetError());
       return;
     }
 
     // int version = gladLoadGL((GLADloadfunc)SDL_GL_GetProcAddress);
-    // std::cout << fmt::format("OpenGL {}.{} loaded\n", GLAD_VERSION_MAJOR(version), GLAD_VERSION_MINOR(version));
+    // std::cout << std::format("OpenGL {}.{} loaded\n", GLAD_VERSION_MAJOR(version), GLAD_VERSION_MINOR(version));
     gl_proc_resolver = (GLADloadfunc)SDL_GL_GetProcAddress;
     int version = gladLoadGL(gl_proc_resolver);
-    std::cout << fmt::format("OpenGL {}.{} loaded\n", GLAD_VERSION_MAJOR(version), GLAD_VERSION_MINOR(version));
+    std::cout << std::format("OpenGL {}.{} loaded\n", GLAD_VERSION_MAJOR(version), GLAD_VERSION_MINOR(version));
 
     SDL_GL_MakeCurrent(sdl_window_, nullptr);
   }

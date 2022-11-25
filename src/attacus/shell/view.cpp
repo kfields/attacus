@@ -1,6 +1,6 @@
 #include <string>
 #include <iostream>
-#include <fmt/core.h>
+#include <format>
 
 #include <glad/gl.h>
 #include <SDL.h>

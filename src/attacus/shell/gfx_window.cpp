@@ -1,6 +1,6 @@
 #include <string>
 #include <iostream>
-#include <fmt/core.h>
+#include <format>
 
 #include <SDL.h>
 #include "SDL_syswm.h"
@@ -45,7 +45,7 @@ namespace attacus
 
     if (sdl_window_ == nullptr)
     {
-      std::cout << fmt::format("SDL Window could not be created: {}\n", SDL_GetError());
+      std::cout << std::format("SDL Window could not be created: {}\n", SDL_GetError());
       return;
     }
 
@@ -53,7 +53,7 @@ namespace attacus
     //SDL_VERSION(&wmi.version);
     if (!SDL_GetWindowWMInfo(sdl_window_, &wmi, SDL_SYSWM_CURRENT_VERSION))
     {
-      std::cout << fmt::format("SDL_SysWMinfo could not be retrieved: {}\n", SDL_GetError());
+      std::cout << std::format("SDL_SysWMinfo could not be retrieved: {}\n", SDL_GetError());
       return;
     }
     SetWindowId(SDL_GetWindowID(sdl_window_));
