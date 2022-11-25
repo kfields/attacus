@@ -7,6 +7,7 @@ set(THIS ${PROJECT_NAME})
 include(${ATT_ROOT}/cmake/Examples.cmake)
 
 set(HEADERS
+    logo.h
 )
 
 set(SOURCES
@@ -15,4 +16,3 @@ set(SOURCES
 
 add_executable(${THIS} ${HEADERS} ${SOURCES})
 USES_EXAMPLES(${THIS})
-target_link_libraries(${THIS} PRIVATE cubes_view)

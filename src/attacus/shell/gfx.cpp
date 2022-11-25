@@ -1,6 +1,15 @@
+#include <string>
+#include <iostream>
+#include <format>
+
 #include <glad/gl.h>
 #include "SDL.h"
 #include "SDL_syswm.h"
+
+#define SOKOL_IMPL
+#define SOKOL_GLCORE33
+#define SOKOL_EXTERNAL_GL_LOADER
+#include <sokol_gfx.h>
 
 #include "gfx_view.h"
 #include "gfx.h"
@@ -20,6 +29,14 @@ namespace attacus
 
   void Gfx::Create()
   {
+    GLADloadfunc gl_proc_resolver = (GLADloadfunc)SDL_GL_GetProcAddress;
+    int version = gladLoadGL(gl_proc_resolver);
+    std::cout << std::format("OpenGL {}.{} loaded\n", GLAD_VERSION_MAJOR(version), GLAD_VERSION_MINOR(version));
+
+    /* setup sokol_gfx */
+    sg_desc sgDesc{0};
+    sg_setup(&sgDesc);
+
     /*auto result = bgfx::renderFrame(); // single threaded mode
 
     bgfx::PlatformData pd{};
@@ -114,7 +131,8 @@ namespace attacus
     pd.backBufferDS = NULL;
   }*/
 
-  void Gfx::Reset() {
-    //bgfx::reset(view().width(), view().height(), resetFlags_);
+  void Gfx::Reset()
+  {
+    // bgfx::reset(view().width(), view().height(), resetFlags_);
   }
 } // namespace attacus

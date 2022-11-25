@@ -55,7 +55,9 @@ python setup.py build
 ### Debug
 ```bash
 python setup.py build --build-type Debug
+#or
 python setup.py build -G "Visual Studio 16 2019" --build-type Debug
+#or
 python setup.py build -G "Visual Studio 17 2022" --build-type Debug
 ```
 

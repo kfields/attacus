@@ -11,10 +11,12 @@ set(ATT_STATIC_PIC ON)
 #
 set(ATT_ROOT ${CMAKE_SOURCE_DIR})
 
-set(SDL_ROOT ${ATT_ROOT}/3rdparty/sdl)
-set(GLM_ROOT ${ATT_ROOT}/3rdparty/glm)
 set(PYBIND11_ROOT ${ATT_ROOT}/3rdparty/pybind11)
+set(GLM_ROOT ${ATT_ROOT}/3rdparty/glm)
+
+set(SDL_ROOT ${ATT_ROOT}/3rdparty/sdl)
 set(GLAD_ROOT ${ATT_ROOT}/src/glad)
+set(SOKOL_ROOT ${ATT_ROOT}/3rdparty/sokol)
 
 set(FLUTTER_ROOT ${ATT_ROOT}/3rdparty/engine/src) #TODO: Set as option where to find flutter repo
 #set(FLUTTER_OUT ${FLUTTER_ROOT}/out/host_debug_unopt)
