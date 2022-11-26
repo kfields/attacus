@@ -38,14 +38,6 @@ void WindowBase::CreateSDLWindow() {
         return;
     }
 
-    //TODO: This is broken
-    /*SDL_SysWMinfo wmi;
-    //SDL_VERSION(&wmi.version);
-    if (!SDL_GetWindowWMInfo(sdl_window_, &wmi, SDL_SYSWM_CURRENT_VERSION)) {
-        std::cout << std::format("SDL_SysWMinfo could not be retrieved: {}\n", SDL_GetError());
-        return;
-    }*/
-
     SetWindowId(SDL_GetWindowID(sdl_window_));
     MapWindow(windowId(), this);
 

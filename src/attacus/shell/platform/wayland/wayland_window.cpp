@@ -12,8 +12,7 @@ WaylandWindow::~WaylandWindow() {
 
 wl_surface* WaylandWindow::GetNativeHandle() {
     SDL_SysWMinfo wmInfo;
-    SDL_VERSION(&wmInfo.version);
-    SDL_GetWindowWMInfo(window_, &wmInfo);
+    SDL_GetWindowWMInfo(sdl_window_, &wmInfo, SDL_SYSWM_CURRENT_VERSION);
     wl_surface* hwnd = wmInfo.info.wl.surface;
     return hwnd;
 }

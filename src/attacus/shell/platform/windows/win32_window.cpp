@@ -14,10 +14,6 @@ Win32Window::~Win32Window()
 void Win32Window::Create()
 {
     WindowBase::Create();
-    /*HWND hWnd = GetNativeHandle();
-    const ULONG_PTR cNewStyle = GetClassLongPtr(hWnd, GCL_STYLE) | CS_HREDRAW | CS_VREDRAW;
-    SetClassLongPtr(hWnd, GCL_STYLE, cNewStyle);
-    ShowWindow(hWnd, SW_NORMAL);*/
 }
 
 RECT Win32Window::GetClientArea()
@@ -30,7 +26,6 @@ RECT Win32Window::GetClientArea()
 HWND Win32Window::GetNativeHandle()
 {
     SDL_SysWMinfo wmInfo;
-    //SDL_VERSION(&wmInfo.version);
     SDL_GetWindowWMInfo(sdl_window_, &wmInfo, SDL_SYSWM_CURRENT_VERSION);
     HWND hwnd = wmInfo.info.win.window;
     return hwnd;
