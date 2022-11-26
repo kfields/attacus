@@ -14,8 +14,6 @@ const float vertices[] = {
 sg_buffer_desc sgBufferDesc{
 		.data = SG_RANGE(vertices)};
 
-//sg_buffer vbuf = sg_make_buffer(&sgBufferDesc);
-
 sg_shader_desc sgShaderDesc{
 		.vs = {.source =
 							 "#version 330\n"
@@ -33,25 +31,6 @@ sg_shader_desc sgShaderDesc{
 							 "void main() {\n"
 							 "  frag_color = color;\n"
 							 "}\n"}};
-
-/* 
-//a shader
-//sg_shader shd = sg_make_shader(&sgShaderDesc);
-
-//a pipeline state object (default render states are fine for triangle)
-//sg_pipeline_desc sgPipelineDesc{
-		.shader = shd,
-		.layout{
-				.attrs = {
-						{.format = SG_VERTEXFORMAT_FLOAT3},
-						{.format = SG_VERTEXFORMAT_FLOAT4}}}};
-
-sg_pipeline pip = sg_make_pipeline(&sgPipelineDesc);
-
-//resource bindings
-sg_bindings bind{
-	.vertex_buffers { vbuf }
-};*/
 
 /* default pass action (clear to grey) */
 sg_pass_action pass_action = {0};
