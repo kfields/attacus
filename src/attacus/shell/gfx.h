@@ -1,5 +1,7 @@
 #pragma once
 
+#include <glad/gl.h>
+
 namespace attacus {
 
 class GfxView;
@@ -8,7 +10,6 @@ class Gfx {
 public:
     Gfx(GfxView& view);
     void Create();
-    //void SetupBgfxPlatformData(bgfx::PlatformData &pd, const SDL_SysWMinfo &wmi);
     void Reset();
     // Accessors
     static Gfx& instance() { return *instance_; }
@@ -20,6 +21,8 @@ public:
     bool debug_ = false;
     uint32_t resetFlags_;
     uint32_t debugFlags_;
+    // OpenGL
+    GLADloadfunc gl_proc_resolver_ = nullptr;
 };
 
 } // namespace attacus

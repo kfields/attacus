@@ -3,7 +3,7 @@
 #include <nohlmann/json.hpp>
 using json = nlohmann::json;
 
-#include <glad/gl.h>
+//#include <glad/gl.h>
 
 #include <attacus/shell/gfx_view.h>
 #include "flutter_embedder.h"
@@ -75,7 +75,7 @@ public:
     //Data members
     void* context_ = nullptr;
     void* resource_context_ = nullptr;
-    GLADloadfunc gl_proc_resolver = nullptr;
+    //GLADloadfunc gl_proc_resolver = nullptr;
     //
     float scaleFactor_ = 1.0f;
     //

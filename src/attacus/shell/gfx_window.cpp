@@ -30,10 +30,10 @@ namespace attacus
 
   void GfxWindow::CreateSDLWindow()
   {
-    // Request an OpenGL 4.5 context (should be core)
+    // Request an OpenGL 4.6 context (should be core)
     SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 5);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 6);
     // Also request a depth buffer
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
@@ -49,13 +49,14 @@ namespace attacus
       return;
     }
 
-    SDL_SysWMinfo wmi;
-    //SDL_VERSION(&wmi.version);
+    //TODO: I think the SDL folks broke this?
+    /*SDL_SysWMinfo wmi;
     if (!SDL_GetWindowWMInfo(sdl_window_, &wmi, SDL_SYSWM_CURRENT_VERSION))
     {
       std::cout << std::format("SDL_SysWMinfo could not be retrieved: {}\n", SDL_GetError());
       return;
-    }
+    }*/
+
     SetWindowId(SDL_GetWindowID(sdl_window_));
     MapWindow(windowId(), this);
 

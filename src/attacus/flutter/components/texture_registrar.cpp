@@ -1,7 +1,8 @@
 #include <iostream>
 
-#include <attacus/shell/surface.h>
+#include <glad/gl.h>
 
+#include <attacus/shell/surface.h>
 #include <attacus/flutter/flutter_view.h>
 
 #include "texture_registrar.h"

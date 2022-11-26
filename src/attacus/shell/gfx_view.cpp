@@ -66,18 +66,31 @@ namespace attacus
   {
     if (!gfx_context_)
     {
-        gfx_context_ = CreateContext();
-        if (gfx_context_ == NULL)
-        {
-          std::cout << std::format("Can't create opengl context for bgfx: {}\n", SDL_GetError());
-          return;
-        }
-        InitGfx();
+      gfx_context_ = CreateContext();
+      if (gfx_context_ == NULL)
+      {
+        std::cout << std::format("Can't create opengl context for bgfx: {}\n", SDL_GetError());
+        return;
+      }
+      InitGfx();
     }
     if (SDL_GL_SetSwapInterval(1) < 0)
     {
       std::cout << std::format("Couldn't enable vsync: {}\n", SDL_GetError());
     }
+  }
+
+  void GfxView::InitGfx()
+  {
+    if (initialized_)
+    {
+      gfx_ = Gfx::instance_;
+      return;
+    }
+
+    gfx_ = new Gfx(*this);
+    gfx_->Create();
+    initialized_ = true;
   }
 
   void GfxView::CreateFramebuffer()
@@ -93,19 +106,6 @@ namespace attacus
   void GfxView::OnSize()
   {
     Reset(ResetKind::kHard);
-  }
-
-  void GfxView::InitGfx()
-  {
-    if (initialized_)
-    {
-      gfx_ = Gfx::instance_;
-      return;
-    }
-
-    gfx_ = new Gfx(*this);
-    gfx_->Create();
-    initialized_ = true;
   }
 
 } // namespace attacus

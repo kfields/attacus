@@ -12,6 +12,7 @@ namespace fs = std::filesystem;
 #include <SDL_syswm.h>
 
 #include <attacus/app.h>
+#include <attacus/shell/gfx.h>
 
 #include "flutter_embedder.h"
 #include "flutter_messenger.h"
@@ -76,11 +77,9 @@ namespace attacus
       return;
     }
 
-    // int version = gladLoadGL((GLADloadfunc)SDL_GL_GetProcAddress);
-    // std::cout << std::format("OpenGL {}.{} loaded\n", GLAD_VERSION_MAJOR(version), GLAD_VERSION_MINOR(version));
-    gl_proc_resolver = (GLADloadfunc)SDL_GL_GetProcAddress;
-    int version = gladLoadGL(gl_proc_resolver);
-    std::cout << std::format("OpenGL {}.{} loaded\n", GLAD_VERSION_MAJOR(version), GLAD_VERSION_MINOR(version));
+    //gl_proc_resolver = (GLADloadfunc)SDL_GL_GetProcAddress;
+    //int version = gladLoadGL(gl_proc_resolver);
+    //std::cout << std::format("OpenGL {}.{} loaded\n", GLAD_VERSION_MAJOR(version), GLAD_VERSION_MINOR(version));
 
     SDL_GL_MakeCurrent(sdl_window_, nullptr);
   }
@@ -127,7 +126,7 @@ namespace attacus
     config.open_gl.gl_proc_resolver = [](void *userdata, const char *name) -> void *
     {
       FlutterView &self = *static_cast<FlutterView *>(userdata);
-      return self.gl_proc_resolver(name);
+      return self.gfx().gl_proc_resolver_(name);
     };
 
     config.open_gl.gl_external_texture_frame_callback =
