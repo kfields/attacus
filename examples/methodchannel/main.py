@@ -1,3 +1,5 @@
+from loguru import logger
+
 from attacus import App, FlutterView, StandardMethodChannel, StandardMethod
 
 class MyFlutter(FlutterView):
@@ -7,9 +9,9 @@ class MyFlutter(FlutterView):
         self.counter = 0
 
     def startup(self):
-        print("Starting up Flutter ...")
+        logger.debug("Starting up Flutter ...")
         messenger = self.messenger
-        print(messenger)
+        logger.debug(messenger)
 
         channel = self.channel = StandardMethodChannel(messenger, "example")
 
@@ -25,27 +27,27 @@ class MyFlutter(FlutterView):
             lambda method_call, result: self.set_value(method_call, result)
         )
 
-        print(self.channel)
+        logger.debug(self.channel)
 
 
     def shutdown(self):
-        print("Shutting down Flutter ...")
+        logger.debug("Shutting down Flutter ...")
 
     def increment_counter(self, method_call, result):
-        print('increment_counter')
-        print(method_call)
-        print(method_call.method_name())
-        print(method_call.arguments())
-        print(result)
+        logger.debug('increment_counter')
+        logger.debug(method_call)
+        logger.debug(method_call.method_name())
+        logger.debug(method_call.arguments())
+        logger.debug(result)
         self.counter += 1
         result.success(self.counter)
 
     def set_value(self, method_call, result):
-        print('set_counter')
-        print(method_call)
-        print(method_call.method_name())
-        print(method_call.arguments())
-        print(result)
+        logger.debug('set_counter')
+        logger.debug(method_call)
+        logger.debug(method_call.method_name())
+        logger.debug(method_call.arguments())
+        logger.debug(result)
         result.success()
 
 class MyApp(App):
@@ -53,13 +55,12 @@ class MyApp(App):
         super().__init__()
 
     def startup(self):
-        print("Starting up App ...")
+        logger.debug("Starting up App ...")
 
     def shutdown(self):
-        print("Shutting down App ...")
+        logger.debug("Shutting down App ...")
 
 app = MyApp()
-#app = App()
 
 flutter = MyFlutter(app)
 

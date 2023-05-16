@@ -6,20 +6,20 @@ authors = ["Kurtis Fields <kurtisfields@gmail.com>"]
 
 [tool.poetry.dependencies]
 python = ">=3.10.0,<3.12"
+loguru = "^0.7.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^7.3.1"
-aimgen = {path = "./pkg/aimgen",  develop = true}
 glad = {path = "./3rdparty/glad",  develop = true}
-pybind11 = "^2.10.0"
-scikit-build = "^0.16.2"
-cmake = "^3.25.0"
+pybind11 = "^2.10.4"
+scikit-build = "^0.17.5"
+cmake = "^3.26.3"
 
 [build-system]
 requires = [
     "setuptools=^65.6.3",
-    "pybind11=^2.10.1",
-    "cmake=^3.25.0",
-    "scikit-build=^0.16.2",
+    "pybind11=^2.10.4",
+    "cmake=^3.26.3",
+    "scikit-build=^0.17.5",
 ]
 build-backend = "poetry.masonry.api"
