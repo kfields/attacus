@@ -9,7 +9,7 @@ struct ExampleParams : WindowParams {
         std::string _url = "https://kfields.github.io/attacus/index.html",
         Point _origin = Point(SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED),
         Size _size = Size(800, 600),
-        uint32_t _flags = SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI
+        uint32_t _flags = SDL_WINDOW_RESIZABLE
     ) : WindowParams(_size, _origin, _name, _flags) {
         description = _description;
         url = _url;

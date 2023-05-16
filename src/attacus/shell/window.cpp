@@ -23,7 +23,7 @@ void Window::OnShow() {
     PlatformWindow::OnShow();
 }
 
-bool Window::Dispatch(SDL_Event& event) {
+/*bool Window::Dispatch(SDL_Event& event) {
     if (state_ == State::kShutdown)
         return false;
 
@@ -48,7 +48,32 @@ bool Window::DispatchWindowEvent(SDL_Event& event) {
         return false;
     }
     return true;
-}
+}*/
+
+    bool Window::Dispatch(SDL_Event &event)
+    {
+        if (state_ == State::kShutdown)
+            return false;
+
+        switch (event.type)
+        {
+        case SDL_EVENT_WINDOW_RESIZED:
+        case SDL_EVENT_WINDOW_PIXEL_SIZE_CHANGED:
+            OnResize(event);
+            break;
+        case SDL_EVENT_WINDOW_MOVED:
+        case SDL_EVENT_WINDOW_SHOWN:
+            break;
+        case SDL_EVENT_WINDOW_EXPOSED:
+            OnShow();
+            break;
+        case SDL_EVENT_WINDOW_CLOSE_REQUESTED:
+            return false;
+        }
+
+        return PlatformWindow::Dispatch(event);
+    }
+
 
 int Window::Run() {
     PlatformWindow::Run();

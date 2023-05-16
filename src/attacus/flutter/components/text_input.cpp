@@ -177,71 +177,80 @@ void TextInput::SendStateUpdate(const TextInputModel& model) {
   channel_->InvokeMethod(kUpdateEditingStateMethod, std::move(args));
 }
 
-bool TextInput::Dispatch(SDL_Event &e)
-{
-    switch (e.type)
+    bool TextInput::Dispatch(SDL_Event &e)
     {
-    case SDL_TEXTINPUT:
-        DispatchText(e.text);
-        break;
-    case SDL_KEYDOWN:
-    case SDL_KEYUP: {
-        DispatchKey(e.key);
-        break;
+        switch (e.type)
+        {
+        case SDL_EVENT_TEXT_INPUT:
+            DispatchText(e.text);
+            break;
+        case SDL_EVENT_KEY_DOWN:
+        case SDL_EVENT_KEY_UP:
+        {
+            DispatchKey(e.key);
+            break;
+        }
+        }
+        return true;
     }
-    }
-    return true;
-}
 
 void TextInput::DispatchText(const SDL_TextInputEvent &event) {
     active_model_->AddText(event.text);
     SendStateUpdate(*active_model_);
 }
 
-void TextInput::DispatchKey(const SDL_KeyboardEvent &event) {
-  if (active_model_ == nullptr) {
-    return;
-  }
-  auto action = event.type;
-  if (action == SDL_KEYDOWN || event.repeat != 0) {
-    auto key = event.keysym.sym;
-    switch (key) {
-      case SDLK_LEFT:
-        if (active_model_->MoveCursorBack()) {
-          SendStateUpdate(*active_model_);
+    void TextInput::DispatchKey(const SDL_KeyboardEvent &event)
+    {
+        if (active_model_ == nullptr)
+        {
+            return;
         }
-        break;
-      case SDLK_RIGHT:
-        if (active_model_->MoveCursorForward()) {
-          SendStateUpdate(*active_model_);
+        auto action = event.type;
+        if (action == SDL_EVENT_KEY_DOWN || event.repeat != 0)
+        {
+            auto key = event.keysym.sym;
+            switch (key)
+            {
+            case SDLK_LEFT:
+                if (active_model_->MoveCursorBack())
+                {
+                    SendStateUpdate(*active_model_);
+                }
+                break;
+            case SDLK_RIGHT:
+                if (active_model_->MoveCursorForward())
+                {
+                    SendStateUpdate(*active_model_);
+                }
+                break;
+            case SDLK_END:
+                active_model_->MoveCursorToEnd();
+                SendStateUpdate(*active_model_);
+                break;
+            case SDLK_HOME:
+                active_model_->MoveCursorToBeginning();
+                SendStateUpdate(*active_model_);
+                break;
+            case SDLK_BACKSPACE:
+                if (active_model_->Backspace())
+                {
+                    SendStateUpdate(*active_model_);
+                }
+                break;
+            case SDLK_DELETE:
+                if (active_model_->Delete())
+                {
+                    SendStateUpdate(*active_model_);
+                }
+                break;
+            case SDLK_RETURN:
+                EnterPressed(active_model_.get());
+                break;
+            default:
+                break;
+            }
         }
-        break;
-      case SDLK_END:
-        active_model_->MoveCursorToEnd();
-        SendStateUpdate(*active_model_);
-        break;
-      case SDLK_HOME:
-        active_model_->MoveCursorToBeginning();
-        SendStateUpdate(*active_model_);
-        break;
-      case SDLK_BACKSPACE:
-        if (active_model_->Backspace()) {
-          SendStateUpdate(*active_model_);
-        }
-        break;
-      case SDLK_DELETE:
-        if (active_model_->Delete()) {
-          SendStateUpdate(*active_model_);
-        }
-        break;
-      case SDLK_RETURN:
-        EnterPressed(active_model_.get());
-        break;
-      default:
-        break;
     }
-  }
-}
 
 void TextInput::EnterPressed(TextInputModel* model) {
   if (input_type_ == kMultilineInputType) {

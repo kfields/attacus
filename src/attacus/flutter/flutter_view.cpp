@@ -32,7 +32,6 @@ namespace fs = std::filesystem;
 #include "components/texture_registrar.h"
 #include "components/view_registry.h"
 
-#define FLUTTER_ENGINE_VERSION 1
 
 namespace attacus
 {
@@ -77,9 +76,9 @@ namespace attacus
       return;
     }
 
-    //gl_proc_resolver = (GLADloadfunc)SDL_GL_GetProcAddress;
-    //int version = gladLoadGL(gl_proc_resolver);
-    //std::cout << std::format("OpenGL {}.{} loaded\n", GLAD_VERSION_MAJOR(version), GLAD_VERSION_MINOR(version));
+    // gl_proc_resolver = (GLADloadfunc)SDL_GL_GetProcAddress;
+    // int version = gladLoadGL(gl_proc_resolver);
+    // std::cout << std::format("OpenGL {}.{} loaded\n", GLAD_VERSION_MAJOR(version), GLAD_VERSION_MINOR(version));
 
     SDL_GL_MakeCurrent(sdl_window_, nullptr);
   }
@@ -113,7 +112,7 @@ namespace attacus
     {
       FlutterView &self = *static_cast<FlutterView *>(userdata);
       auto window = self.sdl_window_;
-      SDL_GL_SwapWindow(window); //TODO:This presents a problem if the view is embedded
+      SDL_GL_SwapWindow(window); // TODO:This presents a problem if the view is embedded
       return true;
     };
     config.open_gl.fbo_callback = [](void *userdata) -> uint32_t
@@ -221,32 +220,40 @@ namespace attacus
   void FlutterView::OnResize(SDL_Event &event)
   {
     GfxView::OnResize(event);
-    UpdateSize(event.window.data1, event.window.data2, 1.0, false);
+    // UpdateSize(event.window.data1, event.window.data2, 1.0, false);
+    UpdateSize();
   }
 
   void FlutterView::OnSize()
   {
     GfxView::OnSize();
-    UpdateSize(width(), height(), 1.0, false);
+    // UpdateSize(width(), height(), 1.0, false);
+    UpdateSize();
   }
 
   void FlutterView::OnShow()
   {
     GfxView::OnShow();
-    UpdateSize(width(), height(), 1.0, false);
+    // UpdateSize(width(), height(), 1.0, false);
+    UpdateSize();
   }
 
-  void FlutterView::UpdateSize(size_t width, size_t height, float pixelRatio, bool maximized)
+  void FlutterView::UpdateSize()
   {
-    //  Round up the physical window size to a multiple of the pixel ratio
-    width = std::ceil(width / pixelRatio) * pixelRatio;
-    height = std::ceil(height / pixelRatio) * pixelRatio;
+    int w, h;
+    SDL_GetWindowSize(sdl_window_, &w, &h);
+    // printf("Window size: width=%i, height=%i\n", w, h);
+    int pw, ph;
+    SDL_GetWindowSizeInPixels(sdl_window_, &pw, &ph);
+    // printf("Window size in pixels: width=%i, height=%i\n", pw, ph);
+    pixelRatio_ = (float)pw / (float)w;
+    // printf("Pixel ratio: %f\n", pixelRatio_);
 
     FlutterWindowMetricsEvent event = {0};
     event.struct_size = sizeof(event);
-    event.width = width * scaleFactor_;
-    event.height = height * scaleFactor_;
-    event.pixel_ratio = pixelRatio * scaleFactor_;
+    event.width = pw;
+    event.height = ph;
+    event.pixel_ratio = pixelRatio_;
 
     FlutterEngineSendWindowMetricsEvent(engine_, &event);
     FlutterEngineScheduleFrame(engine_);

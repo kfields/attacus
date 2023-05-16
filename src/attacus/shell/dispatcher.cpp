@@ -4,15 +4,17 @@
 
 namespace attacus {
 
-bool Dispatcher::Dispatch(SDL_Event& event) {
-    switch (event.type) {
-    case SDL_QUIT:
-        return false;
-    case SDL_WINDOWEVENT:
-        return DispatchWindowEvent(event);
+    bool Dispatcher::Dispatch(SDL_Event &event)
+    {
+        /*if(event.type >= SDL_EVENT_WINDOW_FIRST && event.type <= SDL_EVENT_WINDOW_LAST)
+            return DispatchWindowEvent(event);*/
+        switch (event.type)
+        {
+        case SDL_EVENT_QUIT:
+            return false;
+        }
+        return true;
     }
-    return true;
-}
 
 /*bool Dispatcher::DispatchWindowEvent(SDL_Event& event) {
     Uint8 sdl_window_event = event.window.event;
@@ -34,19 +36,20 @@ bool Dispatcher::Dispatch(SDL_Event& event) {
     return true;
 }*/
 
-void Dispatcher::PushCallbackEvent(Delegate* delegate, void* user_data){
-    SDL_Event event;
-    SDL_UserEvent userevent;
+    void Dispatcher::PushCallbackEvent(Delegate *delegate, void *user_data)
+    {
+        SDL_Event event;
+        SDL_UserEvent userevent;
 
-    userevent.type = SDL_USEREVENT;
-    userevent.code = 0;
-    userevent.data1 = delegate;
-    userevent.data2 = user_data;
+        userevent.type = SDL_EVENT_USER;
+        userevent.code = 0;
+        userevent.data1 = delegate;
+        userevent.data2 = user_data;
 
-    event.type = SDL_USEREVENT;
-    event.user = userevent;
+        event.type = SDL_EVENT_USER;
+        event.user = userevent;
 
-    SDL_PushEvent(&event);
-}
+        SDL_PushEvent(&event);
+    }
 
 } //namespace attacus

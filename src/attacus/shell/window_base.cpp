@@ -31,7 +31,7 @@ void WindowBase::Create() {
 }
 
 void WindowBase::CreateSDLWindow() {
-    sdl_window_ = SDL_CreateWindow(name_.c_str(), x(), y(), width(), height(), flags_);
+    sdl_window_ = SDL_CreateWindowWithPosition(name_.c_str(), x(), y(), width(), height(), flags_);
 
     if (sdl_window_ == nullptr) {
         std::cout << std::format("Window could not be created: {}\n", SDL_GetError());
@@ -76,7 +76,7 @@ void WindowBase::OnResize(SDL_Event& event) {
 
 void WindowBase::ResizeChildren() {
     int cur_width, cur_height;
-    SDL_GL_GetDrawableSize(sdl_window_, &cur_width, &cur_height);
+    SDL_GetWindowSizeInPixels(sdl_window_, &cur_width, &cur_height);
 
     for (auto child : children_){
         child->SetSize(Size(cur_width, cur_height));

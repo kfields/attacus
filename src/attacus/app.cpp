@@ -80,7 +80,7 @@ namespace attacus
     capture_ = false;
     switch (event.type)
     {
-    case SDL_USEREVENT:
+    case SDL_EVENT_USER:
     {
       Delegate &delegate = *static_cast<Delegate *>(event.user.data1);
       delegate();
@@ -88,7 +88,7 @@ namespace attacus
       event.user.data1 = nullptr;
       break;
     }
-    case SDL_KEYDOWN:
+    case SDL_EVENT_KEY_DOWN:
     {
       int key = event.key.keysym.scancode;
       if (key == SDL_SCANCODE_F11)
@@ -125,21 +125,20 @@ namespace attacus
     return 0;
   }
 
-  static int EventWatcher(void *data, SDL_Event *event)
-  {
-    if (event->type == SDL_WINDOWEVENT &&
-        event->window.event == SDL_WINDOWEVENT_RESIZED)
+    static int EventWatcher(void *data, SDL_Event *event)
     {
-      SDL_Window *win = SDL_GetWindowFromID(event->window.windowID);
-      Window *window = static_cast<Window *>(SDL_GetWindowData(win, "Window"));
-      if (window == nullptr)
-      {
+        if (event->type == SDL_EVENT_WINDOW_RESIZED)
+        {
+            SDL_Window *win = SDL_GetWindowFromID(event->window.windowID);
+            Window *window = static_cast<Window *>(SDL_GetWindowData(win, "Window"));
+            if (window == nullptr)
+            {
+                return 0;
+            }
+            window->Dispatch(*event);
+        }
         return 0;
-      }
-      window->Dispatch(*event);
     }
-    return 0;
-  }
 
   void App::OnSize()
   {

@@ -56,7 +56,8 @@ public:
     void OnSize() override;
     void OnShow() override;
     //
-    void UpdateSize(size_t width, size_t height, float pixelRatio, bool maximized);
+    //void UpdateSize(size_t width, size_t height, float pixelRatio, bool maximized);
+    void UpdateSize();
     //Accessors
     FlutterEngine& engine() { return engine_; }
     FlutterMessenger& messenger() { return *messenger_; }
@@ -77,7 +78,7 @@ public:
     void* resource_context_ = nullptr;
     //GLADloadfunc gl_proc_resolver = nullptr;
     //
-    float scaleFactor_ = 1.0f;
+    float pixelRatio_ = 1.0f;
     //
     FlutterEngine engine_ = nullptr;
     FlutterEngineProcTable engine_api_{0};

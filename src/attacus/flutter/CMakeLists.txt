@@ -9,7 +9,7 @@ include(${ATT_ROOT}/cmake/Shell.cmake)
 
 
 set(FLUTTER_HEADERS
-    ${FLUTTER_OUT}/flutter_embedder.h
+    flutter_embedder.h
     flutter_view.h
     flutter_messenger.h
     flutter_runner.h

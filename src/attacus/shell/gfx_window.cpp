@@ -41,7 +41,7 @@ namespace attacus
 
     SDL_SetHint(SDL_HINT_RENDER_DRIVER, "opengl");
 
-    sdl_window_ = SDL_CreateWindow(name_.c_str(), x(), y(), width(), height(), flags_ | SDL_WINDOW_OPENGL);
+    sdl_window_ = SDL_CreateWindowWithPosition(name_.c_str(), x(), y(), width(), height(), flags_ | SDL_WINDOW_OPENGL);
 
     if (sdl_window_ == nullptr)
     {
@@ -73,7 +73,7 @@ namespace attacus
     capture_ = false;
     switch (event.type)
     {
-    case SDL_KEYDOWN:
+    case SDL_EVENT_KEY_DOWN:
     {
       int key = event.key.keysym.scancode;
       if (key == SDL_SCANCODE_F11)

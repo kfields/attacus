@@ -15,7 +15,7 @@ public:
     Window(Window& parent, WindowParams params = WindowParams());
     virtual ~Window();
     bool Dispatch(SDL_Event& event) override;
-    bool DispatchWindowEvent(SDL_Event& event) override;
+    //bool DispatchWindowEvent(SDL_Event& event) override;
     void OnShow() override;
 
     int Run() override;

@@ -28,10 +28,8 @@ function(USES_EXAMPLES THIS)
     if(${ATT_PLATFORM_WINDOWS})
         add_custom_command(TARGET ${THIS} POST_BUILD
             COMMAND ${CMAKE_COMMAND} -E copy_if_different
-            #"${ATT_ROOT}/binaries/flutter/windows-x64-embedder/flutter_engine.dll"
-            #"${ATT_ROOT}/binaries/flutter/windows-x64-embedder/flutter_engine.dll.pdb"
             "${FLUTTER_OUT}/flutter_engine.dll"
-            "${FLUTTER_OUT}/flutter_engine.dll.pdb"
+            #"${FLUTTER_OUT}/flutter_engine.dll.pdb"
 
             $<TARGET_FILE_DIR:${THIS}>)
 
