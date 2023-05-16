@@ -19,15 +19,3 @@ USES_ATT(${THIS})
 
 add_subdirectory(basic)
 add_subdirectory(methodchannel)
-
-add_subdirectory(views)
-
-add_subdirectory(cubes)
-
-#add_subdirectory(flutter-cubes)
-
-#add_subdirectory(compositor-gl)
-#add_subdirectory(compositor-gl-cubes)
-#add_subdirectory(compositor-gl-view)
-
-#add_subdirectory(cubes)

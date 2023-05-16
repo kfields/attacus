@@ -6,11 +6,6 @@
 #include "SDL.h"
 #include "SDL_syswm.h"
 
-#define SOKOL_IMPL
-#define SOKOL_GLCORE33
-#define SOKOL_EXTERNAL_GL_LOADER
-#include <sokol_gfx.h>
-
 #include "gfx_view.h"
 #include "gfx.h"
 
@@ -31,10 +26,6 @@ namespace attacus
     gl_proc_resolver_ = (GLADloadfunc)SDL_GL_GetProcAddress;
     int version = gladLoadGL(gl_proc_resolver_);
     std::cout << std::format("OpenGL {}.{} loaded\n", GLAD_VERSION_MAJOR(version), GLAD_VERSION_MINOR(version));
-
-    /* setup sokol_gfx */
-    sg_desc sgDesc{0};
-    sg_setup(&sgDesc);
   }
 
   void Gfx::Reset()
