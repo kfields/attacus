@@ -74,4 +74,13 @@ void WindowBase::OnResize(SDL_Event& event) {
     OnSize();
 }
 
+void WindowBase::ResizeChildren() {
+    int cur_width, cur_height;
+    SDL_GL_GetDrawableSize(sdl_window_, &cur_width, &cur_height);
+
+    for (auto child : children_){
+        child->SetSize(Size(cur_width, cur_height));
+    }
+}
+
 } //namespace attacus

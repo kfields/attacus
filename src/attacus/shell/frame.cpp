@@ -9,9 +9,8 @@ Frame::Frame(View& parent, ViewParams params) : View(parent, params)
 void Frame::Create() {
 }
 
-void Frame::OnSize() {
-    for (std::vector<View*>::iterator it = children_.begin(); it != children_.end(); ++it){
-        View* child = *it;
+void Frame::ResizeChildren() {
+    for (auto child : children_){
         child->SetSize(size());
     }
 }

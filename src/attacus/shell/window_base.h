@@ -48,6 +48,7 @@ public:
     void OnPosition() override;
     void SetSize(Size size);
     void OnResize(SDL_Event& event) override;
+    void ResizeChildren() override;
     //
     static void MapWindow(uint32_t key, WindowBase* window) { windowMap_[key] = window; }
     static void UnmapWindow(uint32_t key) { windowMap_.erase(key); }

@@ -113,7 +113,7 @@ namespace attacus
     {
       FlutterView &self = *static_cast<FlutterView *>(userdata);
       auto window = self.sdl_window_;
-      SDL_GL_SwapWindow(window);
+      SDL_GL_SwapWindow(window); //TODO:This presents a problem if the view is embedded
       return true;
     };
     config.open_gl.fbo_callback = [](void *userdata) -> uint32_t

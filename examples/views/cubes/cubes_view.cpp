@@ -76,15 +76,13 @@ public:
 	{
 		GfxView::Draw();
 
-		int cur_width, cur_height;
-		SDL_GL_GetDrawableSize(sdl_window_, &cur_width, &cur_height);
-		sg_begin_default_pass(&pass_action, cur_width, cur_height);
+		sg_begin_default_pass(&pass_action, width(), height());
 		sg_apply_pipeline(pip_);
 		sg_apply_bindings(&bindings_);
 		sg_draw(0, 3, 1);
 		sg_end_pass();
 		sg_commit();
-		SDL_GL_SwapWindow(sdl_window_);
+		SDL_GL_SwapWindow(sdl_window_); //TODO:This presents a problem if the view is embedded
 	}
 
 	// Data members
