@@ -14,6 +14,3 @@
 [submodule "3rdparty/pybind11"]
 	path = 3rdparty/pybind11
 	url = https://github.com/pybind/pybind11
-[submodule "3rdparty/sokol"]
-	path = 3rdparty/sokol
-	url = https://github.com/floooh/sokol
