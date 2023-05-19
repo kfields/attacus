@@ -55,6 +55,7 @@ class MyFlutter(FlutterView):
     @MyChannel.route('send')
     def send(self, text):
         logger.debug(text)
+        self.channel.invoke_method('on_message', text)
 
 class MyApp(App):
     def __init__(self):

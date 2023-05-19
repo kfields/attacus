@@ -12,7 +12,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Ai Chat Demo',
       /*theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
         useMaterial3: true,
@@ -34,7 +34,26 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  String _message = '';
   MethodChannel platform = const MethodChannel('aichat');
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Register a listener on the channel.
+    platform.setMethodCallHandler((MethodCall call) {
+      switch (call.method) {
+        case 'on_message':
+          setState(() {
+            _message = call.arguments;
+          });
+          break;
+      }
+      return Future(() => null);
+    });
+  }
+
   void send(String text) async {
     await platform.invokeMethod('send', text);
     setState(() {
@@ -58,9 +77,10 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            const Expanded(
+            Expanded(
               child: Center(
-                child: Text('Main Content Here'),
+                //child: Text('Main Content Here'),
+                child: Text(_message),
               ),
             ),
             Container(

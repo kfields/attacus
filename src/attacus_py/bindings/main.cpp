@@ -54,10 +54,10 @@ public:
     /* Trampoline (need one for each virtual function) */
     void Startup() override {
         PYMETHOD_OVERRIDE(
-            void,       // Return type
-            FlutterView,        // Parent class
-            startup,    // Python function name
-            Startup     // C++ function name
+            void,           // Return type
+            FlutterView,    // Parent class
+            startup,        // Python function name
+            Startup         // C++ function name
         );
     }
     void Shutdown() override {
@@ -116,15 +116,6 @@ void init_main(py::module &attacus_py, Registry &registry) {
     PYCLASS_BEGIN(attacus_py, FlutterMessenger)
     PYCLASS_END(attacus_py, FlutterMessenger)
 
-    PYCLASS_BEGIN(attacus_py, StandardMethodChannel)
-        .def(py::init<>([](FlutterMessenger& messenger, const std::string& name){
-            std::cout << "StandardMethodChannel: " << name << std::endl;
-            return new StandardMethodChannel(
-                messenger,
-                name
-            );
-        }))
-    PYCLASS_END(attacus_py, StandardMethodChannel)
 
     auto _StandardMethod = py::class_<StandardMethod, std::unique_ptr<StandardMethod, py::nodelete>>(attacus_py, "StandardMethod")
         .def(py::init<>([](StandardMethodChannel& channel, const std::string& name, py::object cb){
@@ -186,5 +177,49 @@ void init_main(py::module &attacus_py, Registry &registry) {
                 }, variant);
             })
     PYCLASS_END(attacus_py, EncodableValue)
-    
+
+    PYCLASS_BEGIN(attacus_py, StandardMethodChannel)
+        .def(py::init<>([](FlutterMessenger& messenger, const std::string& name){
+            std::cout << "StandardMethodChannel: " << name << std::endl;
+            return new StandardMethodChannel(
+                messenger,
+                name
+            );
+        }))
+        /*.def("invoke_method", [](StandardMethodChannel& self, const std::string &method, const EncodableValue& arguments) {
+            std::unique_ptr<EncodableValue> args = std::make_unique<EncodableValue>(arguments);
+            return self.InvokeMethod(method, std::move(args));
+        }
+            , py::arg("name")
+            , py::arg("arguments")
+            //, py::arg("result") = nullptr
+            , py::return_value_policy::automatic_reference
+        )*/
+        .def("invoke_method", [](StandardMethodChannel& self, const std::string &method, py::object obj) {
+            PyObject* object = obj.ptr();
+            EncodableValue value;
+            if (Py_IsNone(object)) {
+                value = nullptr;
+            }
+            else if (PyLong_Check(object)) {
+                int64_t val = PyLong_AsLong(object);
+                value = val;
+            }
+            else if (PyUnicode_Check(object)) {
+                auto val = PyUnicode_AsUTF8(object);
+                value = val;
+            }
+            std::unique_ptr<EncodableValue> args = std::make_unique<EncodableValue>(value);
+            return self.InvokeMethod(method, std::move(args));
+        }
+            , py::arg("name")
+            , py::arg("arguments")
+            //, py::arg("result") = nullptr
+            , py::return_value_policy::automatic_reference
+        )
+
+
+
+    PYCLASS_END(attacus_py, StandardMethodChannel)
+   
 }
