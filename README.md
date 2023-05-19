@@ -42,11 +42,6 @@ poetry install
 python setup.py build [--build-type [Release|Debug]}
 ```
 
-### Generate Bindings
-```bash
-aimgen gen
-```
-
 ### Release
 ```bash
 python setup.py build

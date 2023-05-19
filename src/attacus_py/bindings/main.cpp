@@ -16,6 +16,9 @@ namespace py = pybind11;
 
 using namespace attacus;
 
+template<class T>
+struct always_false : std::false_type {};
+
 class PyApp : public App {
 public:
     /* Inherit the constructors */
@@ -166,6 +169,22 @@ void init_main(py::module &attacus_py, Registry &registry) {
 
     //PYCLASS_BEGIN(attacus_py, EncodableValue)
     auto _EncodableValue = py::class_<EncodableValue, std::unique_ptr<EncodableValue, py::nodelete>>(attacus_py, "EncodableValue")
+        .def("decode", [](EncodableValue& self) {
+                auto variant = self;
+                return std::visit([](auto&& arg) -> py::object {
+                    using T = std::decay_t<decltype(arg)>;
+                    if constexpr (std::is_same_v<T, int>) {
+                        return py::int_(arg);
+                    } else if constexpr (std::is_same_v<T, double>) {
+                        return py::float_(arg);
+                    } else if constexpr (std::is_same_v<T, std::string>) {
+                        return py::str(arg);
+                    } else {
+                        //static_assert(always_false<T>::value, "non-exhaustive visitor!");
+                        return py::none();
+                    }
+                }, variant);
+            })
     PYCLASS_END(attacus_py, EncodableValue)
     
 }
