@@ -93,31 +93,27 @@ class _MyHomePageState extends State<MyHomePage> {
           children: <Widget>[
             Expanded(
               child: Center(
-                child: Scrollbar(
-                  thumbVisibility: true,
+                child: ListView.builder(
                   controller: _scrollController,
-                  child: ListView.builder(
-                    controller: _scrollController,
-                    itemCount: _messages.length,
-                    itemBuilder: (context, index) {
-                      return Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Card(
-                          child: ListTile(
-                              /*leading: CircleAvatar(
+                  itemCount: _messages.length,
+                  itemBuilder: (context, index) {
+                    return Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Card(
+                        child: ListTile(
+                            /*leading: CircleAvatar(
                             backgroundImage: _messages[index].avatar,
                           ),
                           title: Text(_messages[index].text),*/
-                              leading: CircleAvatar(
-                                //backgroundImage: _messages[index].avatar,
-                                child: _messages[index].avatar,
-                              ),
-                              //title: Text(_messages[index].text),
-                              title: MarkdownBody(data: _messages[index].text)),
-                        ),
-                      );
-                    },
-                  ),
+                            leading: CircleAvatar(
+                              //backgroundImage: _messages[index].avatar,
+                              child: _messages[index].avatar,
+                            ),
+                            //title: Text(_messages[index].text),
+                            title: MarkdownBody(data: _messages[index].text)),
+                      ),
+                    );
+                  },
                 ),
               ),
             ),

@@ -19,6 +19,24 @@ using namespace attacus;
 template<class T>
 struct always_false : std::false_type {};
 
+EncodableValue encode(py::object obj) {
+    PyObject* object = obj.ptr();
+    EncodableValue value;
+    if (Py_IsNone(object)) {
+        value = nullptr;
+    }
+    else if (PyLong_Check(object)) {
+        int64_t val = PyLong_AsLong(object);
+        value = val;
+    }
+    else if (PyUnicode_Check(object)) {
+        auto val = PyUnicode_AsUTF8(object);
+        value = val;
+    }
+    //std::unique_ptr<EncodableValue> args = std::make_unique<EncodableValue>(value);
+    return value;
+}
+
 class PyApp : public App {
 public:
     /* Inherit the constructors */
@@ -186,16 +204,7 @@ void init_main(py::module &attacus_py, Registry &registry) {
                 name
             );
         }))
-        /*.def("invoke_method", [](StandardMethodChannel& self, const std::string &method, const EncodableValue& arguments) {
-            std::unique_ptr<EncodableValue> args = std::make_unique<EncodableValue>(arguments);
-            return self.InvokeMethod(method, std::move(args));
-        }
-            , py::arg("name")
-            , py::arg("arguments")
-            //, py::arg("result") = nullptr
-            , py::return_value_policy::automatic_reference
-        )*/
-        .def("invoke_method", [](StandardMethodChannel& self, const std::string &method, py::object obj) {
+        /*.def("invoke_method", [](StandardMethodChannel& self, const std::string &method, py::object obj) {
             PyObject* object = obj.ptr();
             EncodableValue value;
             if (Py_IsNone(object)) {
@@ -216,7 +225,18 @@ void init_main(py::module &attacus_py, Registry &registry) {
             , py::arg("arguments")
             //, py::arg("result") = nullptr
             , py::return_value_policy::automatic_reference
+        )*/
+        .def("invoke_method", [](StandardMethodChannel& self, const std::string &method, py::object obj) {
+            EncodableValue value = encode(obj);
+            std::unique_ptr<EncodableValue> args = std::make_unique<EncodableValue>(value);
+            return self.InvokeMethod(method, std::move(args));
+        }
+            , py::arg("name")
+            , py::arg("arguments")
+            //, py::arg("result") = nullptr
+            , py::return_value_policy::automatic_reference
         )
+
 
 
 

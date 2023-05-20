@@ -1,6 +1,23 @@
+from dotenv import load_dotenv
+
+load_dotenv()  # take environment variables from .env.
+
 from loguru import logger
 
+#import google.generativeai as palm
+from langchain.chat_models import ChatOpenAI, ChatGooglePalm
+from langchain.chains import ConversationChain
+from langchain.memory import ConversationBufferMemory
+
 from attacus import App, FlutterView, StandardMethodChannel, StandardMethod
+
+#chat: palm.types.ChatResponse = None
+
+#llm = ChatGooglePalm()
+llm = ChatOpenAI()
+
+memory = ConversationBufferMemory()
+chain = ConversationChain(llm=llm, memory=memory, verbose=True)
 
 class MyChannel(StandardMethodChannel):
     routes = {}
@@ -54,8 +71,17 @@ class MyFlutter(FlutterView):
 
     @MyChannel.route('send')
     def send(self, text):
+        global chat
         logger.debug(text)
-        self.channel.invoke_method('on_message', text)
+        """
+        if not chat:
+            chat = palm.chat(messages=[text])
+            response = chat.last
+        else:
+            response = chat.reply(text)
+        """
+        response = chain.run(text)
+        self.channel.invoke_method('on_message', response)
 
 class MyApp(App):
     def __init__(self):

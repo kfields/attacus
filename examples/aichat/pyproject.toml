@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "aichat"
+version = "0.1.0"
+description = ""
+authors = ["Kurtis Fields <kurtisfields@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+google-generativeai = "^0.1.0rc3"
+python-dotenv = "^1.0.0"
+langchain = "^0.0.174"
+openai = "^0.27.7"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
