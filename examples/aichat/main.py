@@ -13,8 +13,8 @@ from attacus import App, FlutterView, StandardMethodChannel, StandardMethod
 
 #chat: palm.types.ChatResponse = None
 
-#llm = ChatGooglePalm()
-llm = ChatOpenAI()
+llm = ChatGooglePalm()
+#llm = ChatOpenAI()
 
 memory = ConversationBufferMemory()
 chain = ConversationChain(llm=llm, memory=memory, verbose=True)
