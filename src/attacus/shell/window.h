@@ -19,6 +19,8 @@ public:
     void OnShow() override;
 
     int Run() override;
+    virtual void Loop();
+    bool ProcessEvents();
     //Data members
     State state_;
     int64_t time_offset_;

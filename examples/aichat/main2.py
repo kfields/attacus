@@ -1,6 +1,3 @@
-import inspect
-import asyncio
-
 from dotenv import load_dotenv
 
 load_dotenv()  # take environment variables from .env.
@@ -42,43 +39,18 @@ class MyChannel(StandardMethodChannel):
             return f
         return decorator
 
-    """
-    def execute(self, method_call, method, method_result):
+    def execute(self, method_call, method, result):
         logger.debug(method_call)
         logger.debug(method)
         logger.debug(method_call.method_name())
         args = method_call.arguments()
         logger.debug(args)
-        logger.debug(method_result)
+        logger.debug(result)
 
         pyarg = args.decode()
         logger.debug(pyarg)
-        result = method(self.receiver, pyarg)
-        method_result.success(result)
-    """
-    def execute(self, method_call, method, method_result):
-        logger.debug(method_call)
-        logger.debug(method)
-        logger.debug(method_call.method_name())
-        args = method_call.arguments()
-        logger.debug(args)
-        logger.debug(method_result)
-
-        pyarg = args.decode()
-        logger.debug(pyarg)
-        #result = None
-        if inspect.iscoroutinefunction(method):
-            loop = asyncio.get_event_loop()
-            def callback(future):
-                result = future.result()
-                logger.debug(f"Callback invoked with result: {result}")
-                #method_result.success(result)
-            task = loop.create_task(method(self.receiver, pyarg))
-            # Add the callback
-            task.add_done_callback(callback)
-        else:
-            result = method(self.receiver, pyarg)
-            method_result.success(result)
+        method(self.receiver, pyarg)
+        result.success()
 
 class MyFlutter(FlutterView):
     def __init__(self, parent):
@@ -98,7 +70,7 @@ class MyFlutter(FlutterView):
         logger.debug("Shutting down Flutter ...")
 
     @MyChannel.route('send')
-    async def send(self, text):
+    def send(self, text):
         global chat
         logger.debug(text)
         """
@@ -108,7 +80,7 @@ class MyFlutter(FlutterView):
         else:
             response = chat.reply(text)
         """
-        response = await chain.arun(text)
+        response = chain.run(text)
         self.channel.invoke_method('on_message', response)
 
 class MyApp(App):
@@ -118,19 +90,10 @@ class MyApp(App):
     def startup(self):
         logger.debug("Starting up App ...")
 
-    """
     def loop(self):
         logger.debug("Entering App Loop ...")
         while self.process_events():
             pass
-        logger.debug("Exiting App Loop ...")
-    """
-    def loop(self):
-        logger.debug("Entering App Loop ...")
-        async def _loop(interval=1/60):
-            while self.process_events():
-                await asyncio.sleep(interval)
-        asyncio.run(_loop())
         logger.debug("Exiting App Loop ...")
 
     def shutdown(self):

@@ -33,9 +33,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   final TextEditingController _messageController = TextEditingController();
-  //final List<String> _messages = [];
   final List<ChatMessage> _messages = [];
-  //String _message = '';
   MethodChannel platform = const MethodChannel('aichat');
 
   @override

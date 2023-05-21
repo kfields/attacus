@@ -145,7 +145,7 @@ namespace attacus
     GfxWindow::OnSize();
     Render();
   }
-  // TODO: Have a thread use a delegate to trigger a render
+
   void App::RegisterResizer()
   {
     SDL_AddEventWatch(EventWatcher, this);

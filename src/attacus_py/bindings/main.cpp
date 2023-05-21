@@ -33,7 +33,6 @@ EncodableValue encode(py::object obj) {
         auto val = PyUnicode_AsUTF8(object);
         value = val;
     }
-    //std::unique_ptr<EncodableValue> args = std::make_unique<EncodableValue>(value);
     return value;
 }
 
@@ -43,6 +42,14 @@ public:
     using App::App;
     PyApp() : App() {}
     /* Trampoline (need one for each virtual function) */
+    void Loop() override {
+        PYMETHOD_OVERRIDE(
+            void,       // Return type
+            App,        // Parent class
+            loop,    // Python function name
+            Loop     // C++ function name
+        );
+    }
     void Startup() override {
         PYMETHOD_OVERRIDE(
             void,       // Return type
@@ -65,9 +72,6 @@ class PyFlutterView : public FlutterView {
 public:
     /* Inherit the constructors */
     using FlutterView::FlutterView;
-    //PyFlutterView() : FlutterView() {}
-    //PyFlutterView(const PyFlutterView&);
-    //PyFlutterView(View& parent, ViewParams params = ViewParams()) : FlutterView(parent, params) {}
     PyFlutterView(View& parent, ViewParams params = ViewParams()) : FlutterView(parent) {}
     /* Trampoline (need one for each virtual function) */
     void Startup() override {
@@ -88,26 +92,6 @@ public:
     }
 };
 
-/*class PyStandardMethodChannel : public StandardMethodChannel {
-public:
-    PyStandardMethodChannel(FlutterMessenger& messenger, const std::string& name, py::object cb)
-        : StandardMethodChannel(
-            messenger,
-            name,
-            [cb](const StandardMethodCall &call, std::unique_ptr<StandardMethodResult> result){
-                std::cout << "StandardMethodCall" << std::endl;
-                std::cout << cb << std::endl;
-                auto py_call = py::cast(&call);
-                std::cout << "py_call: " << py_call << std::endl;
-                auto py_result = py::cast(result.get());
-                std::cout << "py_result: " << py_result << std::endl;
-                cb(py_call, py_result);
-            }
-        )
-        , cb_(cb) {}
-    py::object cb_;
-};*/
-
 void init_main(py::module &attacus_py, Registry &registry) {
 
     PYCLASS_O_BEGIN(attacus_py, App, PyApp)
@@ -117,6 +101,7 @@ void init_main(py::module &attacus_py, Registry &registry) {
         .def("run", [](App& self) {
             self.Run();
         })
+        .def("process_events", &App::ProcessEvents)
         .def("startup", &App::Startup)
         .def("shutdown", &App::Shutdown)
     PYCLASS_END(attacus_py, App)
@@ -166,7 +151,6 @@ void init_main(py::module &attacus_py, Registry &registry) {
             if (Py_IsNone(object)) {
                 return self.Success();
             }
-            //PyTypeObject* type = Py_TYPE(object);
             if (PyLong_Check(object)) {
                 int64_t val = PyLong_AsLong(object);
                 return self.Success(val);
@@ -204,28 +188,6 @@ void init_main(py::module &attacus_py, Registry &registry) {
                 name
             );
         }))
-        /*.def("invoke_method", [](StandardMethodChannel& self, const std::string &method, py::object obj) {
-            PyObject* object = obj.ptr();
-            EncodableValue value;
-            if (Py_IsNone(object)) {
-                value = nullptr;
-            }
-            else if (PyLong_Check(object)) {
-                int64_t val = PyLong_AsLong(object);
-                value = val;
-            }
-            else if (PyUnicode_Check(object)) {
-                auto val = PyUnicode_AsUTF8(object);
-                value = val;
-            }
-            std::unique_ptr<EncodableValue> args = std::make_unique<EncodableValue>(value);
-            return self.InvokeMethod(method, std::move(args));
-        }
-            , py::arg("name")
-            , py::arg("arguments")
-            //, py::arg("result") = nullptr
-            , py::return_value_policy::automatic_reference
-        )*/
         .def("invoke_method", [](StandardMethodChannel& self, const std::string &method, py::object obj) {
             EncodableValue value = encode(obj);
             std::unique_ptr<EncodableValue> args = std::make_unique<EncodableValue>(value);
