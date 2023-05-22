@@ -119,7 +119,7 @@ void init_main(py::module &attacus_py, Registry &registry) {
     PYCLASS_BEGIN(attacus_py, FlutterMessenger)
     PYCLASS_END(attacus_py, FlutterMessenger)
 
-
+    //PYCLASS_BEGIN(attacus_py, StandardMethod)
     auto _StandardMethod = py::class_<StandardMethod, std::unique_ptr<StandardMethod, py::nodelete>>(attacus_py, "StandardMethod")
         .def(py::init<>([](StandardMethodChannel& channel, const std::string& name, py::object cb){
             std::cout << "StandardMethod: " << name << std::endl;
@@ -132,7 +132,7 @@ void init_main(py::module &attacus_py, Registry &registry) {
                     std::cout << cb << std::endl;
                     auto py_call = py::cast(&call);
                     std::cout << "py_call: " << py_call << std::endl;
-                    auto py_result = py::cast(result.get());
+                    auto py_result = py::cast(std::move(result));
                     std::cout << "py_result: " << py_result << std::endl;
                     cb(py_call, py_result);
                 }
@@ -145,7 +145,8 @@ void init_main(py::module &attacus_py, Registry &registry) {
         .def("arguments", &StandardMethodCall::arguments)
     PYCLASS_END(attacus_py, StandardMethodCall)
 
-    auto _StandardMethodResult = py::class_<StandardMethodResult, std::unique_ptr<StandardMethodResult, py::nodelete>>(attacus_py, "StandardMethodResult")
+    PYCLASS_BEGIN(attacus_py, StandardMethodResult)
+    //auto _StandardMethodResult = py::class_<StandardMethodResult, std::unique_ptr<StandardMethodResult, py::nodelete>>(attacus_py, "StandardMethodResult")
         .def("success", [](StandardMethodResult& self, py::object obj) {
             PyObject* object = obj.ptr();
             if (Py_IsNone(object)) {
