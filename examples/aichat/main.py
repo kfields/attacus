@@ -100,7 +100,7 @@ class MyFlutter(FlutterView):
         logger.debug("Shutting down Flutter ...")
 
     @MyChannel.route('send')
-    async def send(self, text):
+    async def send(self, text: str):
         global chat
         logger.debug(text)
         """
@@ -113,6 +113,7 @@ class MyFlutter(FlutterView):
         #response = await chain.arun(text)
         try:
             response = await chain.arun(text)
+            response = response.replace('\n', '\r\n')
         except Exception as e:
             print(f"An error occurred: {e}")
 

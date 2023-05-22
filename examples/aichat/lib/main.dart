@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:markdown/markdown.dart' as md;
+import 'code_element_builder.dart';
+import 'dot_loading_indicator.dart';
 
 void main() {
   runApp(const MyApp());
@@ -46,13 +49,14 @@ class _MyHomePageState extends State<MyHomePage> {
         case 'on_message':
           setState(() {
             var text = call.arguments;
-            _messages.add(
-              ChatMessage(
-                text: text,
-                avatar: const Icon(Icons.smart_toy_sharp, color: Colors.white),
-              ),
-            );
+            _messages.last.text = text;
+            _messages.last.isWaiting = false;
           });
+          _scrollController.animateTo(
+            _scrollController.position.maxScrollExtent,
+            duration: const Duration(milliseconds: 500),
+            curve: Curves.easeOut,
+          );
           break;
       }
       return Future(() => null);
@@ -61,12 +65,18 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void send(String text) async {
     setState(() {
+      _messages.add(ChatMessage(
+        text: _messageController.text,
+        avatar: const Icon(Icons.person, color: Colors.white),
+        isWaiting: false,
+      ));
       _messages.add(
         ChatMessage(
-          text: _messageController.text,
-          avatar: const Icon(Icons.person, color: Colors.white),
+          text: '',
+          avatar: const Icon(Icons.smart_toy_sharp, color: Colors.white),
         ),
       );
+
       _messageController.clear();
     });
     await platform.invokeMethod('send', text);
@@ -102,16 +112,28 @@ class _MyHomePageState extends State<MyHomePage> {
                         padding: const EdgeInsets.all(8.0),
                         child: Card(
                           child: ListTile(
-                              /*leading: CircleAvatar(
-                            backgroundImage: _messages[index].avatar,
-                          ),
-                          title: Text(_messages[index].text),*/
                               leading: CircleAvatar(
-                                //backgroundImage: _messages[index].avatar,
                                 child: _messages[index].avatar,
                               ),
-                              //title: Text(_messages[index].text),
-                              title: MarkdownBody(data: _messages[index].text)),
+                              title: _messages[index].isWaiting
+                                  ? const Center(child: DotLoadingIndicator())
+                                  : MarkdownBody(
+                                      key:
+                                          const Key("defaultmarkdownformatter"),
+                                      data: _messages[index].text,
+                                      selectable: true,
+                                      extensionSet: md.ExtensionSet(
+                                        md.ExtensionSet.gitHubFlavored
+                                            .blockSyntaxes,
+                                        [
+                                          md.EmojiSyntax(),
+                                          ...md.ExtensionSet.gitHubFlavored
+                                              .inlineSyntaxes
+                                        ],
+                                      ),
+                                      builders: {
+                                          'code': CodeElementBuilder(),
+                                        })),
                         ),
                       );
                     },
@@ -139,9 +161,10 @@ class _MyHomePageState extends State<MyHomePage> {
 }
 
 class ChatMessage {
-  final String text;
+  String text;
   //final ImageProvider avatar;
   final Icon avatar;
-
-  ChatMessage({required this.text, required this.avatar});
+  bool isWaiting;
+  ChatMessage(
+      {required this.text, required this.avatar, this.isWaiting = true});
 }

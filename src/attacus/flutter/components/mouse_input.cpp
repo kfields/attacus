@@ -68,7 +68,7 @@ namespace attacus
         case SDL_EVENT_MOUSE_WHEEL:
         {
             float dx = e.wheel.x;
-            float dy = -e.wheel.y * 2; //TODO: mouse wheel sensitivity?
+            float dy = -e.wheel.y * 4; //TODO: mouse wheel sensitivity?
             UpdatePointer(FlutterPointerPhase::kDown, e.motion.timestamp, e.wheel.mouseX, e.wheel.mouseY, dx, dy);
             UpdatePointer(FlutterPointerPhase::kMove, e.motion.timestamp, e.wheel.mouseX, e.wheel.mouseY, dx, dy);
             UpdatePointer(FlutterPointerPhase::kUp, e.motion.timestamp, e.wheel.mouseX, e.wheel.mouseY, dx, dy);

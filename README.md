@@ -141,3 +141,10 @@ cat engine.version
 ```bash
 flutter build bundle
 ```
+
+## icudtl.dat
+```
+flutter\bin\cache\artifacts\engine\windows-x64\icudtl.dat
+```
+I'm manually copying this into the build directory.  Not good.
+It needs to be copied over automatically
