@@ -92,9 +92,9 @@ public:
     }
 };
 
-void init_main(py::module &attacus_py, Registry &registry) {
+void init_main(py::module &attacus, Registry &registry) {
 
-    PYCLASS_O_BEGIN(attacus_py, App, PyApp)
+    PYCLASS_O_BEGIN(attacus, App, PyApp)
         .def(py::init<>([](){
             return App::Produce<PyApp>();
         }))
@@ -104,23 +104,25 @@ void init_main(py::module &attacus_py, Registry &registry) {
         .def("process_events", &App::ProcessEvents)
         .def("startup", &App::Startup)
         .def("shutdown", &App::Shutdown)
-    PYCLASS_END(attacus_py, App)
+    PYCLASS_END(attacus, App)
 
-    //PYCLASS_BEGIN(attacus_py, FlutterView)
-    PYCLASS_O_BEGIN(attacus_py, FlutterView, PyFlutterView)
+    //PYCLASS_BEGIN(attacus, FlutterView)
+    PYCLASS_O_BEGIN(attacus, FlutterView, PyFlutterView)
         .def(py::init<>([](App& parent){
             return FlutterView::Produce<PyFlutterView>(parent);
         }))
         .def("startup", &FlutterView::Startup)
         .def("shutdown", &FlutterView::Shutdown)
         .def_readonly("messenger", &FlutterView::messenger_)
-    PYCLASS_END(attacus_py, FlutterView)
+        .def_readwrite("assets_path", &FlutterView::assets_path_)
+        .def_readwrite("icu_data_path", &FlutterView::icu_data_path_)
+    PYCLASS_END(attacus, FlutterView)
 
-    PYCLASS_BEGIN(attacus_py, FlutterMessenger)
-    PYCLASS_END(attacus_py, FlutterMessenger)
+    PYCLASS_BEGIN(attacus, FlutterMessenger)
+    PYCLASS_END(attacus, FlutterMessenger)
 
-    //PYCLASS_BEGIN(attacus_py, StandardMethod)
-    auto _StandardMethod = py::class_<StandardMethod, std::unique_ptr<StandardMethod, py::nodelete>>(attacus_py, "StandardMethod")
+    //PYCLASS_BEGIN(attacus, StandardMethod)
+    auto _StandardMethod = py::class_<StandardMethod, std::unique_ptr<StandardMethod, py::nodelete>>(attacus, "StandardMethod")
         .def(py::init<>([](StandardMethodChannel& channel, const std::string& name, py::object cb){
             std::cout << "StandardMethod: " << name << std::endl;
             std::cout << cb << std::endl;
@@ -138,15 +140,15 @@ void init_main(py::module &attacus_py, Registry &registry) {
                 }
             );
         }))
-    PYCLASS_END(attacus_py, StandardMethod)
+    PYCLASS_END(attacus, StandardMethod)
 
-    PYCLASS_BEGIN(attacus_py, StandardMethodCall)
+    PYCLASS_BEGIN(attacus, StandardMethodCall)
         .def("method_name", &StandardMethodCall::method_name)
         .def("arguments", &StandardMethodCall::arguments)
-    PYCLASS_END(attacus_py, StandardMethodCall)
+    PYCLASS_END(attacus, StandardMethodCall)
 
-    PYCLASS_BEGIN(attacus_py, StandardMethodResult)
-    //auto _StandardMethodResult = py::class_<StandardMethodResult, std::unique_ptr<StandardMethodResult, py::nodelete>>(attacus_py, "StandardMethodResult")
+    PYCLASS_BEGIN(attacus, StandardMethodResult)
+    //auto _StandardMethodResult = py::class_<StandardMethodResult, std::unique_ptr<StandardMethodResult, py::nodelete>>(attacus, "StandardMethodResult")
         .def("success", [](StandardMethodResult& self, py::object obj) {
             PyObject* object = obj.ptr();
             if (Py_IsNone(object)) {
@@ -159,10 +161,10 @@ void init_main(py::module &attacus_py, Registry &registry) {
         }
         , py::arg("value") = nullptr
         )
-    PYCLASS_END(attacus_py, StandardMethodResult)
+    PYCLASS_END(attacus, StandardMethodResult)
 
-    //PYCLASS_BEGIN(attacus_py, EncodableValue)
-    auto _EncodableValue = py::class_<EncodableValue, std::unique_ptr<EncodableValue, py::nodelete>>(attacus_py, "EncodableValue")
+    //PYCLASS_BEGIN(attacus, EncodableValue)
+    auto _EncodableValue = py::class_<EncodableValue, std::unique_ptr<EncodableValue, py::nodelete>>(attacus, "EncodableValue")
         .def("decode", [](EncodableValue& self) {
                 auto variant = self;
                 return std::visit([](auto&& arg) -> py::object {
@@ -179,9 +181,9 @@ void init_main(py::module &attacus_py, Registry &registry) {
                     }
                 }, variant);
             })
-    PYCLASS_END(attacus_py, EncodableValue)
+    PYCLASS_END(attacus, EncodableValue)
 
-    PYCLASS_BEGIN(attacus_py, StandardMethodChannel)
+    PYCLASS_BEGIN(attacus, StandardMethodChannel)
         .def(py::init<>([](FlutterMessenger& messenger, const std::string& name){
             std::cout << "StandardMethodChannel: " << name << std::endl;
             return new StandardMethodChannel(
@@ -203,6 +205,6 @@ void init_main(py::module &attacus_py, Registry &registry) {
 
 
 
-    PYCLASS_END(attacus_py, StandardMethodChannel)
+    PYCLASS_END(attacus, StandardMethodChannel)
    
 }

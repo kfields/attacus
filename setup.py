@@ -10,6 +10,7 @@ setup(
     license          = 'MIT',
     author           = 'kfields',
     packages         = setuptools.find_packages(exclude=["__aimgen__"]),
+    package_data={'attacus': ['*.pyd', '*.dll', "*.dat"]},
     #package_data={'aimgui': ['*.so']},
     #ext_modules      = [module],
     #setup_requires   = ['pybind11', "wheel", "scikit-build", "cmake", "ninja"],

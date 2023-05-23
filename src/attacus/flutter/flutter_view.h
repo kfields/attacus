@@ -76,9 +76,10 @@ public:
     //Data members
     void* context_ = nullptr;
     void* resource_context_ = nullptr;
-    //GLADloadfunc gl_proc_resolver = nullptr;
     //
     float pixelRatio_ = 1.0f;
+    std::string assets_path_;
+    std::string icu_data_path_;
     //
     FlutterEngine engine_ = nullptr;
     FlutterEngineProcTable engine_api_{0};
