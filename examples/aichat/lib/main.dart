@@ -19,7 +19,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Ai Chat Demo',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData.dark(),
+      theme: ThemeData.dark(useMaterial3: true),
       home: const MyHomePage(title: 'Ai Chat Demo'),
     );
   }
@@ -132,7 +132,8 @@ class _MyHomePageState extends State<MyHomePage> {
                                         ],
                                       ),
                                       builders: {
-                                          'code': CodeElementBuilder(),
+                                          'code': CodeElementBuilder(
+                                              context: context),
                                         })),
                         ),
                       );

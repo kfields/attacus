@@ -23,6 +23,7 @@ public:
     int mouseId = 0;
     float lastMouseX = 0.0f, lastMouseY = 0.0f;
     int64_t buttons_ = 0;
+    float wheelSensitivity_ = 8.0f;
 };
 
 } //namespace attacus

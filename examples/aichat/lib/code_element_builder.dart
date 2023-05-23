@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_highlighter/flutter_highlighter.dart';
 import 'package:flutter_highlighter/themes/atom-one-dark.dart';
+//import 'package:flutter_highlighter/themes/atom-one-light.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:markdown/markdown.dart' as md;
 import 'package:google_fonts/google_fonts.dart';
 
 class CodeElementBuilder extends MarkdownElementBuilder {
+  CodeElementBuilder({required this.context});
   @override
   Widget? visitElementAfter(md.Element element, TextStyle? preferredStyle) {
     var language = '';
@@ -15,8 +17,7 @@ class CodeElementBuilder extends MarkdownElementBuilder {
       language = lg.substring(9);
     }
     return SizedBox(
-      /*width:
-          MediaQueryData.fromView(View.of(context)).size.width,*/
+      width: MediaQueryData.fromView(View.of(context)).size.width,
       child: HighlightView(
         // The original code to be highlighted
         element.textContent,
@@ -27,8 +28,7 @@ class CodeElementBuilder extends MarkdownElementBuilder {
 
         // Specify highlight theme
         // All available themes are listed in `themes` folder
-        /*theme: MediaQueryData.fromWindow(WidgetsBinding.instance!.window)
-                    .platformBrightness ==
+        /*theme: MediaQueryData.fromView(View.of(context)).platformBrightness ==
                 Brightness.light
             ? atomOneLightTheme
             : atomOneDarkTheme,*/
@@ -42,4 +42,6 @@ class CodeElementBuilder extends MarkdownElementBuilder {
       ),
     );
   }
+
+  final BuildContext context;
 }

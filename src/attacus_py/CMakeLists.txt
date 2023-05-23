@@ -26,10 +26,6 @@ set_target_properties(${THIS} PROPERTIES OUTPUT_NAME "attacus_py")
 USES_PYBIND11(${THIS})
 USES_ATT(${THIS})
 
-#target_compile_definitions(${THIS} PRIVATE ATT_DLL)
-
-#
-
 target_sources(${THIS} PRIVATE ${ATTPY_SOURCES})
 # add include files
 target_sources(${THIS} PRIVATE ${ATTPY_HEADERS}) # for intellisense

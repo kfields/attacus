@@ -140,7 +140,13 @@ cat engine.version
 ## Flutter Examples
 ```bash
 flutter build bundle
+python main.py
 ```
+or
+```bash
+flutter run
+```
+
 
 ## icudtl.dat
 ```
